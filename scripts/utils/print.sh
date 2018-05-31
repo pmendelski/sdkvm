@@ -45,7 +45,7 @@ printSuccess() {
 }
 
 printError() {
-  printlnColor $COLOR_RED "[error] $1"
+  (>&2 printlnColor $COLOR_RED "[error] $1")
 }
 
 printWarn() {

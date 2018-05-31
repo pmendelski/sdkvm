@@ -4,7 +4,7 @@
 export SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && echo $PWD )"
 
 sdkvm() {
-  local -r commandsDir="$SDKVM_HOME/scripts/commands"
+  local -r commandsDir="$SDKVM_HOME/scripts"
   case $1 in
     help|--help|-h)
       shift
@@ -20,7 +20,8 @@ sdkvm() {
       # Switch command updates current process variables
       # It must be evaluated locally
       shift
-      eval "$("$commandsDir/switch.sh" $@)"
+      local exports="$("$commandsDir/switch.sh" $@)"
+      eval "$exports"
       return
       ;;
     *) # Command.

@@ -27,12 +27,13 @@ sdkvm_install() {
 }
 
 sdkvm_switch() {
-  local -r prevVersion="$1"
-  local -r newVersion="$1"
-  local -r prevJavaHome="$SDKVM/sdk/jdk/$prevVersion"
-  local -r newJavaHome="$SDKVM/sdk/jdk/$version"
-  echo "export JAVA_HOME=$newJavaHome"
-  echo "export PATH=$(replacePathPart "$prevJavaHome/bin" "$newJavaHome/bin")"
+  local -r sdkDir="$1"
+  local -r newVersion="$2"
+  local -r prevVersion="$3"
+  local -r prevJavaHome="$sdkDir/$prevVersion"
+  local -r newJavaHome="$sdkDir/$newVersion"
+  echo "export JAVA_HOME=\"$newJavaHome\""
+  echo "export PATH=\"$(replacePathPart "$prevJavaHome/bin" "$newJavaHome/bin")\""
 }
 
 sdkvm_list() {

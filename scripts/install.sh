@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-source $(dirname "${BASH_SOURCE[0]}")/../utils/command.sh
-declare -r SDKVM_SDKS_DIR="$SDKVM_HOME/sdk"
+source $(dirname "${BASH_SOURCE[0]}")/utils/command.sh
 
 help() {
   echo "NAME"
@@ -26,7 +25,7 @@ main() {
   local -r sdk="$1"
   importSdk "$sdk"
   local -r version="${2:-$(sdkvm_list | head -n 1)}"
-  validateSdkVersion "$sdk" "$version"
+  validateRemoteSdkVersion "$sdk" "$version"
   local -r targetDir="$SDKVM_HOME/sdk/$sdk/$version"
   rm -rf "$targetDir"
   mkdir -p "$targetDir"

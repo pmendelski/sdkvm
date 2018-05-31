@@ -45,8 +45,10 @@ extract() {
 replacePathPart() {
   local -r path="$1"
   local -r replacement="$2"
-  echo ":${PATH}:" \
-    | sed "s|:$path:|:|" \
-    | sed "s|^:|$replacement:|"
-    | sed 's|:*$||'
+  [ "$path" == "$replacement" ] \
+    && echo "${PATH}" \
+    || echo ":${PATH}:" \
+      | sed "s|:$path:|:|" \
+      | sed "s|^:|$replacement:|" \
+      | sed 's|:*$||'
 }

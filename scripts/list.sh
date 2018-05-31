@@ -1,32 +1,31 @@
 #!/bin/bash -e
 
-source $(dirname "${BASH_SOURCE[0]}")/../utils/command.sh
-declare -r SDKVM_SDKS_DIR="$SDKVM_HOME/sdk"
+source $(dirname "${BASH_SOURCE[0]}")/utils/command.sh
 
 remoteSdkVersions() {
   local -r sdk="$1"
   local -r remote="$(sdkvm_list)"
+  local -r list="$(listRemoteSdkVersions $1)"
   printPadded "Remote:"
-  printPadded "${remote:-none}" 2
+  printPadded "${list:-none}" 2
 }
 
 localSdkVersions() {
-  local -r sdk="$1"
-  local -r local="$(find "$SDKVM_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | xargs -I '{}' basename {})"
+  local -r list="$(listLocalSdkVersions $1)"
   printPadded "Local:"
-  printPadded "${local:-none}" 2
+  printPadded "${list:-none}" 2
 }
 
 localSdks() {
-  local -r local="$(find "$SDKVM_SDKS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | xargs -I '{}' basename {} .sh)"
+  local -r list="$(listLocalSdks)"
   printPadded "Local:"
-  printPadded "${local:-none}" 2
+  printPadded "${list:-none}" 2
 }
 
 remoteSdks() {
-  local -r remote="$(find "$SDKVM_HOME/scripts/sdk" -mindepth 1 -maxdepth 1 -type f 2>/dev/null | xargs -I '{}' basename {} .sh)"
+  local -r list="$(listRemoteSdks)"
   printPadded "Remote:"
-  printPadded "${remote:-none}" 2
+  printPadded "${list:-none}" 2
 }
 
 help() {
