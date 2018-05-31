@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+# Make sure we're in the projects root directory
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && echo $PWD )"
+cd "$PROJECT_DIR"
+
+source sdkvm.sh
+sdkvm $@
