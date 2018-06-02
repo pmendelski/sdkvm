@@ -1,10 +1,15 @@
 #!/bin/bash -e
 # It is super basic Version Manager for multiple SDKs
 
-export SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && echo $PWD )"
+declare -xg SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && echo $PWD )"
 
 sdkvm() {
-  local -r commandsDir="$SDKVM_HOME/scripts"
+  error() {
+    (>&2 echo $1)
+    exit 1
+  }
+
+  local -r commandsDir="$SDKVM_HOME/scripts/commands"
   case $1 in
     help|--help|-h)
       shift
@@ -16,16 +21,24 @@ sdkvm() {
       "$commandsDir/version.sh" $@
       return
       ;;
-    switch)
-      # Switch command updates current process variables
-      # It must be evaluated locally
+    enable|disable)
+      # Enable and disable commands update current process variables
+      # They must be evaluated locally
+      local command="$commandsDir/$1.sh"
       shift
-      local exports="$("$commandsDir/switch.sh" $@)"
+      local output="$($command $@)"
+      local exports="$(echo "$output" | sed -nE 's/EVAL: *(.+)$/\1/p')"
+      echo -e "$output" | grep -v "EVAL: " || true
       eval "$exports"
       return
       ;;
+    -*)
+      error "Urecognized option: $1"
+      ;;
     *) # Command.
       local -r command="$1"
+      [ -z "$command" ] && error "No command defined. Try --help option";
+      [[ "$command" != "${command#_}" ]] && error "Invalid command name: \"$command\"";
       $(find "$commandsDir" -mindepth 1 -maxdepth 1 -type f 2>/dev/null | xargs -I '{}' basename {} .sh 2>/dev/null | grep -Fqx "$command") \
         || error "Unrecognized sdkvm command: \"$command\". Try --help option."
       shift
@@ -33,7 +46,16 @@ sdkvm() {
       return
       ;;
   esac
-  echo "No option defined"
-  echo "Try --help option"
-  exit 1;
+  error "No command defined. Try --help option"
 }
+
+sdkvm_init() {
+  local -r sdkDir="$SDKVM_HOME/sdk"
+  for file in "$sdkDir"/*/.version; do
+    local sdk="$(echo "$file" | sed -En "s|^$sdkDir/([^/]+)/.*|\1|p")"
+    local version="$(cat "$file")"
+    sdkvm enable "$sdk" "$version" --silent
+  done
+}
+
+sdkvm_init

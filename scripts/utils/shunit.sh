@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script should be sourced only once
-[[ ${SHUNIT_LOADED:-} -eq 1 ]] && return || readonly SHUNIT_LOADED=1
+[[ ${__SHUNIT_LOADED:-} -eq 1 ]] && return || readonly __SHUNIT_LOADED=1
 
 # Colors
 declare ASSERT_RED=$(tput setaf 1)
@@ -70,7 +70,8 @@ printTestSummary() {
 
 addFailure() {
   local -r msg="${1:-Failed}"
-  local -r entry="${currentTestFile}${TEST_FAILURE_SEP}${currentTestTitle}${TEST_FAILURE_SEP}${msg}"
+  local -r escaped="${msg//$'\n'/\\n}"
+  local -r entry="${currentTestFile}${TEST_FAILURE_SEP}${currentTestTitle}${TEST_FAILURE_SEP}${escaped}"
   testFailures+=("$entry")
   if [ $bail = 1 ]; then
     exit 1;
@@ -79,7 +80,8 @@ addFailure() {
 
 test() {
   local -r testName="$1"
-  local -r testTitle="${2:-$testName}"
+  shift
+  local -r testTitle="${testName}($@)"
   local -r testFile="${BASH_SOURCE[1]}"
   if [ ! "$testFile" == "$currentTestFile" ]; then
     echo -e "\n${ASSERT_BOLD}${ASSERT_MAGENTA}${BASH_SOURCE[1]}${ASSERT_NORMAL}"
@@ -87,7 +89,7 @@ test() {
   testCount=$((testCount + 1))
   currentTestFile=$testFile
   currentTestTitle=$testTitle
-  $testName
+  $testName $@
   printTestSummary
 }
 
@@ -102,38 +104,52 @@ runTests() {
 # Assertions
 #############
 
-assertEq() {
-  local -r expected="$1"
-  local -r actual="$2"
+assertEquals() {
+  local -r actual="${1//$'\n'/\\n}"
+  local -r expected="${2//$'\n'/\\n}"
   local -r msg="${3:-Expected equal ('$actual' == '$expected')}"
-  if [ ! "$expected" == "$actual" ]; then
+  if [ ! "$actual" = "$expected" ]; then
+    addFailure "$msg"
+    return 1
+  fi
+}
+
+assertEq() {
+  assertEquals "$@"
+}
+
+assertNotEquals() {
+  local -r actual="${1//$'\n'/\\n}"
+  local -r expected="${2//$'\n'/\\n}"
+  local -r msg="${3:-Expected not equal ('$actual' != '$expected')}"
+  if [ "$actual" = "$expected" ]; then
     addFailure "$msg"
     return 1
   fi
 }
 
 assertNotEq() {
-  local -r expected="$1"
-  local -r actual="$2"
-  local -r msg="${3:-Expected not equal ('$actual' != '$expected')}"
-  if [ "$expected" == "$actual" ]; then
-    addFailure "$msg"
-    return 1
-  fi
+  assertNotEquals "$@"
+}
+
+assertEmpty() {
+  local -r actual=$1
+  local -r msg="${2:-Expected empty value. Actual: '$actual'}"
+  [ -z "$1" ]
+  assertSuccess "$msg"
 }
 
 assertSuccess() {
   local -r actual=$?
   local -r msg="${1:-Expected success operation (status: $actual)}"
-  assertEq 0 $actual "$msg"
+  assertEq $actual 0 "$msg"
   return "$?"
 }
 
 assertFailure() {
   local -r actual="$?"
   local -r msg="${1:-Expected failure operation (status: $actual)}"
-  echo "Actual: $actual, msg: $msg"
-  assertNotEq 0 $actual "$msg"
+  assertNotEq $actual 0 "$msg"
   return "$?"
 }
 
@@ -219,7 +235,7 @@ printHelp() {
 
 noColors() {
   ASSERT_RED=""
-  ASSERT_GREEN=$""
+  ASSERT_GREEN=""
   ASSERT_MAGENTA=""
   ASSERT_NORMAL=""
   ASSERT_BOLD=""

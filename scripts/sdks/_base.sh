@@ -1,12 +1,7 @@
-source $(dirname "${BASH_SOURCE[0]}")/print.sh
-source $(dirname "${BASH_SOURCE[0]}")/tmpdir.sh
-
-package() {
-  local -r name="$1"
-  local -r installFile="${BASH_SOURCE[1]}"
-  (sudo apt install -y $name && printSuccess "Package installed successfully: $name ($installFile)") \
-    || error "Could not install package: $name ($installFile)"
-}
+source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
+import utils/print
+import utils/tmpdir
+import utils/colondelim
 
 download() {
   local -r url="$1"
@@ -42,13 +37,6 @@ extract() {
   rm -rf "$tmp"
 }
 
-replacePathPart() {
-  local -r path="$1"
-  local -r replacement="$2"
-  [ "$path" == "$replacement" ] \
-    && echo "${PATH}" \
-    || echo ":${PATH}:" \
-      | sed "s|:$path:|:|" \
-      | sed "s|^:|$replacement:|" \
-      | sed 's|:*$||'
+removeFromPath() {
+  colondelim_remove "$PATH" "$1"
 }

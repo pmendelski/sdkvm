@@ -2,22 +2,24 @@
 [[ ${UTILS_PRINT_SOURCED:-} -eq 1 ]] && return || readonly UTILS_PRINT_SOURCED=1
 
 # Default flags
-declare -i nocolor=0
-declare -i silent=0
-declare -i verbose=0
+declare -ig NOCOLOR=0
+declare -ig SILENT=0
+declare -ig VERBOSE=0
 
 # Colors
-declare -r COLOR_RED=`tput setaf 1`
-declare -r COLOR_GREEN=`tput setaf 2`
-declare -r COLOR_YELLOW=`tput setaf 3`
-declare -r COLOR_BLUE=`tput setaf 4`
-declare -r COLOR_MAGENTA=`tput setaf 5`
-declare -r COLOR_CYAN=`tput setaf 6`
-declare -r COLOR_RESET=`tput sgr0`
-declare -r PADDING='  '
+declare -rg COLOR_RED=`tput setaf 1`
+declare -rg COLOR_GREEN=`tput setaf 2`
+declare -rg COLOR_YELLOW=`tput setaf 3`
+declare -rg COLOR_BLUE=`tput setaf 4`
+declare -rg COLOR_MAGENTA=`tput setaf 5`
+declare -rg COLOR_CYAN=`tput setaf 6`
+declare -rg COLOR_RESET=`tput sgr0`
+declare -rg PADDING='  '
 
 print() {
-  [ $silent == 0 ] && printf "$1"
+  if [ "$SILENT" = 0 ]; then
+    printf "$1"
+  fi
 }
 
 println() {
@@ -25,7 +27,7 @@ println() {
 }
 
 printColor() {
-  if [ $nocolor = 0 ]; then
+  if [ "$NOCOLORS" = 0 ]; then
     print "$1$2${COLOR_RESET}"
   else
     print "$2"
@@ -66,7 +68,7 @@ printPadded() {
 }
 
 printDebug() {
-  [ $verbose = 1 ] && println "$1" || :
+  [ $VERBOSE = 1 ] && println "$1" || :
 }
 
 error() {
