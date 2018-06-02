@@ -3,7 +3,7 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/print.sh
 
-createTmpDir() {
+tmpdir_create() {
   local -r suffix=$1
   local -r tmpdir=$([[ -n "$suffix" ]] \
     && mktemp -d --suffix "-$suffix" \
@@ -14,7 +14,7 @@ createTmpDir() {
   echo $tmpdir
 }
 
-removeTmpDir() {
+tmpdir_remove() {
   local -r tmpdir=$1
   if [[ ! "$tmpdir" ]]; then
     error "Could not remove temp dir. Missing path parementer $tmpdir"

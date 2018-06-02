@@ -28,6 +28,16 @@ colondelim_add() {
   fi
 }
 
+colondelim_addAsFirst() {
+  local -r delim="$(colondelim_remove "$1" "$2")"
+  local -r toadd="$2"
+  if [ -z "$delim" ]; then
+    echo "$toadd"
+  else
+    echo "${toadd}:${delim}"
+  fi
+}
+
 colondelim_replace() {
   local -r delim="$1"
   local -r toreplace="$2"
