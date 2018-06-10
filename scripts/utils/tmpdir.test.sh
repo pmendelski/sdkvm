@@ -5,17 +5,17 @@ source $(dirname "${BASH_SOURCE[0]}")/tmpdir.sh
 
 shouldCreateTmpDir() {
   local -r tmpdir=$(tmpdir_create)
-  assertDir $tmpdir "Expected tmpdir to be a directory"
-  assertStartsWith $tmpdir "/tmp/" "Expected '$tmpdir' to be a subdirectory of /tmp"
+  assertDir "$tmpdir" "Expected tmpdir to be a directory"
+  assertStartsWith "$tmpdir" "/tmp/" "Expected '$tmpdir' to be a subdirectory of /tmp"
 }
 test shouldCreateTmpDir
 
 shouldCreateTmpDirWithSuffix() {
   local -r suffix="test"
   local -r tmpdir="$(tmpdir_create "$suffix")"
-  assertDir $tmpdir "Expected tmpdir to be a directory"
-  assertStartsWith $tmpdir "/tmp/" "Expected '$tmpdir' to be a subdirectory of /tmp"
-  assertEndsWith $tmpdir "-$suffix" "Expected '$tmpdir' to have a suffix '$suffix'"
+  assertDir "$tmpdir" "Expected tmpdir to be a directory"
+  assertStartsWith "$tmpdir" "/tmp/" "Expected '$tmpdir' to be a subdirectory of /tmp"
+  assertEndsWith "$tmpdir" "-$suffix" "Expected '$tmpdir' to have a suffix '$suffix'"
 }
 test shouldCreateTmpDirWithSuffix
 
@@ -23,14 +23,14 @@ shouldRemoveTmpDir() {
   local -r tmpdir="$(tmpdir_create)"
   tmpdir_remove "$tmpdir"
   assertSuccess
-  assertNotExists $tmpdir "Expected tmpdir to not exist"
+  assertNotExists "$tmpdir" "Expected tmpdir to not exist"
 }
 test shouldRemoveTmpDir
 
 shouldNotRemoveTmpDir() {
   local -r dir="/tmp"
   local -r msg="$(tmpdir_remove "$dir" 2>&1)"
-  assertDir $dir
+  assertDir "$dir"
   assertContains "$msg" "Could not remove temp dir '$dir'. Passed path is not a subpath of /tmp"
 }
 test shouldNotRemoveTmpDir

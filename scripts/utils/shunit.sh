@@ -24,9 +24,15 @@ declare -a testFailures=()
 declare -i testCount=0
 
 reportFailures() {
+  local -r status=$?
+  if [ $status != 0 ]; then
+    echo -e "\n${ASSERT_BOLD}${ASSERT_RED}Test error: $currentTestFile $currentTestTitle${ASSERT_NORMAL}"
+    echo -e "${ASSERT_RED}Shell exit with status code: $status${ASSERT_NORMAL}\n"
+    exit 1
+  fi
   if [ ${#testFailures[@]} -eq 0 ]; then
     echo -e "\n${ASSERT_BOLD}${ASSERT_GREEN}Tests Passed: ${testCount}${ASSERT_NORMAL}\n"
-    # exit 0
+    exit 0
   fi
   local previousTestTitle=""
   local -i failures=0
@@ -41,7 +47,7 @@ reportFailures() {
     fi
   done
   echo -e "\n${ASSERT_BOLD}${ASSERT_RED}Tests Failed: ${failures}/${testCount}${ASSERT_NORMAL}\n"
-  # exit 1
+  exit 1
 }
 
 trap reportFailures EXIT
@@ -95,9 +101,7 @@ test() {
 runTests() {
   local -r files=${@:-$(find . -name "*.test.sh")}
   for file in $files; do
-    echo ">>> $file"
     source "$file"
-    echo "<<< $file"
   done
 }
 
@@ -136,10 +140,6 @@ assertEquals() {
   fi
 }
 
-assertEq() {
-  assertEquals "$@"
-}
-
 assertNotEquals() {
   local -r actual="${1//$'\n'/\\n}"
   local -r expected="${2//$'\n'/\\n}"
@@ -150,10 +150,6 @@ assertNotEquals() {
   fi
 }
 
-assertNotEq() {
-  assertNotEquals "$@"
-}
-
 assertEmpty() {
   local -r actual=$1
   local -r msg="${2:-Expected empty value. Actual: '$actual'}"
@@ -162,17 +158,15 @@ assertEmpty() {
 }
 
 assertSuccess() {
-  local -r actual=$?
+  local -r actual="$?"
   local -r msg="${1:-Expected success operation (status: $actual)}"
-  assertEq $actual 0 "$msg"
-  return "$?"
+  assertEquals "$actual" "0" "$msg"
 }
 
 assertFailure() {
   local -r actual="$?"
   local -r msg="${1:-Expected failure operation (status: $actual)}"
-  assertNotEq $actual 0 "$msg"
-  return "$?"
+  assertNotEquals "$actual" "0" "$msg"
 }
 
 assertDir() {
@@ -180,7 +174,6 @@ assertDir() {
   local -r msg="${2:-Expected '$actual' to be a directory}"
   [[ -d "$actual"  ]]
   assertSuccess "$msg"
-  return "$?"
 }
 
 assertFile() {
@@ -188,23 +181,20 @@ assertFile() {
   local -r msg="${2:-Expected '$actual' to be a file}"
   [[ -f "$actual"  ]]
   assertSuccess "$msg"
-  return "$?"
 }
 
-assertNotExist() {
+assertExists() {
   local -r actual="$1"
   local -r msg="${2:-Expected '$actual' to exist}"
-  [[ -e "$actual"  ]]
+  [ -e "$actual"  ]
   assertSuccess "$msg"
-  return "$?"
 }
 
 assertNotExists() {
   local -r actual="$1"
   local -r msg="${2:-Expected '$actual' to not exist}"
-  [[ ! -e "$actual"  ]]
+  [ ! -e "$actual" ]
   assertSuccess "$msg"
-  return "$?"
 }
 
 assertStartsWith() {
@@ -213,7 +203,6 @@ assertStartsWith() {
   local -r msg="${3:-Expected '$actual' to start with '$prefix'}"
   [[ ! "${actual##$prefix}" == "${actual}" ]]
   assertSuccess "$msg"
-  return "$?"
 }
 
 assertEndsWith() {
@@ -222,7 +211,6 @@ assertEndsWith() {
   local -r msg="${3:-Expected '$actual' to end with '$prefix'}"
   [[ ! "${actual%%$suffix}" == "${actual}" ]]
   assertSuccess "$msg"
-  return "$?"
 }
 
 assertContains() {
@@ -231,7 +219,6 @@ assertContains() {
   local -r msg="${3:-Expected '$actual' to contain '$part'}"
   [[ ! "${actual/$part/}" == "${actual}" ]]
   assertSuccess "$msg"
-  return "$?"
 }
 
 ###############################################

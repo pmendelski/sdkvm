@@ -1,7 +1,7 @@
 # This script should be sourced only once
 [[ ${UTILS_TMPDIR_SOURCED:-} -eq 1 ]] && return || readonly UTILS_TMPDIR_SOURCED=1
 
-source $(dirname "${BASH_SOURCE[0]}")/print.sh
+source $(dirname "${BASH_SOURCE[0]}")/error.sh
 
 tmpdir_create() {
   local -r suffix=$1
@@ -17,12 +17,15 @@ tmpdir_create() {
 tmpdir_remove() {
   local -r tmpdir=$1
   if [[ ! "$tmpdir" ]]; then
+    echo "1"
     error "Could not remove temp dir. Missing path parementer $tmpdir"
   fi
   if [[ ! -d "$tmpdir"  ]]; then
+    echo "2"
     error "Could not remove temp dir '$tmpdir'. Passed path is not a directory"
   fi
   if [[ "${tmpdir##/tmp/}" == "${tmpdir}" ]] && [ ! "$tmpdir" == "/tmp/" ] ; then
+    echo "3"
     error "Could not remove temp dir '$tmpdir'. Passed path is not a subpath of /tmp"
   fi
   rm -rf "$tmpdir"

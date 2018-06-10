@@ -5,7 +5,7 @@ source $(dirname "${BASH_SOURCE[0]}")/error.sh
 
 shouldExitWithNonZeroCode() {
   local -r code="$(error &>/dev/null; echo $?)"
-  assertNotEq "$code" "0" "Expected error command to exit with non 0 status code"
+  assertNotEquals "$code" "0" "Expected error command to exit with non 0 status code"
 }
 test shouldExitWithNonZeroCode
 

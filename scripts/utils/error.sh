@@ -30,4 +30,6 @@ errorTrap() {
   exit "${code}"
 }
 
-trap 'errorTrap' EXIT
+regiterErrorTrap() {
+  trap 'errorTrap' EXIT
+}
