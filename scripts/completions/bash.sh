@@ -1,16 +1,14 @@
-# TODO: Add Bash compltions
+# TODO: Finish Bash autocompltion
 
 _sdkvm() {
-  local cur prev opts
+  local cur opts
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="list install selfupdate enable disable --help --verbose --version"
-
-  if [[ ${cur} == -* ]] ; then
+  if [ $COMP_CWORD = 1 ];then
+    opts="list install uninstall selfupdate update enable disable version --help --verbose --version"
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-    return 0
   fi
+  return 0
 }
 
 # make zsh emulate bash if necessary
