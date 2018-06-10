@@ -1,5 +1,3 @@
-import utils/colondelim
-
 sdk_getEnabledVersion() {
   local -r sdk="$1"
   echo "$(colondelim_mapGet "$SDKVM_ENABLED" "$sdk")"

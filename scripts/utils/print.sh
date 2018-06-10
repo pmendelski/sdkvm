@@ -18,24 +18,24 @@ declare -rg PADDING='  '
 
 print() {
   if [ "$SILENT" = 0 ]; then
-    printf "$1"
+    echo -n "$1"
   fi
 }
 
 println() {
-  print "$1\n"
+  echo "$1"
 }
 
 printColor() {
-  if [ "$NOCOLORS" = 0 ]; then
-    print "$1$2${COLOR_RESET}"
-  else
-    print "$2"
-  fi
+  [ $NOCOLOR = 0 ] \
+    && print "$1$2${COLOR_RESET}" \
+    || print "$2"
 }
 
 printlnColor() {
-  printColor "$1" "$2\n"
+  [ $NOCOLOR = 0 ] \
+    && println "$1$2${COLOR_RESET}" \
+    || println "$2"
 }
 
 printQuestion() {
@@ -69,9 +69,4 @@ printPadded() {
 
 printDebug() {
   [ $VERBOSE = 1 ] && println "$1" || :
-}
-
-error() {
-  printError "$@";
-  exit 1
 }

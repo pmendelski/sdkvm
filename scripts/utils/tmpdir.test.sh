@@ -12,7 +12,7 @@ test shouldCreateTmpDir
 
 shouldCreateTmpDirWithSuffix() {
   local -r suffix="test"
-  local -r tmpdir=$(tmpdir_create $suffix)
+  local -r tmpdir="$(tmpdir_create "$suffix")"
   assertDir $tmpdir "Expected tmpdir to be a directory"
   assertStartsWith $tmpdir "/tmp/" "Expected '$tmpdir' to be a subdirectory of /tmp"
   assertEndsWith $tmpdir "-$suffix" "Expected '$tmpdir' to have a suffix '$suffix'"
@@ -20,8 +20,8 @@ shouldCreateTmpDirWithSuffix() {
 test shouldCreateTmpDirWithSuffix
 
 shouldRemoveTmpDir() {
-  local -r tmpdir=$(tmpdir_create)
-  tmpdir_remove $tmpdir
+  local -r tmpdir="$(tmpdir_create)"
+  tmpdir_remove "$tmpdir"
   assertSuccess
   assertNotExists $tmpdir "Expected tmpdir to not exist"
 }

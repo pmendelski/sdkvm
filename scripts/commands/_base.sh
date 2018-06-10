@@ -2,7 +2,10 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
 import utils/print
+import utils/error
 import sdk
+
+registerErrorTrap
 
 requireParam() {
   local -r name="$1"

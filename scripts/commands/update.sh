@@ -4,15 +4,14 @@ source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 help() {
   echo "NAME"
-  echo "  sdkvm install SDK - Install SDK"
+  echo "  sdkvm update SDK - Update SDK"
   echo ""
   echo "SYNOPSIS"
-  echo "  sdkvm install SDK [VERSION] [OPTION]..."
+  echo "  sdkvm update SDK [OPTION]..."
   echo ""
   echo "PARAMETERS"
-  echo "  VERSION      Install SDK with version and switch to it."
-  echo "               In no version is specified the newest"
-  echo "               version is installed."
+  echo "  SDK          Install SDK with version and switch to it."
+  echo "               In no SDK is specified the all SDKs will be updated."
   echo ""
   echo "OPTIONS"
   echo "  --no-use|-u  Do not switch to the SDK after installing"
@@ -30,10 +29,8 @@ main() {
   local -i save=0
   local -i force=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
-  local -r version="$(echo "$2" | grep -o "^[^-].*")"
 
   requireSdkParam "$sdk" || shift
-  [ -n "$version" ] && shift
 
   while (("$#")); do
     case $1 in
@@ -57,10 +54,11 @@ main() {
     shift
   done
 
-  [ $force = 1 ] && sdk_isLocalSdk "$sdk" "$version" && sdk_uninstall "$sdk" "$version"
-  sdk_install "$sdk" "$version"
-  [ $use = 1 ] && sdk_enable "$sdk" "$version"
-  [ $save = 1 ] && sdk_saveEnabled "$sdk"
+  sdk_isLocal "$sdk"
+  # [ $force = 1 ] && sdk_isLocalSdk "$sdk" "$version" && sdk_uninstall "$sdk" "$version"
+  # sdk_install "$sdk" "$version"
+  # [ $use = 1 ] && sdk_enable "$sdk" "$version"
+  # [ $save = 1 ] && sdk_saveEnabled "$sdk"
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This script should be sourced only once
 [[ ${__SHUNIT_LOADED:-} -eq 1 ]] && return || readonly __SHUNIT_LOADED=1
@@ -25,24 +25,23 @@ declare -i testCount=0
 
 reportFailures() {
   if [ ${#testFailures[@]} -eq 0 ]; then
-    echo -e "\n${ASSERT_BOLD}${ASSERT_GREEN}Tests Passed: ${testCount}\n"
-    exit 0
-  else
-    local previousTestTitle=""
-    local -i failures=0
-    for failure in "${testFailures[@]}"; do
-      IFS=$TEST_FAILURE_SEP read -ra a <<<$failure;
-      local testFile=${a[0]}
-      local testTitle=${a[1]}
-      local message=${a[2]}
-      if [ ! "$testTitle" == "$previousTestTitle" ]; then
-        previousTestTitle=$testTitle
-        failures=$((failures + 1))
-      fi
-    done
-    echo -e "\n${ASSERT_BOLD}${ASSERT_RED}Tests Failed: ${failures}/${testCount}\n"
-    exit 1
+    echo -e "\n${ASSERT_BOLD}${ASSERT_GREEN}Tests Passed: ${testCount}${ASSERT_NORMAL}\n"
+    # exit 0
   fi
+  local previousTestTitle=""
+  local -i failures=0
+  for failure in "${testFailures[@]}"; do
+    IFS=$TEST_FAILURE_SEP read -ra a <<<$failure;
+    local testFile=${a[0]}
+    local testTitle=${a[1]}
+    local message=${a[2]}
+    if [ ! "$testTitle" == "$previousTestTitle" ]; then
+      previousTestTitle=$testTitle
+      failures=$((failures + 1))
+    fi
+  done
+  echo -e "\n${ASSERT_BOLD}${ASSERT_RED}Tests Failed: ${failures}/${testCount}${ASSERT_NORMAL}\n"
+  # exit 1
 }
 
 trap reportFailures EXIT
@@ -96,8 +95,30 @@ test() {
 runTests() {
   local -r files=${@:-$(find . -name "*.test.sh")}
   for file in $files; do
+    echo ">>> $file"
     source "$file"
+    echo "<<< $file"
   done
+}
+
+#############
+# Utils
+#############
+
+noCtrl() {
+  echo -n "$1" \
+    | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' \
+    | sed -e 's/[[:cntrl:]]//g'
+}
+
+trim() {
+  echo -n "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
+trimmedNoCtrl() {
+  local result="$(noCtrl "$1")"
+  result="$(noCtrl "$result")"
+  echo "$result"
 }
 
 #############
@@ -108,7 +129,8 @@ assertEquals() {
   local -r actual="${1//$'\n'/\\n}"
   local -r expected="${2//$'\n'/\\n}"
   local -r msg="${3:-Expected equal ('$actual' == '$expected')}"
-  if [ ! "$actual" = "$expected" ]; then
+
+  if [ "$actual" != "$expected" ]; then
     addFailure "$msg"
     return 1
   fi

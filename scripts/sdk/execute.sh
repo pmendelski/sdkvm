@@ -18,6 +18,7 @@ sdk__import() {
   )
   local -r sdk="$1"
   local -r sdkScript="$SDKVM_REMOTE_SDKS_DIR/${sdk}.sh"
+  [ ! -f "$sdkScript" ] && error "Urecognized SDK: \"$sdk\""
   [ "$_SDKVM_IMPORTED_SDK" == "$sdk" ] && return
   [ -z "$sdk" ] && error "Missing SDK parameter"
   [ ! -f "$sdkScript" ] && error "Unrecognized SDK: \"$sdk\" $sdkScript"
@@ -37,6 +38,5 @@ sdk_execute() {
   local -r action="_sdkvm_$2"
   shift
   shift
-  sdk__import "$sdk"
-  $action $@
+  sdk__import "$sdk" && $action $@
 }

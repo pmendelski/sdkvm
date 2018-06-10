@@ -47,7 +47,9 @@ main() {
   done
 
   sdk_enable "$sdk" "$version"
-  [ $save = 1 ] && sdk_saveEnabled
+  if [ $save = 1 ]; then
+    sdk_saveEnabled
+  fi
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

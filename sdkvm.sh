@@ -1,29 +1,47 @@
 #!/bin/bash -e
-# It is super basic Version Manager for multiple SDKs
 
-declare -xg SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && echo $PWD )"
+declare -xg SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+declare -xig SDKVM_DEBUG=0
+source "$SDKVM_HOME/scripts/completions/index.sh"
 
 sdkvm() {
+  local -r commandsDir="$SDKVM_HOME/scripts/commands"
+
   error() {
     (>&2 echo $1)
     exit 1
   }
 
-  local -r commandsDir="$SDKVM_HOME/scripts/commands"
+  execute() {
+    local command="$1"
+    shift
+    "$commandsDir/${command}.sh" $@
+  }
+
+  executeSelf() {
+    local command="$1"
+    shift
+    shift
+    "$commandsDir/self.sh" "$command" $@
+  }
+
   case $1 in
-    help|--help|-h)
-      shift
-      "$commandsDir/help.sh" $@
+    --help|-h)
+      executeSelf "help" $@
       return
       ;;
-    version|--version|-v)
-      shift
-      "$commandsDir/version.sh" $@
+    --version|-v)
+      executeSelf "version" $@
+      return
+      ;;
+    --update|-u)
+      executeSelf "update" $@
       return
       ;;
     enable|disable)
-      # Enable and disable commands update current process variables
-      # They must be evaluated locally
+      echo "adasdasdasdsad"
+      # Enable and disable must be evaluated locally
+      # They update current process variables
       local command="$commandsDir/$1.sh"
       shift
       local output="$($command $@)"
@@ -51,6 +69,7 @@ sdkvm() {
 
 sdkvm_init() {
   local -r sdkDir="$SDKVM_HOME/sdk"
+  [ -d "$sdkDir" ] || return
   for file in "$sdkDir"/*/.version; do
     local sdk="$(echo "$file" | sed -En "s|^$sdkDir/([^/]+)/.*|\1|p")"
     local version="$(cat "$file")"
@@ -58,4 +77,4 @@ sdkvm_init() {
   done
 }
 
-sdkvm_init
+# sdkvm_init

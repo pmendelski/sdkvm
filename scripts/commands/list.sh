@@ -2,36 +2,23 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-remoteSdkVersions() {
+listFormattedSdks() {
   local -r sdk="$1"
-  local -r list="$(sdk_listRemoteSdkVersions "$sdk")"
-  printPadded "Remote:"
-  printPadded "${list:-none}" 2
-}
-
-localSdkVersions() {
-  local -r sdk="$1"
-  local -r list="$(sdk_listLocalSdkVersions "$sdk")"
-  printPadded "Local:"
-  printPadded "${list:-none}" 2
-}
-
-localSdks() {
-  local -r list="$(sdk_listLocalSdks)"
-  printPadded "Local:"
-  printPadded "${list:-none}" 2
-}
-
-remoteSdks() {
-  local -r list="$(sdk_listRemoteSdks)"
-  printPadded "Remote:"
-  printPadded "${list:-none}" 2
+  println "Local:"
+  [ -z "$sdk" ] \
+    && printPadded "$(sdk_listLocalSdks)" \
+    || printPadded "$(sdk_listLocalSdkVersions "$sdk")"
+  println
+  println "Remote:"
+  [ -z "$sdk" ] \
+    && printPadded "$(sdk_listRemoteSdks)" \
+    || printPadded "$(sdk_listRemoteSdkVersions "$sdk")"
 }
 
 help() {
   echo "NAME"
-  echo "  sdkvm list       Lists available SDKs"
-  echo "  sdkvm list SDK   Lists available SDK versions"
+  echo "  sdkvm list       Lists SDKs"
+  echo "  sdkvm list SDK   Lists SDK versions"
   echo ""
   echo "SYNOPSIS"
   echo "  sdkvm list [SDK] [OPTION]..."
@@ -43,21 +30,23 @@ help() {
 }
 
 main() {
-  local -i local=1
-  local -i remote=1
+  local -i local=0
+  local -i remote=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
-  local -r version="$(echo "$2" | grep -o "^[^-].*")"
 
   [ -n "$sdk" ] && shift
-  [ -n "$version" ] && shift
 
   while (("$#")); do
     case $1 in
       --local|-l)
-        remote=0
+        local=1
         ;;
       --remote|-r)
-        local=0
+        remote=1
+        ;;
+      --all|-a)
+        local=1
+        remote=1
         ;;
       --help|-h|help)
         help
@@ -69,18 +58,22 @@ main() {
     esac
     shift
   done
-  [ $local = 0 ] && [ $remote = 0 ] \
-    && error "Local and remote parameters must not be used together"
-
-  if [ -n "$sdk" ]; then
-    println "SDK versions: $sdk"
-    [ "$local" == 1 ] && localSdkVersions $sdk
-    [ "$remote" == 1 ] && remoteSdkVersions $sdk
+  if [ $local = 0 ] && [ $remote = 0 ]; then
+    listFormattedSdks "$sdk"
+  elif [ $local = 1 ] && [ $remote = 1 ]; then
+    [ -n "$sdk" ] \
+      && sdk_listAllSdkVersions "$sdk" \
+      || sdk_listAllSdks
+  elif [ "$local" == 1 ]; then
+    [ -n "$sdk" ] \
+      && sdk_listLocalSdkVersions "$sdk" \
+      || sdk_listLocalSdks
   else
-    println "SDKs:"
-    [ "$local" == 1 ] && localSdks
-    [ "$remote" == 1 ] && remoteSdks
+    [ -n "$sdk" ] \
+      && sdk_listRemoteSdkVersions "$sdk" \
+      || sdk_listRemoteSdks
   fi
+  return 0
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

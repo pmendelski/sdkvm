@@ -6,7 +6,7 @@ declare -rg __IMPORT_FILEPATH="${BASH_SOURCE[0]}"
 declare -g __IMPORTED=()
 
 import() {
-  error() {
+  import_error() {
     (>&2 echo $1)
     exit 1
   }
@@ -16,8 +16,8 @@ import() {
   local -r path="$([ "$1" = "${1#./}" ] && echo "$__IMPORT_BASEDIR/$1" || echo "$callerDir/${1#./}")"
   local -r file="$([ -d "$path" ] && echo "$path/index.sh" || echo "${path%.sh}.sh")"
   local -r resolved="$(readlink -f "$file")"
-  [ -f "$file" ] || error "Could not import \"${file}\" from \"$callerFile\". File does not exist."
-  [ "$resolved" == "$__IMPORT_FILEPATH" ] && error "Could not import the import script \"$resolved\" from \"$callerFile\"."
+  [ -f "$file" ] || import_error "Could not import \"${file}\" from \"$callerFile\". File does not exist."
+  [ "$resolved" == "$__IMPORT_FILEPATH" ] && import_error "Could not import the import script \"$resolved\" from \"$callerFile\"."
 
   local cached=0
   for imported in "${__IMPORTED[@]}"; do
@@ -30,6 +30,6 @@ import() {
   if [ $cached = 0 ]; then
     __IMPORTED+=("$resolved")
     source "$resolved" \
-      || error "Could not import \"${resolved}\" from \"$callerFile\". Could not source it."
+      || import_error "Could not import \"${resolved}\" from \"$callerFile\". Could not source it."
   fi
 }
