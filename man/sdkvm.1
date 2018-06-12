@@ -1,0 +1,53 @@
+.TH SDKVM 1
+.SH NAME
+sdkvm \- manage different versions of Software Development Kits.
+.SH SYNOPSIS
+.B sdkvm
+[\fB\-\-version\fR|\fB\-\-update\fR|\fB\-\-help\fR]
+.br
+.B sdkvm
+[\fB\-\-debug\fR]
+[\fB\-\-no\-pretty\fR]
+\fICOMMAND\fR
+[\fB\fIOPTS\fR]
+.SH DESCRIPTION
+Sdkvm manages different Software Development Kits (SDK) by downloading, compiling, installing them on the system.
+In comparison with nvm, rvm or sdkman it adds little overhead to the terminal startup time and it is not dedicated to any specific SDK.
+.SH OPTIONS
+.TP
+.BR \-v ", " \-\-version\fR
+Print the sdkvm version.
+.TP
+.BR \-u ", " \-\-update\fR
+Update the sdkvm.
+.TP
+.BR \-h ", " \-\-help\fR
+Print the manual.
+.TP
+.BR \-d ", " \-dd ", " \-\-debug\fR
+Increase log verbosity. Multiple occurrences (\-d \-d or \-dd) increases the verbosity even more.
+.TP
+.BR \-p ", " \-\-no-pretty\fR
+Disable pretty printing. Remove colors and icons from logs.
+.SH COMMANDS
+.TP
+.B list
+List locally (installed) and remotely (not installed) available SDKs.
+.TP
+.B install
+Install a remotely available SDK.
+.TP
+.B unintsall
+Uninstall a locally available SDK.
+.TP
+.B update
+Replace currently enabled SDK version with the newest one available remotely. If needed the newest SDK version is installed.
+.TP
+.B enable
+Enable a particular version of locally available SDK.
+.TP
+.B disable
+Disable a SDK.
+.TP
+.B version
+Print enabled version of SDK.

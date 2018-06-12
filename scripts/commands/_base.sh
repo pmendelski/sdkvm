@@ -25,6 +25,7 @@ handleCommonParam() {
   case "$1" in
     --silent|-s) SILENT=1 ;;
     --no-colors|-c) NOCOLORS=1 ;;
+    --no-icons|-i) NOICONS=1 ;;
     --verbose|-v) VERBOSE=$(($VERBOSE + 1)) ;;
     *)
       error "Unknown parameter \"$1\". Try --help option."
