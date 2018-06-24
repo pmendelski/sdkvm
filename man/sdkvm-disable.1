@@ -1,0 +1,24 @@
+.TH SDKVM 1
+
+.SH NAME
+sdkvm disable \- disable a SDK
+
+.SH SYNOPSIS
+.B sdkvm disable
+.I SDK
+.RB [ VERSION ]
+.RB [ \-\-save ]
+
+.SH DESCRIPTION
+Disable SDK version by removing SDK binaries from the PATH variable. The change is visible in current terminal session and all children processes. If no version is provided the newest installed version is used.
+.PP
+Disabled SDK version may be persisted using \fI--save\fR option.
+
+.SH OPTIONS
+.TP
+.BR \-s ", " \-\-save\fR
+Save disabled SDK so it is not enabled automatically during system startup.
+
+.SH SEE ALSO
+sdkvm enable
+sdkvm list

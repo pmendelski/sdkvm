@@ -21,19 +21,6 @@ sdkVersions() {
   fi
 }
 
-help() {
-  echo "NAME"
-  echo "  sdkvm version     - Prints all enabled SDK versions"
-  echo "  sdkvm version SDK - Prints enabled SDK version"
-  echo ""
-  echo "SYNOPSIS"
-  echo "  sdkvm version [SDK] [OPTION]..."
-  echo ""
-  echo "PARAMETERS"
-  echo "  SDK          Prints the version of enabled SDK"
-  echo ""
-}
-
 main() {
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   [ -n "$sdk" ] && shift
@@ -41,8 +28,7 @@ main() {
   while (("$#")); do
     case $1 in
       --help|-h|help)
-        help
-        exit 0
+        help "version"
         ;;
       -*)
         handleCommonParam "$1"

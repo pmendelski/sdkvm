@@ -1,0 +1,26 @@
+.TH SDKVM 1
+
+.SH NAME
+sdkvm list \- list SDKs
+.br
+sdkvm list \fISDK\fR \- list SDK versions
+
+.SH SYNOPSIS
+.B sdkvm list
+.RB [ SDK ]
+.RB [ \-\-local | \-\-remote ]
+
+.SH DESCRIPTION
+Command responsible for printing SDKs or SDK versions.
+.PP
+Remote SDK is available in a remote source like FTP server. Those SDKs are available to be installed.
+.PP
+Local SDK are already installed and are available on local machine.
+
+.SH OPTIONS
+.TP
+.BR \-l ", " \-\-local\fR
+Print only locally avaiable SDKs or SDK versions
+.TP
+.BR \-r ", " \-\-remote\fR
+Print only remote SDKs or SDK versions

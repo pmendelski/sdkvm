@@ -1,0 +1,29 @@
+.TH SDKVM 1
+
+.SH NAME
+sdkvm install \- install a SDK
+
+.SH SYNOPSIS
+.B sdkvm install
+.I SDK
+.RB [ VERSION ]
+.RB [ \-\-no\-switch ]
+.RB [ \-\-force ]
+
+.SH DESCRIPTION
+Install SDK version on local mashine. If no version is provided the newest one available from a remote source is used.
+.PP
+By default newly installed SDK is autmatically enabled and persisted.
+
+.SH OPTIONS
+.TP
+.BR \-n ", " \-\-no\-switch\fR
+Do not automatically enable newly installed SDK.
+.TP
+.BR \-f ", " \-\-force\fR
+If SDK version is already installed reinstall it.
+
+.SH SEE ALSO
+sdkvm list
+sdkvm uninstall
+sdkvm enable

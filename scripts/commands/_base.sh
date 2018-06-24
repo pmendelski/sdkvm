@@ -21,6 +21,12 @@ requireVersionParam() {
   requireParam "VERSION" "$1"
 }
 
+help() {
+  local cmdmanfile="${1:+-$1}"
+  man -l man/sdkvm$cmdmanfile.1
+  exit 0
+}
+
 handleCommonParam() {
   case "$1" in
     --silent|-s) SILENT=1 ;;

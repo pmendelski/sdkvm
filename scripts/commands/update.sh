@@ -2,28 +2,6 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-help() {
-  echo "NAME"
-  echo "  sdkvm update SDK - Update SDK"
-  echo ""
-  echo "SYNOPSIS"
-  echo "  sdkvm update SDK [OPTION]..."
-  echo ""
-  echo "PARAMETERS"
-  echo "  SDK          Install SDK with version and switch to it."
-  echo "               In no SDK is specified the all SDKs will be updated."
-  echo ""
-  echo "OPTIONS"
-  echo "  --no-use|-u  Do not switch to the SDK after installing"
-  echo "  --no-save|-s Do not save the SDK version as the default one"
-  echo "  --no-switch  Alias for --no-use and --no-save"
-  echo "  --force|-f   Reinstall the SDK even if it already exists"
-  echo ""
-  echo "SEE"
-  echo "  sdkvm list"
-  echo ""
-}
-
 main() {
   local -i use=0
   local -i save=0
@@ -44,8 +22,7 @@ main() {
         force=1
         ;;
       --help|-h|help)
-        help
-        exit 0
+        help "update"
         ;;
       -*)
         handleCommonParam "$1"

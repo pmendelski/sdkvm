@@ -2,26 +2,6 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-help() {
-  echo "NAME"
-  echo "  sdkvm disable - Remove SDK form the command line"
-  echo ""
-  echo "SYNOPSIS"
-  echo "  sdkvm disable SDK [VERSION] [OPTION]..."
-  echo ""
-  echo "PARAMETERS"
-  echo "  VERSION    Install the version of SDK otherwise the enabled version is used."
-  echo ""
-  echo "OPTIONS"
-  echo "  --help -h     Prints help."
-  echo "  --save -s     Disable version permanently."
-  echo "                Every newly opened terminal will nol onger use the version."
-  echo ""
-  echo "SEE"
-  echo "  sdkvm list - Lists sdk versions"
-  echo ""
-}
-
 main() {
   local -i save=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
@@ -33,8 +13,7 @@ main() {
   while (("$#")); do
     case $1 in
       --help|-h|help)
-        help
-        exit 0
+        help "disable"
         ;;
       --save|-s)
         save=1

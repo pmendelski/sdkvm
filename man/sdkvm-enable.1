@@ -1,0 +1,24 @@
+.TH SDKVM 1
+
+.SH NAME
+sdkvm enable \- enable a SDK
+
+.SH SYNOPSIS
+.B sdkvm enable
+.I SDK
+.RB [ VERSION ]
+.RB [ \-\-save ]
+
+.SH DESCRIPTION
+Enable SDK version by adding SDK binaries to the PATH variable. The change is visible in current terminal session and all children processes. If no version is provided the newest installed version is used.
+.PP
+Enabled SDK version may be persisted using \fI--save\fR option.
+
+.SH OPTIONS
+.TP
+.BR \-s ", " \-\-save\fR
+Save enabled SDK so it is enabled automatically during system startup.
+
+.SH SEE ALSO
+sdkvm disable
+sdkvm list

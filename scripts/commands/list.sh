@@ -15,20 +15,6 @@ listFormattedSdks() {
     || printPadded "$(sdk_listRemoteSdkVersions "$sdk")"
 }
 
-help() {
-  echo "NAME"
-  echo "  sdkvm list       Lists SDKs"
-  echo "  sdkvm list SDK   Lists SDK versions"
-  echo ""
-  echo "SYNOPSIS"
-  echo "  sdkvm list [SDK] [OPTION]..."
-  echo ""
-  echo "OPTIONS"
-  echo "  --local|-l    Prints installed SDKs."
-  echo "  --remote|-r   Prints remotely available SDKs."
-  echo ""
-}
-
 main() {
   local -i local=0
   local -i remote=0
@@ -49,8 +35,7 @@ main() {
         remote=1
         ;;
       --help|-h|help)
-        help
-        exit 0
+        help "list"
         ;;
       -*)
         handleCommonParam "$1"

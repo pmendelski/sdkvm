@@ -2,26 +2,6 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-help() {
-  echo "NAME"
-  echo "  sdkvm enable SDK   Makes SDK available in the command line"
-  echo ""
-  echo "SYNOPSIS"
-  echo "  sdkvm enable SDK [VERSION] [OPTION]..."
-  echo ""
-  echo "PARAMETERS"
-  echo "  VERSION    Install the version of SDK otherwise the newest available version is used."
-  echo ""
-  echo "OPTIONS"
-  echo "  --help -h     Prints help."
-  echo "  --save -s     Save the version."
-  echo "                Every newly opened terminal will use the new version."
-  echo ""
-  echo "SEE"
-  echo "  sdkvm list - Lists sdk versions"
-  echo ""
-}
-
 main() {
   local -i save=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
@@ -33,8 +13,7 @@ main() {
   while (("$#")); do
     case $1 in
       --help|-h|help)
-        help
-        exit 0
+        help "enable"
         ;;
       --save|-s)
         save=1

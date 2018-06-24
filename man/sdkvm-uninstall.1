@@ -1,0 +1,26 @@
+.TH SDKVM 1
+
+.SH NAME
+sdkvm uninstall \- uninstall a SDK
+
+.SH SYNOPSIS
+.B sdkvm uninstall
+.I SDK
+.RB [ VERSION ]
+.RB [ \-\-no\-switch ]
+.RB [ \-\-force ]
+
+.SH DESCRIPTION
+Uninstall a SDK version from local mashine. If no version is provided then all SDK versions are uninstalled.
+.PP
+After previously enabled SDK version is removed then automatically another is enabled.
+
+.SH OPTIONS
+.TP
+.BR \-n ", " \-\-no\-switch\fR
+Do not automatically enable other newest installed SDK version.
+
+.SH SEE ALSO
+sdkvm list
+sdkvm install
+sdkvm disable
