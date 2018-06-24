@@ -5,7 +5,7 @@ sdk_listRemoteSdks() {
 
 sdk_listRemoteSdkVersions() {
   local -r sdk="$1"
-  sdk_execute "$sdk" versions
+  sdk_executeOrEmpty "$sdk" versions
 }
 
 sdk_listLocalSdks() {
@@ -22,9 +22,12 @@ sdk_listEnabledSdks() {
 }
 
 sdk_listLocalSdkVersions() {
+  # List local SDK versions in dir createion order
   local -r sdk="$1"
-  find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
-    | xargs -I '{}' basename {} 2>/dev/null
+  find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null -printf "%Tx %.8TX %p\n" \
+    | sort -r \
+    | cut -f 3 -d' ' \
+    | grep -o '[^/]*$'
 }
 
 sdk_listAllSdks() {

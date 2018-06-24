@@ -6,7 +6,7 @@ sdkVersions() {
   local -r sdk="${1?Expected sdk}"
   [ $(sdk_isEnabled "$sdk") ] \
     && sdk_getEnabledVersion "$sdk" \
-    || error "SDK is not enabled: \"$sdk\". Try --help option"
+    || print "SDK is not enabled: \"$sdk\""
 }
 
 sdkVersions() {
@@ -17,7 +17,7 @@ sdkVersions() {
       sdk_getEnabledVersion "$s"
     done
   else
-    error "There is no enabled SDK"
+    print "There is no enabled SDK"
   fi
 }
 

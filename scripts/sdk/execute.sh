@@ -40,3 +40,15 @@ sdk_execute() {
   shift
   sdk__import "$sdk" && $action $@
 }
+
+sdk_isDefined() {
+  local -r sdk="$1"
+  [ -f "$SDKVM_REMOTE_SDKS_DIR/${sdk}.sh" ]
+}
+
+sdk_executeOrEmpty() {
+  local -r sdk="$1"
+  if $(sdk_isDefined "$sdk"); then
+    sdk_execute "$@"
+  fi
+}
