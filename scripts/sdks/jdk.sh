@@ -28,17 +28,17 @@ _sdkvm_install() {
 
 _sdkvm_enable() {
   local -r sdkDir="$2"
-  echo "EVAL: export _SDKVM_JAVA_HOME_PREV=\"$JAVA_HOME\""
-  echo "EVAL: export JAVA_HOME=\"$sdkDir\""
-  echo "EVAL: export PATH=\"$(path_add "$sdkDir/bin")\""
+  exec "export _SDKVM_JAVA_HOME_PREV=\"$JAVA_HOME\""
+  exec "export JAVA_HOME=\"$sdkDir\""
+  exec "export PATH=\"$(path_add "$sdkDir/bin")\""
 }
 
 _sdkvm_disable() {
   local -r sdkDir="$2"
   local -r javaHome="$sdkDir"
-  echo "EVAL: export JAVA_HOME=\"$_SDKVM_JAVA_HOME_PREV\""
-  echo "EVAL: unset _SDKVM_JAVA_HOME_PREV"
-  echo "EVAL: export PATH=\"$(path_remove "$javaHome/bin")\""
+  exec "export JAVA_HOME=\"$_SDKVM_JAVA_HOME_PREV\""
+  exec "unset _SDKVM_JAVA_HOME_PREV"
+  exec "export PATH=\"$(path_remove "$javaHome/bin")\""
 }
 
 _sdkvm_versions() {

@@ -4,3 +4,8 @@ import utils/tmpdir
 import utils/extract
 import utils/path
 import utils/colondelim
+
+exec() {
+  # All stdout lines that start with "EVAL: " are evaluated in parent process
+  echo "EVAL: $@"
+}
