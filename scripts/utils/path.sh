@@ -1,9 +1,9 @@
-import ./colondelim
+import ./delimlist
 
 path_remove() {
-  colondelim_remove "$PATH" "$1"
+  delimlist_remove "$PATH" "$1"
 }
 
 path_add() {
-  colondelim_addAsFirst "$PATH" "$1"
+  delimlist_addAsFirst "$PATH" "$1"
 }

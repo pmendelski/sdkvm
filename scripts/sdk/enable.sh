@@ -1,6 +1,6 @@
 sdk_getEnabledVersion() {
   local -r sdk="$1"
-  echo "$(colondelim_mapGet "$SDKVM_ENABLED" "$sdk")"
+  echo "$(delimmap_get "$SDKVM_ENABLED" "$sdk")"
 }
 
 sdk_enable() {
@@ -14,7 +14,7 @@ sdk_enable() {
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   if [ -z "$enabled" ] || [ "$enabled" != "$version" ]; then
     printDebug "Enabling SDK $sdk $version"
-    SDKVM_ENABLED="$(colondelim_mapPut "$SDKVM_ENABLED" "$sdk" "$version")"
+    SDKVM_ENABLED="$(delimmap_put "$SDKVM_ENABLED" "$sdk" "$version")"
     echo "EVAL: export SDKVM_ENABLED=\"$SDKVM_ENABLED\""
     sdk_execute "$sdk" enable "$version" "$targetDir"
     printInfo "Enabled SDK $sdk $version"
@@ -34,7 +34,7 @@ sdk_disable() {
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   if [ -n "$enabled" ] && [ "$enabled" = "$version" ]; then
     printDebug "Disabling SDK $sdk $version"
-    SDKVM_ENABLED="$(colondelim_mapRemove "$SDKVM_ENABLED" "$sdk")"
+    SDKVM_ENABLED="$(delimmap_remove "$SDKVM_ENABLED" "$sdk")"
     echo "EVAL: export SDKVM_ENABLED=\"$SDKVM_ENABLED\""
     sdk_execute "$sdk" disable "$version" "$targetDir"
     printInfo "Disabled SDK $sdk $version"
@@ -46,7 +46,7 @@ sdk_disable() {
 sdk_isEnabled() {
   local -r sdk="$1"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
-  colondelim_mapContains "$SDKVM_ENABLED" "$sdk" "$value"
+  delimmap_contains "$SDKVM_ENABLED" "$sdk" "$value"
 }
 
 sdk_saveEnabled() {

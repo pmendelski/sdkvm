@@ -3,7 +3,7 @@ source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
 # Utils scripts
 import utils/print
 import utils/error
-import utils/colondelim
+import utils/delimmap
 
 # SDK scripts
 import ./paths

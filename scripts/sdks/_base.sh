@@ -3,7 +3,7 @@ import utils/print
 import utils/tmpdir
 import utils/extract
 import utils/path
-import utils/colondelim
+import utils/delimmap
 import utils/systype
 
 exec() {
@@ -29,10 +29,7 @@ indexedSdk() {
 indexedSdkVersions() {
   local -r sdk="$1"
   local -r index="$(indexedSdk "$sdk")"
-  if [ ! -f "$cacheFile" ]; then
-    error "Remote SDK source was not indexed for $sdk. Please run: sdkvm index $sdk"
-  fi
-  cat "$SDKVM_REMOTE_CACHE_DIR/$sdk"
+  delimmap_get "$index" "$sdk"
 }
 
 indexedSdkUrl() {
