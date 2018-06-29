@@ -15,12 +15,7 @@ test shouldRemoveColonDelimitedValue "abc:def:ghi" "def" "abc:ghi"
 test shouldRemoveColonDelimitedValue "abc:def:ghi" "ghi" "abc:def"
 test shouldRemoveColonDelimitedValue "abc:de%COLON%f:ghi" "de:f" "abc:ghi"
 test shouldRemoveColonDelimitedValue "abc:def:ghi" "jkl" "abc:def:ghi"
-
-shouldReturnEmptyStringAfterRemovingLastValue() {
-  local -r result=$(colondelim_remove "abc" "abc")
-  assertEmpty "$result"
-}
-test shouldReturnEmptyStringAfterRemovingLastValue
+test shouldRemoveColonDelimitedValue "abc" "abc" ""
 
 shouldAddColonDelimitedValue() {
   local -r text="$1"
@@ -34,14 +29,7 @@ test shouldAddColonDelimitedValue "abc:def:ghi" "abc" "abc:def:ghi"
 test shouldAddColonDelimitedValue "abc:def:ghi" "def" "abc:def:ghi"
 test shouldAddColonDelimitedValue "abc:def:ghi" "ghi" "abc:def:ghi"
 test shouldAddColonDelimitedValue "abc:ghi" "de:f" "abc:ghi:de%COLON%f"
-
-shouldAddColonDelimitedValueToEmptyString() {
-  local -r text=""
-  local -r toadd="abc"
-  local -r result=$(colondelim_add "$text" "$toadd")
-  assertEquals "$result" "$toadd" "Expected \"$text\" with added \"$toadd\" to be \"$toadd\". Actual: \"$result\""
-}
-test shouldAddColonDelimitedValueToEmptyString
+test shouldAddColonDelimitedValue "" "ghi" "ghi"
 
 shoulReplaceColonDelimitedValue() {
   local -r text="$1"
@@ -78,6 +66,18 @@ shouldNotContainColonDelimitedValue() {
 test shouldNotContainColonDelimitedValue "abc:def:ghi" "a"
 test shouldNotContainColonDelimitedValue "abc:def:ghi" "jkl"
 
+shouldListValues() {
+  local -r text="$1"
+  local -r expected="$2"
+  local -r delim="$3"
+  local -r result="$(colondelim_values "$text" "$delim")"
+  assertEquals "$result" "$expected"
+}
+test shouldListValues "abc:def:abc" "abc\ndef\nabc"
+test shouldListValues "abc:%COLON%d%COLON%e%COLON%:abc" "abc\n:d:e:\nabc"
+test shouldListValues "abc#def#abc" "abc\ndef\nabc" "#"
+test shouldListValues "" ""
+
 shouldFindValueByPrefix() {
   local -r text="$1"
   local -r prefix="$2"
@@ -87,6 +87,7 @@ shouldFindValueByPrefix() {
 }
 test shouldFindValueByPrefix "abc/1:def/1:abc/2" "abc/" "abc/1\nabc/2"
 test shouldFindValueByPrefix "abc/1:def/1:abc/2" "def/" "def/1"
+test shouldFindValueByPrefix "abc/1:def%COLON%/1:abc/2" "def:/" "def:/1"
 test shouldFindValueByPrefix "abc/1:def/1:abc/2" "jkl/" ""
 
 shouldFindFirstValueByPrefix() {
@@ -100,18 +101,19 @@ test shouldFindFirstValueByPrefix "abc/1:def/1:abc/2" "abc/" "abc/1"
 test shouldFindFirstValueByPrefix "abc/1:def/1:abc/2" "def/" "def/1"
 test shouldFindFirstValueByPrefix "abc/1:def/1:abc/2" "jkl/" ""
 
-shouldMapGet() {
+shouldGetFromMap() {
   local -r text="$1"
   local -r key="$2"
   local -r expected="$3"
   local -r result="$(colondelim_mapGet "$text" "$key")"
   assertEquals "$result" "$expected"
 }
-test shouldMapGet "abc/1:def/1:abc/2" "abc" "1"
-test shouldMapGet "abc/1:def/1:abc/2" "def" "1"
-test shouldMapGet "abc/1:def/1:abc/2" "jkl" ""
+test shouldGetFromMap "abc/1:def/1:abc/2" "abc" "1"
+test shouldGetFromMap "abc/1:def/1:abc/2" "def" "1"
+test shouldGetFromMap "abc/1:d%COLON%ef/1%COLON%2%SLASH%3:abc/2" "d:ef" "1:2/3"
+test shouldGetFromMap "abc/1:def/1:abc/2" "jkl" ""
 
-shouldMapPut() {
+shouldPutToMap() {
   local -r text="$1"
   local -r key="$2"
   local -r value="$3"
@@ -121,13 +123,13 @@ shouldMapPut() {
   local -r result="$(colondelim_mapPut "$text" "$key" "$value" "$colon" "$slash")"
   assertEquals "$result" "$expected"
 }
-test shouldMapPut "abc/1:def/1:abc/2" "abc" "1" "def/1:abc/1"
-test shouldMapPut "def/1" "abc" "1" "def/1:abc/1"
-test shouldMapPut "abc/1:def/1:abc/2" "abc" "3" "def/1:abc/3"
-test shouldMapPut "abc/1:def/1:abc/2" "jkl" "1" "abc/1:def/1:abc/2:jkl/1"
-test shouldMapPut "a\tA\nb\tB" "c" "C" "a\tA\nb\tB\nc\tC" "\n" "\t"
+test shouldPutToMap "abc/1:def/1:abc/2" "abc" "1" "def/1:abc/1"
+test shouldPutToMap "def/1" "abc" "1" "def/1:abc/1"
+test shouldPutToMap "abc/1:def/1:abc/2" "abc" "3" "def/1:abc/3"
+test shouldPutToMap "abc/1:def/1:abc/2" "jkl" "1" "abc/1:def/1:abc/2:jkl/1"
+test shouldPutToMap "a\tA\nb\tB" "c" "C" "a\tA\nb\tB\nc\tC" "\n" "\t"
 
-shouldMapRemoveWithValue() {
+shouldRemoveRemoveEntryFromMap() {
   local -r text="$1"
   local -r key="$2"
   local -r value="$3"
@@ -135,33 +137,33 @@ shouldMapRemoveWithValue() {
   local -r result="$(colondelim_mapRemove "$text" "$key" "$value")"
   assertEquals "$result" "$expected"
 }
-test shouldMapRemoveWithValue "abc/1:def/1:abc/2" "abc" "1" "def/1:abc/2"
-test shouldMapRemoveWithValue "abc/1:def/1:abc/2" "abc" "2" "abc/1:def/1"
-test shouldMapRemoveWithValue "abc/1:def/1:abc/2" "def" "1" "abc/1:abc/2"
-test shouldMapRemoveWithValue "abc/1:def/1:abc/2" "jkl" "1" "abc/1:def/1:abc/2"
+test shouldRemoveRemoveEntryFromMap "abc/1:def/1:abc/2" "abc" "1" "def/1:abc/2"
+test shouldRemoveRemoveEntryFromMap "abc/1:def/1:abc/2" "abc" "2" "abc/1:def/1"
+test shouldRemoveRemoveEntryFromMap "abc/1:def/1:abc/2" "def" "1" "abc/1:abc/2"
+test shouldRemoveRemoveEntryFromMap "abc/1:def/1:abc/2" "jkl" "1" "abc/1:def/1:abc/2"
 
-shouldMapRemove() {
+shouldRemoveAKeyFromMap() {
   local -r text="$1"
   local -r key="$2"
   local -r expected="$3"
   local -r result="$(colondelim_mapRemove "$text" "$key")"
   assertEquals "$result" "$expected"
 }
-test shouldMapRemove "abc/1:def/1:abc/2" "abc" "def/1"
-test shouldMapRemove "abc/1:def/1:abc/2" "def" "abc/1:abc/2"
-test shouldMapRemove "abc/1:def/1:abc/2" "jkl" "abc/1:def/1:abc/2"
+test shouldRemoveAKeyFromMap "abc/1:def/1:abc/2" "abc" "def/1"
+test shouldRemoveAKeyFromMap "abc/1:def/1:abc/2" "def" "abc/1:abc/2"
+test shouldRemoveAKeyFromMap "abc/1:def/1:abc/2" "jkl" "abc/1:def/1:abc/2"
 
-shouldMapContains() {
+shouldContainKeyInMap() {
   local -r text="$1"
   local -r key="$2"
   local -r expected="$4"
   colondelim_mapContains "$text" "$key"
   assertSuccess
 }
-test shouldMapContains "abc/1:def/1:abc/2" "abc"
-test shouldMapContains "abc/1:def/1:abc/2" "def"
+test shouldContainKeyInMap "abc/1:def/1:abc/2" "abc"
+test shouldContainKeyInMap "abc/1:def/1:abc/2" "def"
 
-shouldMapContainsWithValue() {
+shouldContainKeyAndValueInMap() {
   local -r text="$1"
   local -r key="$2"
   local -r value="$3"
@@ -169,14 +171,21 @@ shouldMapContainsWithValue() {
   colondelim_mapContains "$text" "$key" "$value"
   assertSuccess
 }
-test shouldMapContainsWithValue "abc/1:def/1:abc/2" "abc" "1" "def/1:abc/2"
-test shouldMapContainsWithValue "abc/1:def/1:abc/2" "abc" "2" "abc/1:def/1"
-test shouldMapContainsWithValue "abc/1:def/1:abc/2" "def" "1" "abc/1:abc/2"
-test shouldMapContainsWithValue "abc/1:de%SLASH%f/%SLASH%1:abc/2" "de/f" "/1" "abc/1:abc/2"
+test shouldContainKeyAndValueInMap "abc/1:def/1:abc/2" "abc" "1" "def/1:abc/2"
+test shouldContainKeyAndValueInMap "abc/1:def/1:abc/2" "abc" "2" "abc/1:def/1"
+test shouldContainKeyAndValueInMap "abc/1:def/1:abc/2" "def" "1" "abc/1:abc/2"
+test shouldContainKeyAndValueInMap "abc/1:de%SLASH%f/%SLASH%1:abc/2" "de/f" "/1" "abc/1:abc/2"
 
-shouldMapNotContains() {
+shouldNotContainInMap() {
   colondelim_mapContains "$@"
   assertFailure
 }
-test shouldMapNotContains "abc/1:def/1:abc/2" "jkl"
-test shouldMapNotContains "abc/1:def/1:abc/2" "abc" "3"
+test shouldNotContainInMap "abc/1:def/1:abc/2" "jkl"
+test shouldNotContainInMap "abc/1:def/1:abc/2" "abc" "3"
+
+shouldListKeysFromMap() {
+  colondelim_mapContains "$@"
+  assertFailure
+}
+test shouldListKeysFromMap "abc/1:def/1" "abc\ndef"
+test shouldListKeysFromMap "abc/1:def/1:abc/2" "abc\ndef"

@@ -69,7 +69,7 @@ printTestSummary() {
   done
   if [ $printedTestTitle -eq 0 ]; then
     printedTestTitle=1
-    echo "${ASSERT_PADDING}${ASSERT_GREEN}✔ ${testTitle}${ASSERT_NORMAL}"
+    echo "${ASSERT_PADDING}${ASSERT_GREEN}✔ ${currentTestTitle}${ASSERT_NORMAL}"
   fi
 }
 
@@ -88,13 +88,17 @@ test() {
   shift
   local -r testTitle="${testName}($@)"
   local -r testFile="${BASH_SOURCE[1]}"
+  local -r failureCount=${#testFailures[@]}
   if [ ! "$testFile" == "$currentTestFile" ]; then
     echo -e "\n${ASSERT_BOLD}${ASSERT_MAGENTA}${BASH_SOURCE[1]}${ASSERT_NORMAL}"
   fi
   testCount=$((testCount + 1))
   currentTestFile=$testFile
   currentTestTitle=$testTitle
-  $testName $@
+  $testName "$@"
+  if [ $? != 0 ] && [ $failureCount = ${#testFailures[@]} ]; then
+    addFailure "Test failure: $testName"
+  fi
   printTestSummary
 }
 

@@ -4,8 +4,42 @@ import utils/tmpdir
 import utils/extract
 import utils/path
 import utils/colondelim
+import utils/systype
 
 exec() {
   # All stdout lines that start with "EVAL: " are evaluated in parent process
   echo "EVAL: $@"
+}
+
+cachedSdks() {
+  local -r sdk="$1"
+  local -r system="${2:-$SYSTYPE}"
+
+}
+
+indexedSdk() {
+  local -r sdk="$1"
+  local -r cacheFile="$SDKVM_REMOTE_CACHE_DIR/$sdk"
+  if [ ! -f "$cacheFile" ]; then
+    error "Remote SDK source was not indexed for $sdk. Please run: sdkvm index $sdk"
+  fi
+  cat "$SDKVM_REMOTE_CACHE_DIR/$sdk"
+}
+
+indexedSdkVersions() {
+  local -r sdk="$1"
+  local -r index="$(indexedSdk "$sdk")"
+  if [ ! -f "$cacheFile" ]; then
+    error "Remote SDK source was not indexed for $sdk. Please run: sdkvm index $sdk"
+  fi
+  cat "$SDKVM_REMOTE_CACHE_DIR/$sdk"
+}
+
+indexedSdkUrl() {
+  local -r sdk="$1"
+  local -r cacheFile="$SDKVM_REMOTE_CACHE_DIR/$sdk"
+  if [ ! -f "$cacheFile" ]; then
+    error "Remote SDK source was not indexed for $sdk. Please run: sdkvm index $sdk"
+  fi
+  cat "$SDKVM_REMOTE_CACHE_DIR/$sdk"
 }
