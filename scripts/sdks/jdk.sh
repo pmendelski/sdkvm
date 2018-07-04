@@ -2,17 +2,16 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-declare -rgA jdk_versions=(
-  ["oracle-jdk-8"]="http://download.oracle.com/otn-pub/java/jdk/8u172-b11/a58eab1ec242421181065cdc37240b08/jdk-8u172-linux-x64.tar.gz"
-  ["oracle-jdk-10"]="http://download.oracle.com/otn-pub/java/jdk/10.0.1+10/fb4372174a714e6b8c52526dc134031e/jdk-10.0.1_linux-x64_bin.tar.gz"
-)
+_sdkvm_versions() {
+  echo "jdk-10 http://download.oracle.com/otn/java/jdk/10+46/76eac37278c24557a3c4199677f19b62/jdk-10_linux-x64_bin.tar.gz"
+  echo "jdk-9  http://download.oracle.com/otn/java/jdk/9.0.4+11/c2514751926b4512b076cc82f959763f/jdk-9.0.4_linux-x64_bin.tar.gz"
+  echo "jdk-8  http://download.oracle.com/otn/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jdk-8u162-linux-x64.tar.gz"
+}
 
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="${jdk_versions[$version]}"
-  [ -z "$downloadUrl" ] && error "Could not find JDK version: \"$version\""
-  printInfo "Installing JDK: $version"
+  local -r downloadUrl="$3"
   local -r file="${downloadUrl##*/}"
   local -r tmpdir="$(tmpdir_create "$version")"
   cd "$tmpdir"
@@ -35,12 +34,7 @@ _sdkvm_enable() {
 
 _sdkvm_disable() {
   local -r sdkDir="$2"
-  local -r javaHome="$sdkDir"
   exec "export JAVA_HOME=\"$_SDKVM_JAVA_HOME_PREV\""
   exec "unset _SDKVM_JAVA_HOME_PREV"
-  exec "export PATH=\"$(path_remove "$javaHome/bin")\""
-}
-
-_sdkvm_versions() {
-  echo "${!jdk_versions[@]}" | sed 's| |\n|g'
+  exec "export PATH=\"$(path_remove "$sdkDir/bin")\""
 }

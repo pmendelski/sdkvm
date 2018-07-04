@@ -16,12 +16,11 @@ sdk__import() {
     "_sdkvm_disable"
     "_sdkvm_versions"
   )
+  [ "$_SDKVM_IMPORTED_SDK" == "$sdk" ] && return
   local -r sdk="$1"
   local -r sdkScript="$SDKVM_REMOTE_SDKS_DIR/${sdk}.sh"
   [ ! -f "$sdkScript" ] && error "Urecognized SDK: \"$sdk\""
-  [ "$_SDKVM_IMPORTED_SDK" == "$sdk" ] && return
   [ -z "$sdk" ] && error "Missing SDK parameter"
-  [ ! -f "$sdkScript" ] && error "Unrecognized SDK: \"$sdk\" $sdkScript"
   _SDKVM_IMPORTED_SDK=""
   for fun in $moduleFuns; do
     unset -f "$fun"

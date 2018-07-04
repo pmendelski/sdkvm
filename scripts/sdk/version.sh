@@ -22,7 +22,7 @@ sdk_validateLocalSdkVersion() {
     || error "Unrecognized $sdk version: \"$version\""
 }
 
-sdk_isLocal() {
+sdk_isLocalSdkVersion() {
   local -r sdk="${1?"Expected sdk"}"
   local -r version="${2?"Expected version"}"
   local -r versions="$(listLocalSdkVersions "$sdk")"
@@ -30,7 +30,7 @@ sdk_isLocal() {
     && echo "$versions" | grep -Fq "$version"
 }
 
-sdk_isRemote() {
+sdk_isRemoteSdkVersion() {
   local -r sdk="${1?"Expected sdk"}"
   local -r version="${2?"Expected version"}"
   local -r versions="$(listRemoteSdkVersions "$sdk")"

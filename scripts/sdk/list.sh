@@ -5,7 +5,13 @@ sdk_listRemoteSdks() {
 
 sdk_listRemoteSdkVersions() {
   local -r sdk="$1"
-  sdk_executeOrEmpty "$sdk" versions
+  sdk_executeOrEmpty "$sdk" versions | cut -d' ' -f 1
+}
+
+sdk_getRemoteSdkVersionDownloadUrl() {
+  local -r sdk="$1"
+  local -r version="$2"
+  sdk_executeOrEmpty "$sdk" versions | grep -E "^$version" | cut -d' ' -f 2
 }
 
 sdk_listLocalSdks() {
