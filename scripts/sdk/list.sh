@@ -8,12 +8,6 @@ sdk_listRemoteSdkVersions() {
   sdk_executeOrEmpty "$sdk" versions | cut -d' ' -f 1
 }
 
-sdk_getRemoteSdkVersionDownloadUrl() {
-  local -r sdk="$1"
-  local -r version="$2"
-  sdk_executeOrEmpty "$sdk" versions | grep -E "^$version" | cut -d' ' -f 2
-}
-
 sdk_listLocalSdks() {
   find "$SDKVM_LOCAL_SDKS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
     | xargs -I '{}' basename {} 2>/dev/null
@@ -37,12 +31,16 @@ sdk_listLocalSdkVersions() {
 }
 
 sdk_listAllSdks() {
-  echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" | sort -u
+  echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" | \
+    sort -u | \
+    sed '/^\s*$/d'
 }
 
 sdk_listAllSdkVersions() {
   local -r sdk="$1"
-  echo -e "$(sdk_listLocalSdkVersions "$sdk")\n$(sdk_listRemoteSdkVersions "$sdk")" | sort -u
+  echo -e "$(sdk_listLocalSdkVersions "$sdk")\n$(sdk_listRemoteSdkVersions "$sdk")" | \
+    sort -u | \
+    sed '/^\s*$/d'
 }
 
 sdk_listNotInstalledSdks() {

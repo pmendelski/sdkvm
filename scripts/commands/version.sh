@@ -2,14 +2,14 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-sdkVersions() {
+printEnabledSdkVersion() {
   local -r sdk="${1?Expected sdk}"
   [ $(sdk_isEnabled "$sdk") ] \
     && sdk_getEnabledVersion "$sdk" \
-    || print "SDK is not enabled: \"$sdk\""
+    || printWarn "SDK is not enabled: \"$sdk\""
 }
 
-sdkVersions() {
+printAllEnabledSdkVersions() {
   local -r enabledSdks="$(sdk_listEnabledSdks)"
   if [ -n "$enabledSdks" ]; then
     for s in $enabledSdks; do
@@ -17,7 +17,7 @@ sdkVersions() {
       sdk_getEnabledVersion "$s"
     done
   else
-    print "There is no enabled SDK"
+    printWarn "There is no enabled SDK"
   fi
 }
 
@@ -38,9 +38,9 @@ main() {
   done
 
   if [ -n "$sdk" ]; then
-    sdkVersions "$sdk"
+    printEnabledSdkVersion "$sdk"
   else
-    sdkVersions
+    printAllEnabledSdkVersions
   fi
 }
 

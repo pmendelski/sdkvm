@@ -39,7 +39,6 @@ sdkvm() {
       return
       ;;
     enable|disable)
-      echo "adasdasdasdsad"
       # Enable and disable must be evaluated locally
       # They update current process variables
       local command="$commandsDir/$1.sh"

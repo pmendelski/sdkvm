@@ -2,10 +2,32 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-_sdkvm_versions() {
-  echo "jdk-10 http://download.oracle.com/otn/java/jdk/10+46/76eac37278c24557a3c4199677f19b62/jdk-10_linux-x64_bin.tar.gz"
-  echo "jdk-9  http://download.oracle.com/otn/java/jdk/9.0.4+11/c2514751926b4512b076cc82f959763f/jdk-9.0.4_linux-x64_bin.tar.gz"
-  echo "jdk-8  http://download.oracle.com/otn/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jdk-8u162-linux-x64.tar.gz"
+jdkVersionPageUrls() {
+  curl -s https://www.oracle.com/technetwork/java/javase/downloads/index.html | \
+    grep -oE "href=\"([^\"]+/javase/downloads/jdk[^\"]+-downloads[^\"]+)\"" | \
+    cut -f 2 -d \" | \
+    sort -u
+}
+
+_sdkvm_fetch_versions() {
+  jdkVersionPageUrls | \
+    grep -oE "jdk([0-9]+)" | \
+    grep -oE "[0-9]+"
+}
+
+_sdkvm_fetch_download_url() {
+  local -r version="${1?Expected version}"
+  local -r jdkDownloadPageUrl="$(jdkVersionPageUrls | grep "jdk$version-downloads" | head -n 1)"
+  if [ -z "$jdkDownloadPageUrl" ]; then
+    error "Could not locate download page url for JDK v$version"
+  fi
+  curl -s "https://www.oracle.com/$jdkDownloadPageUrl" | \
+    grep -oE "\"(https?://download.oracle.com/[^\"]+)\"" | \
+    grep "linux" | \
+    grep ".tar.gz" | \
+    cut -f 2 -d \" | \
+    sort -u |
+    head -n 1
 }
 
 _sdkvm_install() {
@@ -15,14 +37,17 @@ _sdkvm_install() {
   local -r file="${downloadUrl##*/}"
   local -r tmpdir="$(tmpdir_create "$version")"
   cd "$tmpdir"
-  printDebug "Downloading JDK from $downloadUrl to $tmpdir"
+  printDebug "Downloading JDK $version from $downloadUrl to $tmpdir"
   wget -q --show-progress \
     --no-check-certificate --no-cookies \
     --header "Cookie: oraclelicense=accept-securebackup-cookie" \
     -O "$file" "$downloadUrl"
+  printTrace "Download completed"
   printDebug "Installing JDK from $tmpdir"
   extract "$file" "$targetDir"
+  printTrace "Installation completed"
   tmpdir_remove "$tmpdir"
+  printTrace "Temporary files removed"
 }
 
 _sdkvm_enable() {

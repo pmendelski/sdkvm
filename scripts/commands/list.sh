@@ -2,17 +2,39 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-listFormattedSdks() {
-  local -r sdk="$1"
-  println "Local:"
-  [ -z "$sdk" ] \
-    && printPadded "$(sdk_listLocalSdks)" \
-    || printPadded "$(sdk_listLocalSdkVersions "$sdk")"
-  println
-  println "Remote:"
-  [ -z "$sdk" ] \
-    && printPadded "$(sdk_listRemoteSdks)" \
-    || printPadded "$(sdk_listRemoteSdkVersions "$sdk")"
+printSdks() {
+  local -r localSdks="$(sdk_listLocalSdks)"
+  local -r remoteSdks="$(sdk_listRemoteSdks)"
+  if [ -n "$localSdks" ]; then
+    println "Local SDKs:"
+    printPadded "$(sdk_listLocalSdks)"
+  fi
+  if [ -n "$remoteVersions" ] && [ -n "$localVersions" ]; then
+    println
+  fi
+  if [ -n "$remoteSdks" ]; then
+    println "Remote SDKs:"
+    printPadded "$(sdk_listRemoteSdks)"
+  fi
+}
+
+printSdkVersions() {
+  local -r sdk="${1?Expected SDK}"
+  local -r localVersions="$(sdk_listLocalSdkVersions "$sdk")"
+  local -r remoteVersions="$(sdk_listRemoteSdkVersions "$sdk")"
+  if [ -n "$localVersions" ]; then
+    println "Local SDK versions:"
+    printPadded "$(sdk_listLocalSdkVersions "$sdk")"
+  fi
+  if [ -n "$remoteVersions" ] && [ -n "$localVersions" ]; then
+    println
+  fi
+  if [ -n "$remoteVersions" ]; then
+    println "Remote SDK versions:"
+    printPadded "$(sdk_listRemoteSdkVersions "$sdk")"
+  else
+    printWarn "Remote SDK not found: $sdk"
+  fi
 }
 
 main() {
@@ -44,7 +66,9 @@ main() {
     shift
   done
   if [ $local = 0 ] && [ $remote = 0 ]; then
-    listFormattedSdks "$sdk"
+    [ -n "$sdk" ] \
+      && printSdkVersions "$sdk" \
+      || printSdks
   elif [ $local = 1 ] && [ $remote = 1 ]; then
     [ -n "$sdk" ] \
       && sdk_listAllSdkVersions "$sdk" \

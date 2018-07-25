@@ -33,6 +33,8 @@ handleCommonParam() {
     --no-colors|-c) NOCOLORS=1 ;;
     --no-icons|-i) NOICONS=1 ;;
     --verbose|-v) VERBOSE=$(($VERBOSE + 1)) ;;
+    -vv) VERBOSE=$(($VERBOSE + 2)) ;;
+    -vvv) VERBOSE=$(($VERBOSE + 3)) ;;
     *)
       error "Unknown parameter \"$1\". Try --help option."
       ;;

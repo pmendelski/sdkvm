@@ -3,7 +3,6 @@
 
 # Default flags
 declare -ig NOCOLOR=0
-declare -ig SILENT=0
 declare -ig VERBOSE=0
 
 # Colors
@@ -17,9 +16,7 @@ declare -rg COLOR_RESET=`tput sgr0`
 declare -rg PADDING='  '
 
 print() {
-  if [ "$SILENT" = 0 ]; then
-    echo -n "$1"
-  fi
+  echo -n "$1"
 }
 
 println() {
@@ -51,7 +48,7 @@ printError() {
 }
 
 printWarn() {
-  printlnColor $COLOR_MAGENTA "[warn] $1"
+  (>&2 printlnColor $COLOR_MAGENTA "[warn] $1")
 }
 
 printInfo() {
@@ -68,5 +65,9 @@ printPadded() {
 }
 
 printDebug() {
-  [ $VERBOSE = 1 ] && println "$1" || :
+  [ $VERBOSE -gt 0 ] && println "$1" || :
+}
+
+printTrace() {
+  [ $VERBOSE -gt 1 ] && println "$1" || :
 }
