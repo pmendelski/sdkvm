@@ -16,11 +16,11 @@ declare -rg COLOR_RESET=`tput sgr0`
 declare -rg PADDING='  '
 
 print() {
-  echo -n "$1"
+  echo -ne "$1"
 }
 
 println() {
-  echo "$1"
+  echo -e "$1"
 }
 
 printColor() {

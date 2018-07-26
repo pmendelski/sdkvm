@@ -61,23 +61,23 @@ _sdkvm() {
         ;;
         uninstall)
           _arguments \
-            "1: :($(sdkvm list --remote))" \
-            "2: :($(sdkvm list "$words[2]" --remote))" \
+            "1: :($(sdkvm list --local))" \
+            "2: :($(sdkvm list "$words[2]" --local))" \
             $commonOpts \
             && ret=0
         ;;
         enable)
           _arguments \
-            "1: :($(sdkvm list --remote))" \
-            "2: :($(sdkvm list "$words[2]" --remote))" \
+            "1: :($(sdkvm list --local))" \
+            "2: :($(sdkvm list "$words[2]" --local))" \
             '--save[Enable SDK version for next sessions]' \
             $commonOpts \
             && ret=0
         ;;
         disable)
           _arguments \
-            "1: :($(sdkvm list --remote))" \
-            "2: :($(sdkvm list "$words[2]" --remote))" \
+            "1: :($(sdkvm list --local))" \
+            "2: :($(sdkvm list "$words[2]" --local))" \
             '--save[Disable SDK version for next sessions]' \
             $commonOpts \
             && ret=0

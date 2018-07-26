@@ -37,11 +37,11 @@ main() {
     shift
   done
 
-  if [ -n "$sdk" ]; then
-    printEnabledSdkVersion "$sdk"
-  else
+  [ -n "$sdk" ] && \
+    printEnabledSdkVersion "$sdk" || \
     printAllEnabledSdkVersions
-  fi
+
+  return 0
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

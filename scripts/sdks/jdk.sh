@@ -2,31 +2,36 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-jdkVersionPageUrls() {
-  curl -s https://www.oracle.com/technetwork/java/javase/downloads/index.html | \
+oracleJdkDownloadUrls() {
+  local -r versionPages="$(curl -s https://www.oracle.com/technetwork/java/javase/downloads/index.html | \
     grep -oE "href=\"([^\"]+/javase/downloads/jdk[^\"]+-downloads[^\"]+)\"" | \
     cut -f 2 -d \" | \
-    sort -u
+    sort -u)"
+  for versionPageUrl in $versionPages; do
+    curl -s "https://www.oracle.com/$versionPageUrl" | \
+      grep -oE '"(https?://download.oracle.com/[^\"]+)"' | \
+      grep 'linux-x64' | \
+      grep '.tar.gz' | \
+      cut -f 2 -d \" | \
+      sort -u
+  done
 }
 
-_sdkvm_fetch_versions() {
-  jdkVersionPageUrls | \
-    grep -oE "jdk([0-9]+)" | \
-    grep -oE "[0-9]+"
+_sdkvm_versions() {
+  oracleJdkDownloadUrls | \
+    grep -oE 'jdk-[^-_]+' | \
+    sed 's|^|oracle-|'
 }
 
-_sdkvm_fetch_download_url() {
+_sdkvm_download_url() {
+  local -r oracleVersionPrefix="oracle-jdk-"
   local -r version="${1?Expected version}"
-  local -r jdkDownloadPageUrl="$(jdkVersionPageUrls | grep "jdk$version-downloads" | head -n 1)"
-  if [ -z "$jdkDownloadPageUrl" ]; then
-    error "Could not locate download page url for JDK v$version"
+  if [[ "$version" != "${oracleVersionPrefix}"* ]]; then
+    error "Unrecognized JDK version: $version. Supported only $oracleVersionPrefix* versions."
   fi
-  curl -s "https://www.oracle.com/$jdkDownloadPageUrl" | \
-    grep -oE "\"(https?://download.oracle.com/[^\"]+)\"" | \
-    grep "linux" | \
-    grep ".tar.gz" | \
-    cut -f 2 -d \" | \
-    sort -u |
+  local -r versionNumber="${version#$oracleVersionPrefix}"
+  oracleJdkDownloadUrls | \
+    grep "$versionNumber" | \
     head -n 1
 }
 

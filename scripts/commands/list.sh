@@ -21,17 +21,17 @@ printSdks() {
 printSdkVersions() {
   local -r sdk="${1?Expected SDK}"
   local -r localVersions="$(sdk_listLocalSdkVersions "$sdk")"
-  local -r remoteVersions="$(sdk_listRemoteSdkVersions "$sdk")"
   if [ -n "$localVersions" ]; then
     println "Local SDK versions:"
-    printPadded "$(sdk_listLocalSdkVersions "$sdk")"
+    printPadded "$localVersions"
   fi
+  local -r remoteVersions="$(sdk_listRemoteSdkVersions "$sdk")"
   if [ -n "$remoteVersions" ] && [ -n "$localVersions" ]; then
     println
   fi
   if [ -n "$remoteVersions" ]; then
     println "Remote SDK versions:"
-    printPadded "$(sdk_listRemoteSdkVersions "$sdk")"
+    printPadded "$remoteVersions"
   else
     printWarn "Remote SDK not found: $sdk"
   fi

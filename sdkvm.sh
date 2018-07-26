@@ -38,28 +38,28 @@ sdkvm() {
       executeSelf "update" $@
       return
       ;;
-    enable|disable)
-      # Enable and disable must be evaluated locally
-      # They update current process variables
-      local command="$commandsDir/$1.sh"
-      shift
-      local output="$($command $@)"
-      local exports="$(echo "$output" | sed -nE 's/EVAL: *(.+)$/\1/p')"
-      echo -e "$output" | grep -v "EVAL: " || true
-      eval "$exports"
-      return
-      ;;
     -*)
-      error "Urecognized option: $1"
+      printError "Urecognized option: $1"
+      return 1;
       ;;
     *) # Command.
-      local -r command="$1"
-      [ -z "$command" ] && error "No command defined. Try --help option";
-      [[ "$command" != "${command#_}" ]] && error "Invalid command name: \"$command\"";
-      $(find "$commandsDir" -mindepth 1 -maxdepth 1 -type f 2>/dev/null | xargs -I '{}' basename {} .sh 2>/dev/null | grep -Fqx "$command") \
-        || error "Unrecognized sdkvm command: \"$command\". Try --help option."
-      shift
-      "$commandsDir/${command}.sh" $@
+      [ -z "$1" ] && error "No command defined. Try --help option";
+      [[ "$1" != "${1#_}" ]] && error "Invalid command name: \"$1\"";
+      local -r command="$commandsDir/$1.sh"
+      if [ -f "$command" ]; then
+        shift
+        local -r temp="$(mktemp)"
+        $command $@ | tee "$temp" | grep -v "EVAL:"
+        local exports="$(cat "$temp" | sed -nE 's/EVAL: *(.+)$/\1/p')"
+        rm -f "$temp"
+        if [ -n "$exports" ]; then
+          # echo -e "EVAL: \n$exports"
+          eval "$exports"
+        fi
+      else
+        printError "Unrecognized sdkvm command: \"$command\". Try --help option."
+        return 1;
+      fi
       return
       ;;
   esac

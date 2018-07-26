@@ -3,8 +3,8 @@
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 main() {
-  local -i use=0
-  local -i save=0
+  local -i use=1
+  local -i save=1
   local -i force=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   local -r version="$(echo "$2" | grep -o "^[^-].*")"
@@ -33,10 +33,11 @@ main() {
     shift
   done
 
-  [ $force = 1 ] && sdk_isLocalSdk "$sdk" "$version" && sdk_uninstall "$sdk" "$version"
+  [ $force = 1 ] && sdk_isLocalSdkVersion "$sdk" "$version" && sdk_uninstall "$sdk" "$version"
   sdk_install "$sdk" "$version"
   [ $use = 1 ] && sdk_enable "$sdk" "$version"
   [ $save = 1 ] && sdk_saveEnabled "$sdk"
+  return 0
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

@@ -15,6 +15,7 @@ sdk__import() {
     "_sdkvm_enable"
     "_sdkvm_disable"
     "_sdkvm_versions"
+    "_sdkvm_download_url"
   )
   [ "$_SDKVM_IMPORTED_SDK" == "$sdk" ] && return
   local -r sdk="$1"

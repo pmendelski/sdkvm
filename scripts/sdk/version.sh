@@ -12,14 +12,14 @@ sdk_validateRemoteSdkVersion() {
   local -r sdk="${1?"Expected sdk"}"
   local -r version="${2?"Expected version"}"
   sdk_isRemote "$sdk" "$version" \
-    || error "Unrecognized $sdk version: \"$version\""
+    || error "Unrecognized remote $sdk version: \"$version\""
 }
 
 sdk_validateLocalSdkVersion() {
   local -r sdk="${1?"Expected sdk"}"
   local -r version="${2?"Expected version"}"
-  sdk_isLocal "$sdk" "$version" \
-    || error "Unrecognized $sdk version: \"$version\""
+  sdk_isLocalSdkVersion "$sdk" "$version" \
+    || error "Unrecognized local $sdk version: \"$version\". Available local versions: \n$(sdk_listLocalSdkVersions "$sdk")"
 }
 
 sdk_isLocalSdkVersion() {
@@ -39,7 +39,7 @@ sdk_isRemoteSdkVersion() {
 }
 
 sdk_getRemoteSdkVersionDownloadUrl() {
-  local -r sdk="$1"
-  local -r version="$2"
-  sdk_executeOrEmpty "$sdk" versions | grep -E "^$version" | cut -d' ' -f 2
+  local -r sdk="${1?"Expected sdk"}"
+  local -r version="${2?"Expected version"}"
+  sdk_executeOrEmpty "$sdk" download_url "$version"
 }

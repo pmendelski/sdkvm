@@ -26,7 +26,8 @@ main() {
   done
 
   sdk_disable "$sdk" "$version"
-  [ $save = 1 ] && sdk_saveDisabled
+  [ $save = 1 ] && sdk_saveDisabled "$sdk"
+  return 0
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

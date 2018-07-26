@@ -5,7 +5,7 @@ sdk_listRemoteSdks() {
 
 sdk_listRemoteSdkVersions() {
   local -r sdk="$1"
-  sdk_executeOrEmpty "$sdk" versions | cut -d' ' -f 1
+  sdk_executeOrEmpty "$sdk" versions
 }
 
 sdk_listLocalSdks() {

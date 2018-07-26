@@ -36,6 +36,7 @@ main() {
   # sdk_install "$sdk" "$version"
   # [ $use = 1 ] && sdk_enable "$sdk" "$version"
   # [ $save = 1 ] && sdk_saveEnabled "$sdk"
+  return 0
 }
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@

@@ -24,7 +24,7 @@ main() {
   while (("$#")); do
     case $1 in
       help)
-        help "version"
+        help
         ;;
       version)
         selfVersion
