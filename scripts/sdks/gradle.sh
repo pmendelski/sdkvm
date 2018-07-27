@@ -6,8 +6,7 @@ gradleDownloadUrls() {
   curl -s https://services.gradle.org/distributions/ | \
     grep -oE 'href="(/distributions/gradle-[0-9.]+-bin.zip)"' | \
     cut -f 2 -d \" | \
-    sed 's|^|https://services.gradle.org|' | \
-    sort -ru
+    sed 's|^|https://services.gradle.org|'
 }
 
 _sdkvm_versions() {
@@ -15,7 +14,7 @@ _sdkvm_versions() {
     grep -oE 'gradle-[^-_]+'
 }
 
-_sdkvm_download_url() {
+gradleDownloadUrl() {
   local -r version="${1?Expected version}"
   gradleDownloadUrls | \
     grep "/$version-bin.zip" | \
@@ -25,20 +24,8 @@ _sdkvm_download_url() {
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="$3"
-  local -r file="${downloadUrl##*/}"
-  local -r tmpdir="$(tmpdir_create "$version")"
-  cd "$tmpdir"
-  printDebug "Downloading Gradle $version from $downloadUrl to $tmpdir"
-  wget -q --show-progress \
-    --no-check-certificate --no-cookies \
-    -O "$file" "$downloadUrl"
-  printTrace "Download completed"
-  printDebug "Installing Gradle from $tmpdir"
-  extract "$file" "$targetDir"
-  printTrace "Installation completed"
-  tmpdir_remove "$tmpdir"
-  printTrace "Temporary files removed"
+  local -r downloadUrl="$(gradleDownloadUrl "$version")"
+  installFromUrl "gradle" "$version" "$targetDir" "$downloadUrl"
 }
 
 _sdkvm_enable() {
@@ -54,3 +41,5 @@ _sdkvm_disable() {
   exec "unset _SDKVM_GRADLE_HOME_PREV"
   exec "export PATH=\"$(path_remove "$sdkDir/bin")\""
 }
+
+gradleDownloadUrls

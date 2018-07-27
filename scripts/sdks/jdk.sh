@@ -8,22 +8,14 @@ oracleJdkDownloadUrls() {
     cut -f 2 -d \" | \
     sort -u)"
   for versionPageUrl in $versionPages; do
-    curl -s "https://www.oracle.com/$versionPageUrl" | \
-      grep -oE '"(https?://download.oracle.com/[^\"]+)"' | \
-      grep 'linux-x64' | \
-      grep '.tar.gz' | \
+    curl -s "https://www.oracle.com$versionPageUrl" | \
+      grep -oE '"https?://download.oracle.com/[^"]+"' | \
       cut -f 2 -d \" | \
-      sort -u
+      grep -E 'linux-x64(_bin)?.tar.gz'
   done
 }
 
-_sdkvm_versions() {
-  oracleJdkDownloadUrls | \
-    grep -oE 'jdk-[^-_]+' | \
-    sed 's|^|oracle-|'
-}
-
-_sdkvm_download_url() {
+oracleDownloadUrl() {
   local -r oracleVersionPrefix="oracle-jdk-"
   local -r version="${1?Expected version}"
   if [[ "$version" != "${oracleVersionPrefix}"* ]]; then
@@ -35,24 +27,18 @@ _sdkvm_download_url() {
     head -n 1
 }
 
+_sdkvm_versions() {
+  oracleJdkDownloadUrls | \
+    grep -oE 'jdk-[^-_]+' | \
+    sed 's|^|oracle-|'
+}
+
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="$3"
-  local -r file="${downloadUrl##*/}"
-  local -r tmpdir="$(tmpdir_create "$version")"
-  cd "$tmpdir"
-  printDebug "Downloading JDK $version from $downloadUrl to $tmpdir"
-  wget -q --show-progress \
-    --no-check-certificate --no-cookies \
-    --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-    -O "$file" "$downloadUrl"
-  printTrace "Download completed"
-  printDebug "Installing JDK from $tmpdir"
-  extract "$file" "$targetDir"
-  printTrace "Installation completed"
-  tmpdir_remove "$tmpdir"
-  printTrace "Temporary files removed"
+  local -r downloadUrl="$(oracleDownloadUrl "$version")"
+  installFromUrl "jdk" "$version" "$targetDir" "$downloadUrl" \
+    "--header 'Cookie: oraclelicense=accept-securebackup-cookie'"
 }
 
 _sdkvm_enable() {
