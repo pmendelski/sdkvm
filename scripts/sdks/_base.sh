@@ -32,3 +32,24 @@ installFromUrl() {
   tmpdir_remove "$tmpdir"
   printTrace "Temporary files removed"
 }
+
+setupHomeAndPath() {
+  local -r name="${1?Expected name}"
+  local -r homeName="${name}_HOME"
+  local -r sdkDir="${2?Expected sdk directory}"
+  local -r sdkBinDir="${3:-$sdkDir/bin}"
+  exec "export _SDKVM_${homeName}_PREV=\"${!homeName}\""
+  exec "export ${homeName}=\"$sdkDir\""
+  exec "export PATH=\"$(path_add "$sdkBinDir")\""
+}
+
+resetHomeAndPath() {
+  local -r name="${1?Expected name}"
+  local -r homeName="${name}_HOME"
+  local -r prevHomeName="_SDKVM_${nameName}_PREV"
+  local -r sdkDir="${2?Expected sdk directory}"
+  local -r sdkBinDir="${3:-$sdkDir/bin}"
+  exec "export $homeName=\"${!prevHomeName}\""
+  exec "unset $prevHomeName"
+  exec "export PATH=\"$(path_remove "$sdkBinDir")\""
+}

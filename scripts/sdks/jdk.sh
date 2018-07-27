@@ -42,15 +42,9 @@ _sdkvm_install() {
 }
 
 _sdkvm_enable() {
-  local -r sdkDir="$2"
-  exec "export _SDKVM_JAVA_HOME_PREV=\"$JAVA_HOME\""
-  exec "export JAVA_HOME=\"$sdkDir\""
-  exec "export PATH=\"$(path_add "$sdkDir/bin")\""
+  setupHomeAndPath "JAVA" "$2"
 }
 
 _sdkvm_disable() {
-  local -r sdkDir="$2"
-  exec "export JAVA_HOME=\"$_SDKVM_JAVA_HOME_PREV\""
-  exec "unset _SDKVM_JAVA_HOME_PREV"
-  exec "export PATH=\"$(path_remove "$sdkDir/bin")\""
+  resetHomeAndPath "JAVA" "$2"
 }

@@ -9,16 +9,16 @@ gradleDownloadUrls() {
     sed 's|^|https://services.gradle.org|'
 }
 
-_sdkvm_versions() {
-  gradleDownloadUrls | \
-    grep -oE 'gradle-[^-_]+'
-}
-
 gradleDownloadUrl() {
   local -r version="${1?Expected version}"
   gradleDownloadUrls | \
     grep "/$version-bin.zip" | \
     head -n 1
+}
+
+_sdkvm_versions() {
+  gradleDownloadUrls | \
+    grep -oE 'gradle-[^-_]+'
 }
 
 _sdkvm_install() {
@@ -29,17 +29,9 @@ _sdkvm_install() {
 }
 
 _sdkvm_enable() {
-  local -r sdkDir="$2"
-  exec "export _SDKVM_GRADLE_HOME_PREV=\"$GRADLE_HOME\""
-  exec "export GRADLE_HOME=\"$sdkDir\""
-  exec "export PATH=\"$(path_add "$sdkDir/bin")\""
+  setupHomeAndPath "GRADLE" "$2"
 }
 
 _sdkvm_disable() {
-  local -r sdkDir="$2"
-  exec "export GRADLE_HOME=\"$_SDKVM_GRADLE_HOME_PREV\""
-  exec "unset _SDKVM_GRADLE_HOME_PREV"
-  exec "export PATH=\"$(path_remove "$sdkDir/bin")\""
+  resetHomeAndPath "GRADLE" "$2"
 }
-
-gradleDownloadUrls
