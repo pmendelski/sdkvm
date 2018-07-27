@@ -20,7 +20,8 @@ nodeDownloadUrl() {
 _sdkvm_versions() {
   nodeDownloadUrls | \
     grep -oE 'node-v[^-_]+' |
-    sed 's|node-v|node-|'
+    sed 's|node-v|node-|' | \
+    sort -rV
 }
 
 _sdkvm_install() {

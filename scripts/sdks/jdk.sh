@@ -30,7 +30,8 @@ oracleDownloadUrl() {
 _sdkvm_versions() {
   oracleJdkDownloadUrls | \
     grep -oE 'jdk-[^-_]+' | \
-    sed 's|^|oracle-|'
+    sed 's|^|oracle-|' | \
+    sort -rV
 }
 
 _sdkvm_install() {

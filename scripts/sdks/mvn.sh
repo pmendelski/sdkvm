@@ -22,7 +22,8 @@ mvnDownloadUrl() {
 _sdkvm_versions() {
   mvnDownloadUrls | \
     grep -oE 'apache-maven-[^-_]+' | \
-    sed 's|apache-maven-|mvn-|'
+    sed 's|apache-maven-|mvn-|' | \
+    sort -rV
 }
 
 _sdkvm_install() {

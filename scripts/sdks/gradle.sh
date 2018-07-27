@@ -18,7 +18,8 @@ gradleDownloadUrl() {
 
 _sdkvm_versions() {
   gradleDownloadUrls | \
-    grep -oE 'gradle-[^-_]+'
+    grep -oE 'gradle-[^-_]+' | \
+    sort -rV
 }
 
 _sdkvm_install() {
