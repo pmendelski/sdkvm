@@ -5,7 +5,7 @@ sdk_getNewestRemoteSdkVersion() {
 
 sdk_getNewestLocalSdkVersion() {
   local -r sdk="${1?"Expected sdk"}"
-  sdk_listLocalSdkVersions "$sdk" | sort | head -n 1
+  sdk_listLocalSdkVersions "$sdk" | head -n 1
 }
 
 sdk_validateRemoteSdkVersion() {

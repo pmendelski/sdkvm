@@ -18,7 +18,6 @@ _sdkvm() {
         'install:Install SDK'
         'uninstall:Uninstall SDK'
         'enable:Enable SDK'
-        'index:Index SDK versions'
         'disable:Disable SDK'
         'update:Update SDK'
       )

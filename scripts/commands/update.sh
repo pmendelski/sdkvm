@@ -2,13 +2,16 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
+updateSdkvm() {
+  printInfo "Updating sdkvm..."
+}
+
 main() {
-  local -i use=0
-  local -i save=0
-  local -i force=0
+  local -i use=1
+  local -i save=1
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
 
-  requireSdkParam "$sdk" || shift
+  [ -n "$sdk" ] && shift
 
   while (("$#")); do
     case $1 in
@@ -18,9 +21,6 @@ main() {
       --no-save|-s)
         save=0
         ;;
-      --force|-f)
-        force=1
-        ;;
       -*)
         handleCommonParam "$1" "update"
         ;;
@@ -28,11 +28,20 @@ main() {
     shift
   done
 
-  sdk_isLocal "$sdk"
-  # [ $force = 1 ] && sdk_isLocalSdk "$sdk" "$version" && sdk_uninstall "$sdk" "$version"
-  # sdk_install "$sdk" "$version"
-  # [ $use = 1 ] && sdk_enable "$sdk" "$version"
-  # [ $save = 1 ] && sdk_saveEnabled "$sdk"
+  if [ -n "$sdk" ]; then
+    local -r newestLocal="$(sdk_getNewestLocalSdkVersion "$sdk")"
+    local -r newestRemote="$(sdk_getNewestRemoteSdkVersion "$sdk")"
+    if [ "$newestLocal" != "$newestRemote" ]; then
+      printInfo "Updating $sdk from $newestLocal to $newestRemote"
+      sdk_installSdkVersion "$sdk" "$newestRemote"
+      [ $use = 1 ] && sdk_enable "$sdk" "$version"
+      [ $save = 1 ] && sdk_saveEnabled "$sdk"
+    else
+      printInfo "SDK $sdk is in the most recent version $newestLocal"
+    fi
+  else
+    updateSdkvm
+  fi
   return 0
 }
 

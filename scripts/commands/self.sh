@@ -14,12 +14,6 @@ selfVersion() {
   print "$version"
 }
 
-selfUpdate() {
-  printInfo "Updating sdkvm"
-  # TODO: Uncomment when finished
-  # git pull --rebase origin master
-}
-
 main() {
   while (("$#")); do
     case $1 in
@@ -28,9 +22,6 @@ main() {
         ;;
       version)
         selfVersion
-        ;;
-      update)
-        selfUpdate
         ;;
       -*)
         handleCommonParam "$1"

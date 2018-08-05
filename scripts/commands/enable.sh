@@ -22,7 +22,7 @@ main() {
     shift
   done
 
-  sdk_enable "$sdk" "$version"
+  sdk_enable "$sdk" "${version:-$(sdk_getNewestLocalSdkVersion "$sdk")}"
   [ $save = 1 ] && sdk_saveEnabled "$sdk"
   return 0
 }

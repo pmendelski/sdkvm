@@ -32,6 +32,7 @@ sdk_uninstallSdk() {
     for version in $versions; do
       sdk_uninstallSdkVersion "$sdk" "$version"
     done
+    rm -rf "$SDKVM_LOCAL_SDKS_DIR/$sdk"
   else
     printInfo "SDK is not installed $sdk. Skipping..."
   fi
