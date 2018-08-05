@@ -14,7 +14,7 @@ printSdks() {
   fi
   if [ -n "$remoteSdks" ]; then
     println "Remote SDKs:"
-    printPadded "$(sdk_listRemoteSdks)"
+    printPadded "$remoteSdks"
   fi
 }
 
@@ -26,12 +26,16 @@ printSdkVersions() {
     printPadded "$localVersions"
   fi
   local -r remoteVersions="$(sdk_listRemoteSdkVersions "$sdk")"
+  local -r remoteVersionsCount="$(echo "$remoteVersions" | wc -l)"
   if [ -n "$remoteVersions" ] && [ -n "$localVersions" ]; then
     println
   fi
   if [ -n "$remoteVersions" ]; then
     println "Remote SDK versions:"
-    printPadded "$remoteVersions"
+    printPadded "$(echo "$remoteVersions" | head -n 10)"
+    if [ $remoteVersionsCount -gt 10 ]; then
+      printPadded "(and $(expr $remoteVersionsCount - 10) more...)"
+    fi
   else
     printWarn "Remote SDK not found: $sdk"
   fi
@@ -40,6 +44,7 @@ printSdkVersions() {
 main() {
   local -i local=0
   local -i remote=0
+  local -i flat=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
 
   [ -n "$sdk" ] && shift
@@ -52,9 +57,8 @@ main() {
       --remote|-r)
         remote=1
         ;;
-      --all|-a)
-        local=1
-        remote=1
+      --flat|-f)
+        flat=1
         ;;
       --help|-h|help)
         help "list"
@@ -65,11 +69,7 @@ main() {
     esac
     shift
   done
-  if [ $local = 0 ] && [ $remote = 0 ]; then
-    [ -n "$sdk" ] \
-      && printSdkVersions "$sdk" \
-      || printSdks
-  elif [ $local = 1 ] && [ $remote = 1 ]; then
+  if [ $flat = 1 ]; then
     [ -n "$sdk" ] \
       && sdk_listAllSdkVersions "$sdk" \
       || sdk_listAllSdks
@@ -77,10 +77,14 @@ main() {
     [ -n "$sdk" ] \
       && sdk_listLocalSdkVersions "$sdk" \
       || sdk_listLocalSdks
+  elif [ "$remote" == 1 ]; then
+    [ -n "$sdk" ] \
+    && sdk_listRemoteSdkVersions "$sdk" \
+    || sdk_listRemoteSdks
   else
     [ -n "$sdk" ] \
-      && sdk_listRemoteSdkVersions "$sdk" \
-      || sdk_listRemoteSdks
+      && printSdkVersions "$sdk" \
+      || printSdks
   fi
   return 0
 }

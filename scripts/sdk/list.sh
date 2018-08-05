@@ -32,14 +32,14 @@ sdk_listLocalSdkVersions() {
 
 sdk_listAllSdks() {
   echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" | \
-    sort -u | \
+    sort -uV | \
     sed '/^\s*$/d'
 }
 
 sdk_listAllSdkVersions() {
   local -r sdk="$1"
   echo -e "$(sdk_listLocalSdkVersions "$sdk")\n$(sdk_listRemoteSdkVersions "$sdk")" | \
-    sort -u | \
+    sort -urV | \
     sed '/^\s*$/d'
 }
 

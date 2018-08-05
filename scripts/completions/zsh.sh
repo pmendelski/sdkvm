@@ -35,16 +35,16 @@ _sdkvm() {
       case $words[1] in
         list)
           _arguments \
-            "1: :($(sdkvm list --all))" \
+            "1: :($(sdkvm list --flat))" \
             '--local[List only the installed SDK versions]' \
             '--remote[List only the remote SDK versions]' \
-            '--all[List all SDK versions]' \
+            '--flat[List all SDK versions without grouping]' \
             $commonOpts \
             && ret=0
         ;;
         version)
           _arguments \
-            "1: :($(sdkvm list --all))" \
+            "1: :($(sdkvm list --flat))" \
             $commonOpts \
             && ret=0
         ;;
