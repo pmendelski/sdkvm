@@ -12,14 +12,11 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --help|-h|help)
-        help "disable"
-        ;;
       --save|-s)
         save=1
         ;;
       -?*)
-        handleCommonParam "$1"
+        handleCommonParam "$1" "disable"
         ;;
     esac
     shift

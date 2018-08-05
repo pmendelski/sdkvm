@@ -1,5 +1,5 @@
 sdk_getEnabledVersion() {
-  local -r sdk="$1"
+  local -r sdk="${1?Expected SDK}"
   echo "$(delimmap_get "$SDKVM_ENABLED" "$sdk")"
 }
 
@@ -13,8 +13,8 @@ sdk_enable() {
     export SDKVM_ENABLED=""
     sdk_eval "export SDKVM_ENABLED=\"\""
   fi
-  local -r sdk="$1"
-  local -r version="${2:-$(sdk_getNewestLocalSdkVersion "$sdk")}"
+  local -r sdk="${1?Expected SDK}"
+  local -r version="${2?Expected version}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   sdk_validateLocalSdkVersion "$sdk" "$version"

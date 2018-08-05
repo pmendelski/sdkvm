@@ -4,6 +4,7 @@
 # Default flags
 declare -ig NOCOLOR=0
 declare -ig VERBOSE=0
+declare -ig YES=0
 
 # Colors
 declare -rg COLOR_RED=`tput setaf 1`
@@ -33,10 +34,6 @@ printlnColor() {
   [ $NOCOLOR = 0 ] \
     && println "$1$2${COLOR_RESET}" \
     || println "$2"
-}
-
-printQuestion() {
-  printColor $COLOR_YELLOW "[?] $1"
 }
 
 printSuccess() {
@@ -70,4 +67,26 @@ printDebug() {
 
 printTrace() {
   [ $VERBOSE -gt 1 ] && println "$1" || :
+}
+
+printQuestion() {
+  printlnColor $COLOR_YELLOW "[?] $1"
+}
+
+askForConfirmation() {
+  [ $YES != 0 ] && return 0;
+  local -r question="${1:-Are you sure?} [Y/n] "
+  local -r formattedQuestion=$([ $NOCOLOR = 0 ] \
+      && echo -ne "$COLOR_YELLOW$question${COLOR_RESET}" \
+      || echo -ne "$question")
+  local response=""
+  read -rp "$formattedQuestion" response
+  case $response in
+    Y) return 0;;
+    n) return 1;;
+    *)
+      askForConfirmation "$1"
+      return $?
+      ;;
+  esac
 }

@@ -27,11 +27,8 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --help|-h|help)
-        help "version"
-        ;;
       -*)
-        handleCommonParam "$1"
+        handleCommonParam "$1" "version"
         ;;
     esac
     shift

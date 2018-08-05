@@ -21,11 +21,8 @@ main() {
       --force|-f)
         force=1
         ;;
-      --help|-h|help)
-        help "update"
-        ;;
       -*)
-        handleCommonParam "$1"
+        handleCommonParam "$1" "update"
         ;;
     esac
     shift

@@ -28,9 +28,12 @@ help() {
 }
 
 handleCommonParam() {
+  local -r commandName="$2"
   case "$1" in
+    --help|-h) help "$commandName" ;;
     --silent|-s) SILENT=1 ;;
     --no-colors|-c) NOCOLORS=1 ;;
+    --yes|-y) YES=1 ;;
     --no-icons|-i) NOICONS=1 ;;
     --verbose|-v) VERBOSE=$(($VERBOSE + 1)) ;;
     -vv) VERBOSE=$(($VERBOSE + 2)) ;;

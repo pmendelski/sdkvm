@@ -30,6 +30,12 @@ sdk_isLocalSdkVersion() {
     && echo "$versions" | grep -Fq "$version"
 }
 
+sdk_isLocalSdk() {
+  local -r sdk="${1?"Expected sdk"}"
+  local -r versions="$(sdk_listLocalSdkVersions "$sdk")"
+  [ -n "$versions" ]
+}
+
 sdk_isRemoteSdkVersion() {
   local -r sdk="${1?"Expected sdk"}"
   local -r version="${2?"Expected version"}"

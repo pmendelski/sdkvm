@@ -23,18 +23,15 @@ main() {
       --force|-f)
         force=1
         ;;
-      --help|-h|help)
-        help "install"
-        ;;
       -*)
-        handleCommonParam "$1"
+        handleCommonParam "$1" "install"
         ;;
     esac
     shift
   done
 
-  [ $force = 1 ] && sdk_isLocalSdkVersion "$sdk" "$version" && sdk_uninstall "$sdk" "$version"
-  sdk_install "$sdk" "$version"
+  [ $force = 1 ] && sdk_isLocalSdkVersion "$sdk" "$version" && sdk_uninstallSdkVersion "$sdk" "$version"
+  sdk_installSdkVersion "$sdk" "$version"
   [ $use = 1 ] && sdk_enable "$sdk" "$version"
   [ $save = 1 ] && sdk_saveEnabled "$sdk"
   return 0

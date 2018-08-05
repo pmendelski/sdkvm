@@ -34,7 +34,7 @@ printSdkVersions() {
     println "Remote SDK versions:"
     printPadded "$(echo "$remoteVersions" | head -n 10)"
     if [ $remoteVersionsCount -gt 10 ]; then
-      printPadded "(and $(expr $remoteVersionsCount - 10) more...)"
+      printPadded "...and more, total: $remoteVersionsCount"
     fi
   else
     printWarn "Remote SDK not found: $sdk"
@@ -60,11 +60,8 @@ main() {
       --flat|-f)
         flat=1
         ;;
-      --help|-h|help)
-        help "list"
-        ;;
       -*)
-        handleCommonParam "$1"
+        handleCommonParam "$1" "list"
         ;;
     esac
     shift

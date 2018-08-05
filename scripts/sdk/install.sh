@@ -1,4 +1,4 @@
-sdk_install() {
+sdk_installSdkVersion() {
   local -r sdk="${1?Expected SDK}"
   local -r version="${2:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
@@ -10,9 +10,9 @@ sdk_install() {
   printInfo "SDK installed successffuly"
 }
 
-sdk_uninstall() {
-  local -r sdk="$1"
-  local -r version="${2:$(sdk_getEnabledVersion "$sdk")}"
+sdk_uninstallSdkVersion() {
+  local -r sdk="${1?Expected SDK}"
+  local -r version="${2?Expected version}"
   if sdk_isLocalSdkVersion "$sdk" "$version"; then
     printInfo "Uninstalling SDK: $sdk/$version"
     sdk_isEnabled "$sdk" && sdk_disable "$sdk" "$version"
@@ -20,5 +20,19 @@ sdk_uninstall() {
     printInfo "SDK uninstalled successffuly"
   else
     printInfo "SDK is not installed $sdk/$version. Skipping..."
+  fi
+}
+
+sdk_uninstallSdk() {
+  local -r sdk="${1?Expected SDK}"
+  local -r versions="$(sdk_listLocalSdkVersions "$sdk")"
+  local version=""
+  if [ -n "$versions" ]; then
+    printInfo "Uninstalling SDK: $sdk"
+    for version in $versions; do
+      sdk_uninstallSdkVersion "$sdk" "$version"
+    done
+  else
+    printInfo "SDK is not installed $sdk. Skipping..."
   fi
 }

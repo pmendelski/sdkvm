@@ -31,6 +31,7 @@ _sdkvm() {
         '--silent[Print no logs]'
         '--no-colors[Use no colors in logs]'
         '--verbose[Increase log verbosity]'
+        '--yes[Assume yes for all confirmations]'
       )
       case $words[1] in
         list)
