@@ -14,7 +14,7 @@ sdk_enable() {
     sdk_eval "export SDKVM_ENABLED=\"\""
   fi
   local -r sdk="${1?Expected SDK}"
-  local -r version="${2?Expected version}"
+  local -r version="${2:-$(sdk_getNewestLocalSdkVersion "$sdk")}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   sdk_validateLocalSdkVersion "$sdk" "$version"
@@ -36,7 +36,7 @@ sdk_disable() {
     sdk_eval "export SDKVM_ENABLED=\"\""
   fi
   local -r sdk="${1?Expected SDK}"
-  local -r version="${2?Expected version}"
+  local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   if [ -n "$enabled" ] && [ "$enabled" = "$version" ]; then

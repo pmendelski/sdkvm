@@ -13,7 +13,7 @@ nodeDownloadUrl() {
   local -r version="${1?Expected version}"
   local -r urlVersion="${version/nodejs-/nodejs-v}"
   nodeDownloadUrls | \
-    grep "$urlVesrion-" | \
+    grep "$urlVersion-" | \
     head -n 1
 }
 
@@ -28,7 +28,7 @@ _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
   local -r downloadUrl="$(nodeDownloadUrl "$version")"
-  installFromUrl "nodejs" "$version" "$targetDir" "$downloadUrl"
+  installFromUrl "node" "$version" "$targetDir" "$downloadUrl"
 }
 
 _sdkvm_enable() {

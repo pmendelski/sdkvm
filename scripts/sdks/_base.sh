@@ -53,3 +53,16 @@ resetHomeAndPath() {
   exec "unset $prevHomeName"
   exec "export PATH=\"$(path_remove "$sdkBinDir")\""
 }
+
+installPackages() {
+  local -r packages="${@?Expected packages}"
+  if [ -x "$(command -v apt-get)" ]; then
+    echo "PKGS: $packages"
+    sudo apt-get update
+    sudo apt-get -y install $packages
+  elif [ -x "$(command -v yum)" ]; then
+    sudo yum -y install $packages
+  else
+    error "Could not install packages. Unrecognized package manager."
+  fi
+}

@@ -15,7 +15,7 @@ sdk_uninstallSdkVersion() {
   local -r version="${2?Expected version}"
   if sdk_isLocalSdkVersion "$sdk" "$version"; then
     printInfo "Uninstalling SDK: $sdk/$version"
-    sdk_isEnabled "$sdk" && sdk_disable "$sdk" "$version"
+    sdk_isEnabled "$sdk" "$version" && sdk_disable "$sdk" "$version"
     rm -rf "$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
     printInfo "SDK uninstalled successffuly"
   else
