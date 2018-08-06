@@ -27,7 +27,7 @@ sdk_isLocalSdkVersion() {
   local -r version="${2?"Expected version"}"
   local -r versions="$(sdk_listLocalSdkVersions "$sdk")"
   [ -n "$versions" ] \
-    && echo "$versions" | grep -Fq "$version"
+    && echo "$versions" | grep -Eq "^$version$"
 }
 
 sdk_isLocalSdk() {

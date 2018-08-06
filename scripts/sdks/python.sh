@@ -37,7 +37,7 @@ _sdkvm_install() {
     liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
   cd "$sourcesDir"
   ./configure --prefix="$targetDir"
-  make
+  make -j "$(nproc)"
   make install
   rm -rf "$sourcesDir"
   if [ -f "$targetDir/bin/python3" ]; then
