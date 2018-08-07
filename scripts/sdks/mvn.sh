@@ -2,7 +2,7 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-mvnDownloadUrls() {
+downloadUrls() {
   curl -s 'https://archive.apache.org/dist/maven/maven-3/' | \
     grep -oE 'href="[0-9.]+/?"' | \
     cut -f 2 -d \" | \
@@ -11,16 +11,16 @@ mvnDownloadUrls() {
     sort -r
 }
 
-mvnDownloadUrl() {
+downloadUrl() {
   local -r version="${1?Expected version}"
   local -r urlVersion="${version/mvn-/apache-maven-}"
-  mvnDownloadUrls | \
+  downloadUrls | \
     grep "/$urlVersion-bin.tar.gz" | \
     head -n 1
 }
 
 _sdkvm_versions() {
-  mvnDownloadUrls | \
+  downloadUrls | \
     grep -oE 'apache-maven-[^-_]+' | \
     sed 's|apache-maven-|mvn-|' | \
     sort -rV
@@ -29,8 +29,7 @@ _sdkvm_versions() {
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="$(mvnDownloadUrl "$version")"
-  installFromUrl "mvn" "$version" "$targetDir" "$downloadUrl"
+  extractFromUrl "$(downloadUrl "$version")" "$targetDir"
 }
 
 _sdkvm_enable() {

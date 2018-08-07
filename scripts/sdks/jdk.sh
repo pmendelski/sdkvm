@@ -2,7 +2,7 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-oracleJdkDownloadUrls() {
+oracleDownloadUrls() {
   local -r versionPages="$(curl -s https://www.oracle.com/technetwork/java/javase/downloads/index.html | \
     grep -oE "href=\"([^\"]+/javase/downloads/jdk[^\"]+-downloads[^\"]+)\"" | \
     cut -f 2 -d \" | \
@@ -22,13 +22,13 @@ oracleDownloadUrl() {
     error "Unrecognized JDK version: $version. Supported only $oracleVersionPrefix* versions."
   fi
   local -r versionNumber="${version#$oracleVersionPrefix}"
-  oracleJdkDownloadUrls | \
+  oracleDownloadUrls | \
     grep "$versionNumber" | \
     head -n 1
 }
 
 _sdkvm_versions() {
-  oracleJdkDownloadUrls | \
+  oracleDownloadUrls | \
     grep -oE 'jdk-[^-_]+' | \
     sed 's|^|oracle-|' | \
     sort -rV
@@ -38,7 +38,7 @@ _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
   local -r downloadUrl="$(oracleDownloadUrl "$version")"
-  installFromUrl "jdk" "$version" "$targetDir" "$downloadUrl" \
+  extractFromUrl "$downloadUrl" "$targetDir" \
     "--header 'Cookie: oraclelicense=accept-securebackup-cookie'"
 }
 

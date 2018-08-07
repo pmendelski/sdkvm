@@ -14,6 +14,11 @@ tmpdir_create() {
   echo $tmpdir
 }
 
+tmpdir_create_cd() {
+  local -r tmpdir="$(tmpdir_create "$@")"
+  cd "$tmpdir"
+}
+
 tmpdir_remove() {
   local -r tmpdir=$1
   if [[ ! "$tmpdir" ]]; then
@@ -29,4 +34,10 @@ tmpdir_remove() {
     error "Could not remove temp dir '$tmpdir'. Passed path is not a subpath of /tmp"
   fi
   rm -rf "$tmpdir"
+}
+
+tmpdir_remove_cwd() {
+  local -r tmpdir="$PWD"
+  cd ..
+  tmpdir_remove "$tmpdir"
 }

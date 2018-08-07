@@ -2,23 +2,23 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-antDownloadUrls() {
+downloadUrls() {
   curl -s 'https://archive.apache.org/dist/ant/binaries/' | \
     grep -oE 'href="apache-ant-[0-9.]+-bin\.tar\.gz"' | \
     cut -f 2 -d \" | \
     sed 's|^|https://archive.apache.org/dist/ant/binaries/|'
 }
 
-antDownloadUrl() {
+downloadUrl() {
   local -r version="${1?Expected version}"
   local -r urlVersion="${version/ant-/apache-ant-}"
-  antDownloadUrls | \
+  downloadUrls | \
     grep "/$urlVersion-bin.tar.gz" | \
     head -n 1
 }
 
 _sdkvm_versions() {
-  antDownloadUrls | \
+  downloadUrls | \
     grep -oE 'apache-ant-[^-_]+' | \
     sed 's|apache-ant-|ant-|' |
     sort -rV
@@ -27,8 +27,7 @@ _sdkvm_versions() {
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="$(antDownloadUrl "$version")"
-  installFromUrl "ant" "$version" "$targetDir" "$downloadUrl"
+  extractFromUrl "$(downloadUrl "$version")" "$targetDir"
 }
 
 _sdkvm_enable() {

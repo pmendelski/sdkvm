@@ -2,22 +2,22 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-gradleDownloadUrls() {
+downloadUrls() {
   curl -s https://services.gradle.org/distributions/ | \
     grep -oE 'href="(/distributions/gradle-[0-9.]+-bin.zip)"' | \
     cut -f 2 -d \" | \
     sed 's|^|https://services.gradle.org|'
 }
 
-gradleDownloadUrl() {
+downloadUrl() {
   local -r version="${1?Expected version}"
-  gradleDownloadUrls | \
+  downloadUrls | \
     grep "/$version-bin.zip" | \
     head -n 1
 }
 
 _sdkvm_versions() {
-  gradleDownloadUrls | \
+  downloadUrls | \
     grep -oE 'gradle-[^-_]+' | \
     sort -rV
 }
@@ -25,8 +25,7 @@ _sdkvm_versions() {
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="$(gradleDownloadUrl "$version")"
-  installFromUrl "gradle" "$version" "$targetDir" "$downloadUrl"
+  extractFromUrl "$(downloadUrl "$version")" "$targetDir"
 }
 
 _sdkvm_enable() {

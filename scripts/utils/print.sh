@@ -73,6 +73,19 @@ printQuestion() {
   printlnColor $COLOR_YELLOW "[?] $1"
 }
 
+printProgress() {
+  if [ $VERBOSE = 0 ]; then
+    while read data; do
+      printf "%s" "." >&2
+    done
+    printf "%s\n" "." >&2
+  else
+    while read data; do
+      printf "%s" "$line"
+    done
+  fi
+}
+
 askForConfirmation() {
   [ $YES != 0 ] && return 0;
   local -r question="${1:-Are you sure?} [Y/n] "

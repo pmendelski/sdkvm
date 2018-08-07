@@ -5,32 +5,46 @@ import utils/extract
 import utils/path
 import utils/delimmap
 
-exec() {
-  # All stdout lines that start with "EVAL: " are evaluated in parent process
-  echo "EVAL: $@"
+declare -gr GNU_ARCH="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"
+declare -gr NPROC="$(nproc)"
+
+gnuArch() {
+  dpkg-architecture --query DEB_BUILD_GNU_TYPE
 }
 
-installFromUrl() {
-  local -r sdk="${1?Expected SDK}"
-  local -r version="${2?Expected version}"
-  local -r targetDir="${3?Expected target directory}"
-  local -r downloadUrl="$4"
-  local -r wgetParams="$5"
-  [ -z "$downloadUrl" ] && error "Could not resolve download url for version: $version"
-  local -r file="${downloadUrl##*/}"
-  local -r tmpdir="$(tmpdir_create "$version")"
+extractFromUrl() {
+  local -r downloadUrl="${1?Expected download url}"
+  local -r targetDir="${2?Expected target directory}"
+  local -r wgetParams="$3"
+  local -r fileName="${downloadUrl##*/}"
+  local -r tmpdir="$(tmpdir_create)"
   cd "$tmpdir"
-  printDebug "Downloading $sdk/$version from $downloadUrl to $tmpdir"
+  printInfo "Downloading $fileName from $downloadUrl"
+  printDebug "Using temporarylocation: $tmpdir"
   wget -q --show-progress \
     --no-check-certificate --no-cookies \
     $wgetParams \
-    -O "$file" "$downloadUrl"
-  printTrace "Download completed"
-  printDebug "Installing JDK from $tmpdir"
-  extract "$file" "$targetDir"
-  printTrace "Installation completed"
+    -O "$fileName" "$downloadUrl"
+  printTrace "Downloaded $fileName from $downloadUrl to $tmpdir"
+  printDebug "Extracting $fileName files to $targetDir"
+  extract "$fileName" "$targetDir"
+  printTrace "Extracted $fileName files to $targetDir"
   tmpdir_remove "$tmpdir"
-  printTrace "Temporary files removed"
+}
+
+buildFromUrl() {
+  local -r downloadUrl="${1?Expected download url}"
+  local -r targetDir="${2?Expected target dir}"
+  local -r configOptions="$3"
+  local -r sourcesDir="$(tmpdir_create)"
+  extractFromUrl "$downloadUrl" "$sourcesDir"
+  cd "$sourcesDir"
+  printInfo "Building ${downloadUrl##*/}"
+  ./configure --prefix="$targetDir" --build="$GNU_ARCH" $configOptions | spin
+  make -j "$NPROC" | spin
+  make install | spin
+  rm -rf "$sourcesDir"
+  printDebug "Built ${downloadUrl##*/}"
 }
 
 setupHomeAndPath() {
@@ -38,9 +52,9 @@ setupHomeAndPath() {
   local -r homeName="${name}_HOME"
   local -r sdkDir="${2?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
-  exec "export _SDKVM_${homeName}_PREV=\"${!homeName}\""
-  exec "export ${homeName}=\"$sdkDir\""
-  exec "export PATH=\"$(path_add "$sdkBinDir")\""
+  sdk_eval "export _SDKVM_${homeName}_PREV=\"${!homeName}\""
+  sdk_eval "export ${homeName}=\"$sdkDir\""
+  sdk_eval "export PATH=\"$(path_add "$sdkBinDir")\""
 }
 
 resetHomeAndPath() {
@@ -49,20 +63,22 @@ resetHomeAndPath() {
   local -r prevHomeName="_SDKVM_${nameName}_PREV"
   local -r sdkDir="${2?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
-  exec "export $homeName=\"${!prevHomeName}\""
-  exec "unset $prevHomeName"
-  exec "export PATH=\"$(path_remove "$sdkBinDir")\""
+  sdk_eval "export $homeName=\"${!prevHomeName}\""
+  sdk_eval "unset $prevHomeName"
+  sdk_eval "export PATH=\"$(path_remove "$sdkBinDir")\""
 }
 
 installPackages() {
   local -r packages="${@?Expected packages}"
+  printInfo "Installing additional system packages (password may be required)"
+  printDebug "Packages:\n$packages"
   if [ -x "$(command -v apt-get)" ]; then
-    echo "PKGS: $packages"
-    sudo apt-get update
-    sudo apt-get -y install $packages
+    sudo apt-get update | spin
+    sudo apt-get -y install $packages | spin
   elif [ -x "$(command -v yum)" ]; then
-    sudo yum -y install $packages
+    sudo yum -y install $packages | spin
   else
     error "Could not install packages. Unrecognized package manager."
   fi
+  printDebug "Installed packages"
 }

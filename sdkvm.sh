@@ -49,12 +49,12 @@ sdkvm() {
       if [ -f "$command" ]; then
         shift
         local -r temp="$(mktemp)"
-        $command $@ | tee "$temp" | grep -v "EVAL:"
-        local exports="$(cat "$temp" | sed -nE 's/EVAL: *(.+)$/\1/p')"
+        $command $@ | tee -a "$temp" | grep -v "EVAL:"
+        local evals="$(cat "$temp" | sed -nE 's/EVAL: *(.+)$/\1/p')"
         rm -f "$temp"
-        if [ -n "$exports" ]; then
-          # echo -e "EVAL: \n$exports"
-          eval "$exports"
+        if [ -n "$evals" ]; then
+          # echo -e "EVAL: \n$evals"
+          eval "$evals"
         fi
       else
         printError "Unrecognized sdkvm command: \"$command\". Try --help option."
