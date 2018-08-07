@@ -9,7 +9,7 @@ downloadUrls() {
 }
 
 downloadUrl() {
-  local -r version="${1?Expected version}"
+  local -r version="${1:?Expected version}"
   downloadUrls | \
     grep "$version.tar.gz" | \
     head -n 1

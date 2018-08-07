@@ -17,7 +17,7 @@ oracleDownloadUrls() {
 
 oracleDownloadUrl() {
   local -r oracleVersionPrefix="oracle-jdk-"
-  local -r version="${1?Expected version}"
+  local -r version="${1:?Expected version}"
   if [[ "$version" != "${oracleVersionPrefix}"* ]]; then
     error "Unrecognized JDK version: $version. Supported only $oracleVersionPrefix* versions."
   fi

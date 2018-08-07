@@ -9,7 +9,7 @@ downloadUrls() {
 }
 
 downloadUrl() {
-  local -r version="${1?Expected version}"
+  local -r version="${1:?Expected version}"
   local -r versionNumber="${version#python-}"
   downloadUrls | \
     grep "Python-$versionNumber.tgz" | \
@@ -27,7 +27,7 @@ installDependecnies() {
 }
 
 postInstall() {
-  local -r sdkDir="${1?Expected target dir}"
+  local -r sdkDir="${1:?Expected target dir}"
   if [ -f "$targetDir/bin/python3" ]; then
     printInfo "Recognized python3. Linking as python."
     ln -s "$targetDir/bin/idle3" "$targetDir/bin/idle"

@@ -46,9 +46,9 @@ buildFromUrl() {
 }
 
 setupHomeAndPath() {
-  local -r name="${1?Expected name}"
+  local -r name="${1:?Expected name}"
   local -r homeName="${name}_HOME"
-  local -r sdkDir="${2?Expected sdk directory}"
+  local -r sdkDir="${2:?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
   sdk_eval "export _SDKVM_${homeName}_PREV=\"${!homeName}\""
   sdk_eval "export ${homeName}=\"$sdkDir\""
@@ -56,10 +56,10 @@ setupHomeAndPath() {
 }
 
 resetHomeAndPath() {
-  local -r name="${1?Expected name}"
+  local -r name="${1:?Expected name}"
   local -r homeName="${name}_HOME"
   local -r prevHomeName="_SDKVM_${nameName}_PREV"
-  local -r sdkDir="${2?Expected sdk directory}"
+  local -r sdkDir="${2:?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
   sdk_eval "export $homeName=\"${!prevHomeName}\""
   sdk_eval "unset $prevHomeName"
@@ -67,7 +67,7 @@ resetHomeAndPath() {
 }
 
 installPackages() {
-  local -r packages="${@?Expected packages}"
+  local -r packages="${@:?Expected packages}"
   printInfo "Installing additional system packages (password may be required)"
   printDebug "Packages:\n$packages"
   if [ -x "$(command -v apt-get)" ]; then

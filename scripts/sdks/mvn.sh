@@ -12,7 +12,7 @@ downloadUrls() {
 }
 
 downloadUrl() {
-  local -r version="${1?Expected version}"
+  local -r version="${1:?Expected version}"
   local -r urlVersion="${version/mvn-/apache-maven-}"
   downloadUrls | \
     grep "/$urlVersion-bin.tar.gz" | \

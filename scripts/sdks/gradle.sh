@@ -10,7 +10,7 @@ downloadUrls() {
 }
 
 downloadUrl() {
-  local -r version="${1?Expected version}"
+  local -r version="${1:?Expected version}"
   downloadUrls | \
     grep "/$version-bin.zip" | \
     head -n 1

@@ -17,7 +17,7 @@ sdk__import() {
     "_sdkvm_versions"
   )
   [ "$_SDKVM_IMPORTED_SDK" == "$sdk" ] && return
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r sdkScript="$SDKVM_REMOTE_SDKS_DIR/${sdk}.sh"
   [ ! -f "$sdkScript" ] && error "Urecognized SDK: \"$sdk\""
   [ -z "$sdk" ] && error "Missing SDK parameter"

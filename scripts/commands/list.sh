@@ -19,7 +19,7 @@ printSdks() {
 }
 
 printSdkVersions() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r localVersions="$(sdk_listLocalSdkVersions "$sdk")"
   if [ -n "$localVersions" ]; then
     println "Local SDK versions:"

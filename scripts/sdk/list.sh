@@ -4,7 +4,7 @@ sdk_listRemoteSdks() {
 }
 
 sdk_listRemoteSdkVersions() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   sdk_executeOrEmpty "$sdk" versions
 }
 
@@ -23,7 +23,7 @@ sdk_listEnabledSdks() {
 
 sdk_listLocalSdkVersions() {
   # List local SDK versions in dir creation order
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null -printf "%Tx %.8TX %p\n" \
     | sort -r \
     | cut -f 3 -d' ' \
@@ -37,7 +37,7 @@ sdk_listAllSdks() {
 }
 
 sdk_listAllSdkVersions() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   echo -e "$(sdk_listLocalSdkVersions "$sdk")\n$(sdk_listRemoteSdkVersions "$sdk")" | \
     sort -urV | \
     sed '/^\s*$/d'
@@ -62,7 +62,7 @@ sdk_listNotInstalledSdks() {
 }
 
 sdk_listNotInstalledSdkVersions() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r installed="$(sdk_listLocalSdkVersions "$sdk")"
   local -r remote="$(sdk_listRemoteSdkVersions "$sdk")"
   local -i contains=0

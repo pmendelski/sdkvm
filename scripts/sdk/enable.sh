@@ -1,5 +1,5 @@
 sdk_getEnabledVersion() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   echo "$(delimmap_get "$SDKVM_ENABLED" "$sdk")"
 }
 
@@ -13,7 +13,7 @@ sdk_enable() {
     export SDKVM_ENABLED=""
     sdk_eval "export SDKVM_ENABLED=\"\""
   fi
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getNewestLocalSdkVersion "$sdk")}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
@@ -35,7 +35,7 @@ sdk_disable() {
     export SDKVM_ENABLED=""
     sdk_eval "export SDKVM_ENABLED=\"\""
   fi
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
@@ -53,13 +53,13 @@ sdk_disable() {
 }
 
 sdk_isEnabled() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   delimmap_contains "$SDKVM_ENABLED" "$sdk" "$value"
 }
 
 sdk_saveEnabled() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   [ -z "$version" ] && error "Could not resolve SDK version to persist"
   echo "$version" > "$SDKVM_LOCAL_SDKS_DIR/$sdk/.version"
@@ -68,7 +68,7 @@ sdk_saveEnabled() {
 }
 
 sdk_saveDisabled() {
-  local -r sdk="${1?Expected SDK}"
+  local -r sdk="${1:?Expected SDK}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   if [ "$version" == "$enabled" ]; then
