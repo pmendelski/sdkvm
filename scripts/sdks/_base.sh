@@ -13,28 +13,26 @@ gnuArch() {
 }
 
 extractFromUrl() {
-  local -r downloadUrl="${1?Expected download url}"
-  local -r targetDir="${2?Expected target directory}"
-  local -r wgetParams="$3"
+  local -r downloadUrl="${1:?Expected download url}"
+  local -r targetDir="${2:?Expected target directory}"
+  shift; shift
+  local -r wgetParams=("$@")
   local -r fileName="${downloadUrl##*/}"
   local -r tmpdir="$(tmpdir_create)"
   cd "$tmpdir"
   printInfo "Downloading $fileName from $downloadUrl"
-  printDebug "Using temporarylocation: $tmpdir"
-  wget -q --show-progress \
-    --no-check-certificate --no-cookies \
-    $wgetParams \
-    -O "$fileName" "$downloadUrl"
+  printDebug "Using temporary location: $tmpdir"
+  wget -q --show-progress --no-check-certificate --no-cookies "${wgetParams[@]}" -O $fileName $downloadUrl
   printTrace "Downloaded $fileName from $downloadUrl to $tmpdir"
-  printDebug "Extracting $fileName files to $targetDir"
+  printInfo "Extracting $fileName files to $targetDir"
   extract "$fileName" "$targetDir"
   printTrace "Extracted $fileName files to $targetDir"
   tmpdir_remove "$tmpdir"
 }
 
 buildFromUrl() {
-  local -r downloadUrl="${1?Expected download url}"
-  local -r targetDir="${2?Expected target dir}"
+  local -r downloadUrl="${1:?Expected download url}"
+  local -r targetDir="${2:?Expected target dir}"
   local -r configOptions="$3"
   local -r sourcesDir="$(tmpdir_create)"
   extractFromUrl "$downloadUrl" "$sourcesDir"

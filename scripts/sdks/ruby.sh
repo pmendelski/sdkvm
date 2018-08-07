@@ -35,13 +35,6 @@ installDependecnies() {
     tar
 }
 
-postInstall() {
-  local -r sdkDir="$1"
-  cd "$sdkDir/bin"
-  yes 'y' | ./gem update
-  yes 'y' | ./gem install bundler
-}
-
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'ruby-[0-9.]*[0-9]+' |
@@ -58,7 +51,6 @@ _sdkvm_install() {
   installDependecnies
   buildFromUrl "$(downloadUrl "$version")" "$targetDir" \
     "--disable-install-doc"
-  postInstall "$targetDir"
 }
 
 _sdkvm_enable() {

@@ -39,7 +39,7 @@ _sdkvm_install() {
   local -r targetDir="$2"
   local -r downloadUrl="$(oracleDownloadUrl "$version")"
   extractFromUrl "$downloadUrl" "$targetDir" \
-    "--header 'Cookie: oraclelicense=accept-securebackup-cookie'"
+    --header "Cookie: oraclelicense=accept-securebackup-cookie"
 }
 
 _sdkvm_enable() {

@@ -10,15 +10,15 @@ downloadUrls() {
 }
 
 downloadUrl() {
-  local -r version="${1?Expected version}"
-  local -r urlVersion="${version/nodejs-/nodejs-v}"
+  local -r version="${1:?Expected version}"
+  local -r urlVersion="${version/node-/node-v}"
   downloadUrls | \
     grep "$urlVersion-" | \
     head -n 1
 }
 
 _sdkvm_versions() {
-  nodeDownloadUrls | \
+  downloadUrls | \
     grep -oE 'node-v[^-_]+' |
     sed 's|node-v|node-|' | \
     sort -rV

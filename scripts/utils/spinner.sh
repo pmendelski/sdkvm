@@ -26,7 +26,7 @@ spin() {
     spinner_stop
   else
     while read line; do
-      printf "%s" "$line"
+      printf "%s\n" "$line"
     done
   fi
 }

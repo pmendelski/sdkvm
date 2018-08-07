@@ -37,8 +37,6 @@ postInstall() {
     ln -s "$targetDir/bin/python3-config" "$targetDir/bin/python-config"
     ln -s "$targetDir/share/man/man1/python3.1" "$targetDir/share/man/man1/python.1"
   fi
-  cd "$sdkDir/bin"
-  ./pip install --upgrade pip
 }
 
 _sdkvm_versions() {
