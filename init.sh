@@ -34,10 +34,6 @@ sdkvm() {
       executeSelf "version" $@
       return
       ;;
-    --update|-u)
-      executeSelf "update" $@
-      return
-      ;;
     -*)
       printError "Urecognized option: $1"
       return 1;
@@ -72,7 +68,7 @@ sdkvm_init() {
   for file in "$sdkDir"/*/.version; do
     local sdk="$(echo "$file" | sed -En "s|^$sdkDir/([^/]+)/.*|\1|p")"
     local version="$(cat "$file")"
-    sdkvm enable "$sdk" "$version" --silent
+    sdkvm enable "$sdk" "$version" > /dev/null
   done
 }
 

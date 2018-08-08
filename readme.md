@@ -9,11 +9,5 @@ Super simple and even faster SDK Version Manager.
 ```sh
 cd ~
 git clone git@github.com:pmendelski/sdkvm.git .sdkvm
-cd .sdkvm
-./sdkvm
-```
-
-For more options please see:
-```sh
-./install.sh -h
+echo "source ~/.sdkvm/init.sh" > .bashrc
 ```
