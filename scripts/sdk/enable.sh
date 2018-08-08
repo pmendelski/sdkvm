@@ -58,6 +58,10 @@ sdk_isEnabled() {
   delimmap_contains "$SDKVM_ENABLED" "$sdk" "$value"
 }
 
+sdk_isDisabled() {
+  ! sdk_isEnabled "$1" "$2"
+}
+
 sdk_saveEnabled() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"

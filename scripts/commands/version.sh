@@ -4,7 +4,7 @@ source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 printEnabledSdkVersion() {
   local -r sdk="${1:?Expected sdk}"
-  [ $(sdk_isEnabled "$sdk") ] \
+  sdk_isEnabled "$sdk" \
     && sdk_getEnabledVersion "$sdk" \
     || printWarn "SDK is not enabled: \"$sdk\""
 }
