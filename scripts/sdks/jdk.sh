@@ -49,18 +49,18 @@ oracleDownloadUrl() {
 oracleVersions() {
   oracleDownloadUrls | \
     grep -oE 'jdk-[^-_]+' | \
-    sed 's|^jdk-|oracle-|' | \
+    sed 's|^jdk-||' | \
     sort -rV
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
   case $version in
-    oracle-*)
-      oracleDownloadUrl "${version#oracle-}"
-      ;;
     openjdk-*)
       openJdkDownloadUrl "${version#openjdk-}"
+      ;;
+    *)
+      oracleDownloadUrl "$version"
       ;;
   esac
 }
