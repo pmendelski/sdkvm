@@ -11,7 +11,7 @@ downloadUrls() {
 downloadUrl() {
   local -r version="${1:?Expected version}"
   downloadUrls | \
-    grep "$version.tar.gz" | \
+    grep "ruby-$version.tar.gz" | \
     head -n 1
 }
 
@@ -38,6 +38,7 @@ installDependecnies() {
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'ruby-[0-9.]*[0-9]+' |
+    sed 's|^ruby-||' |
     sort -urV
 }
 

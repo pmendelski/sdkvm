@@ -3,24 +3,21 @@
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 downloadUrls() {
-  curl -s 'https://archive.apache.org/dist/ant/binaries/' | \
-    grep -oE 'href="apache-ant-[0-9.]+-bin\.tar\.gz"' | \
-    cut -f 2 -d \" | \
+  grepLink 'https://archive.apache.org/dist/ant/binaries/' 'apache-ant-[0-9.]+-bin\.tar\.gz' | \
     sed 's|^|https://archive.apache.org/dist/ant/binaries/|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  local -r urlVersion="${version/ant-/apache-ant-}"
   downloadUrls | \
-    grep "/$urlVersion-bin.tar.gz" | \
+    grep "/apache-ant-$version-bin.tar.gz" | \
     head -n 1
 }
 
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'apache-ant-[^-_]+' | \
-    sed 's|apache-ant-|ant-|' |
+    sed 's|apache-ant-||' |
     sort -rV
 }
 

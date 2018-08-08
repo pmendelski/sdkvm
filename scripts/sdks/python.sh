@@ -3,16 +3,15 @@
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 downloadUrls() {
-  curl -s https://www.python.org/downloads/source/ | \
-    grep -oE 'href="https://www.python.org/ftp/python/[0-9.]+/[Pp]ython-[0-9.]+.tgz"' | \
-    cut -f 2 -d \"
+  grepLink \
+    'https://www.python.org/downloads/source/' \
+    'https://www.python.org/ftp/python/[0-9.]+/[Pp]ython-[0-9.]+.tgz'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  local -r versionNumber="${version#python-}"
   downloadUrls | \
-    grep "Python-$versionNumber.tgz" | \
+    grep "Python-$version.tgz" | \
     head -n 1
 }
 
@@ -42,7 +41,7 @@ postInstall() {
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'Python-[0-9.]*[0-9]+' |
-    sed 's|Python-|python-|' |
+    sed 's|^Python-||' |
     sort -urV
 }
 

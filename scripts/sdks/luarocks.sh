@@ -3,16 +3,14 @@
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 downloadUrls() {
-  curl -s http://luarocks.github.io/luarocks/releases/ | \
-    grep -oE 'href="luarocks-[0-9].[0-9].[0-9].tar.gz"' | \
-    cut -f 2 -d \" | \
+  grepLink 'http://luarocks.github.io/luarocks/releases/' 'luarocks-[0-9].[0-9].[0-9].tar.gz' | \
     sed -r 's|^(.+)|http://luarocks.github.io/luarocks/releases/\1|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
   downloadUrls | \
-    grep "$version.tar.gz" | \
+    grep "luarocks-$version.tar.gz" | \
     head -n 1
 }
 
@@ -24,6 +22,7 @@ installDependecnies() {
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'luarocks-[0-9.]*[0-9]+' |
+    sed 's|^luarocks-||' |
     sort -urV
 }
 

@@ -4,6 +4,7 @@ source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 updateSdkvm() {
   printInfo "Updating sdkvm..."
+  git pull --rebase origin
 }
 
 main() {

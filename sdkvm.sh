@@ -76,4 +76,4 @@ sdkvm_init() {
   done
 }
 
-# sdkvm_init
+sdkvm_init

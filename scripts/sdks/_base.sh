@@ -12,6 +12,22 @@ gnuArch() {
   dpkg-architecture --query DEB_BUILD_GNU_TYPE
 }
 
+grepLink() {
+  local -r url="${1:?Expected url}"
+  local -r pattern="${2:?Expected pattern}"
+  curl -s "$url" | \
+    grep -oE "[hH][rR][eE][fF]=\"${pattern}\"" | \
+    cut -f 2 -d \"
+}
+
+grepQuotedContent() {
+  local -r url="${1:?Expected url}"
+  local -r pattern="${2:?Expected pattern}"
+  curl -s "$url" | \
+    grep -oE "\"${pattern}\"" | \
+    cut -f 2 -d \"
+}
+
 extractFromUrl() {
   local -r downloadUrl="${1:?Expected download url}"
   local -r targetDir="${2:?Expected target directory}"

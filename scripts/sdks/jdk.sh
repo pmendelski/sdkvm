@@ -2,43 +2,81 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
+openJdkDownloadUrls() {
+  local -r versionPages="$( \
+    grepLink http://jdk.java.net/ ".?/java-se-ri/[0-9]+" | \
+    sed 's|./|/|')"
+  for versionPageUrl in $versionPages; do
+    grepQuotedContent \
+      "http://jdk.java.net/$versionPageUrl" \
+      'https://download.java.net/openjdk/jdk[^/]*/ri/jdk[^"/]+[_-]linux-x64[_-][^"/]*.(tar.gz|zip)'
+  done
+}
+
+openJdkDownloadUrl() {
+  local -r version="${1:?Expected version}"
+  openJdkDownloadUrls | \
+    grep "$version" | \
+    head -n 1
+}
+
+openJdkVersions() {
+  openJdkDownloadUrls | \
+    grep -oE 'jdk(_ri)?-[^-_]+' | \
+    sed -E 's|^[^-]+|openjdk|'
+}
+
 oracleDownloadUrls() {
-  local -r versionPages="$(curl -s https://www.oracle.com/technetwork/java/javase/downloads/index.html | \
-    grep -oE "href=\"([^\"]+/javase/downloads/jdk[^\"]+-downloads[^\"]+)\"" | \
-    cut -f 2 -d \" | \
+  local -r versionPages="$(\
+    grepLink \
+      https://www.oracle.com/technetwork/java/javase/downloads/index.html \
+      "([^\"]+/javase/downloads/jdk[^\"]+-downloads[^\"]+)" | \
     sort -u)"
   for versionPageUrl in $versionPages; do
-    curl -s "https://www.oracle.com$versionPageUrl" | \
-      grep -oE '"https?://download.oracle.com/[^"]+"' | \
-      cut -f 2 -d \" | \
+    grepQuotedContent "https://www.oracle.com$versionPageUrl" 'https?://download.oracle.com/[^"]+' | \
       grep -E 'linux-x64(_bin)?.tar.gz'
   done
 }
 
 oracleDownloadUrl() {
-  local -r oracleVersionPrefix="oracle-jdk-"
+  local -r oracleVersionPrefix="oracle-"
   local -r version="${1:?Expected version}"
-  if [[ "$version" != "${oracleVersionPrefix}"* ]]; then
-    error "Unrecognized JDK version: $version. Supported only $oracleVersionPrefix* versions."
-  fi
-  local -r versionNumber="${version#$oracleVersionPrefix}"
   oracleDownloadUrls | \
-    grep "$versionNumber" | \
+    grep "$version" | \
     head -n 1
 }
 
-_sdkvm_versions() {
+oracleVersions() {
   oracleDownloadUrls | \
     grep -oE 'jdk-[^-_]+' | \
-    sed 's|^|oracle-|' | \
+    sed 's|^jdk-|oracle-|' | \
     sort -rV
+}
+
+downloadUrl() {
+  local -r version="${1:?Expected version}"
+  case $version in
+    oracle-*)
+      oracleDownloadUrl "${version#oracle-}"
+      ;;
+    openjdk-*)
+      openJdkDownloadUrl "${version#openjdk-}"
+      ;;
+  esac
+}
+
+_sdkvm_versions() {
+  oracleVersions
+  # TODO: Add caching for version fetching and parsing
+  # openJdkVersions is too slow
+  # openJdkVersions
 }
 
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  local -r downloadUrl="$(oracleDownloadUrl "$version")"
-  extractFromUrl "$downloadUrl" "$targetDir" \
+  local -r url="$(downloadUrl "$version")"
+  extractFromUrl "$url" "$targetDir" \
     --header "Cookie: oraclelicense=accept-securebackup-cookie"
 }
 

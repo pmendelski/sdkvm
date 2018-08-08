@@ -3,17 +3,14 @@
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 downloadUrls() {
-  curl -s https://www.lua.org/ftp/ | \
-    tr '[:upper:]' '[:lower:]' | \
-    grep -oE 'href="lua-[0-9].[0-9].[0-9].tar.gz"' | \
-    cut -f 2 -d \" | \
+  grepLink 'https://www.lua.org/ftp/' 'lua-[0-9].[0-9].[0-9].tar.gz' | \
     sed -r 's|^(.+)|https://www.lua.org/ftp/\1|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
   downloadUrls | \
-    grep "$version.tar.gz" | \
+    grep "lua-$version.tar.gz" | \
     head -n 1
 }
 
@@ -25,6 +22,7 @@ installDependecnies() {
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'lua-[0-9.]*[0-9]+' |
+    sed 's|^lua-||' |
     sort -urV
 }
 
