@@ -5,8 +5,8 @@ import utils/extract
 import utils/path
 import utils/delimmap
 
-declare -gr GNU_ARCH="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"
-declare -gr NPROC="$(nproc)"
+declare -xr GNU_ARCH="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"
+declare -xr NPROC="$(nproc)"
 
 gnuArch() {
   dpkg-architecture --query DEB_BUILD_GNU_TYPE
@@ -66,7 +66,10 @@ setupHomeAndPath() {
   local -r homeName="${name}_HOME"
   local -r sdkDir="${2:?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
-  sdk_eval "export _SDKVM_${homeName}_PREV=\"${!homeName}\""
+  local -r prevSdkDir="${!homeName}"
+  if [ -n "$prevSdkDir" ]; then
+    sdk_eval "export _SDKVM_${homeName}_PREV=\"$prevSdkDir\""
+  fi
   sdk_eval "export ${homeName}=\"$sdkDir\""
   sdk_eval "export PATH=\"$(path_add "$sdkBinDir")\""
 }
@@ -74,7 +77,7 @@ setupHomeAndPath() {
 resetHomeAndPath() {
   local -r name="${1:?Expected name}"
   local -r homeName="${name}_HOME"
-  local -r prevHomeName="_SDKVM_${nameName}_PREV"
+  local -r prevHomeName="_SDKVM_${homeName}_PREV"
   local -r sdkDir="${2:?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
   sdk_eval "export $homeName=\"${!prevHomeName}\""

@@ -1,8 +1,16 @@
 #!/bin/bash -e
 
-declare -xg SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 declare -xig SDKVM_DEBUG=0
-source "$SDKVM_HOME/scripts/completions/index.sh"
+
+if [ -n "$ZSH_VERSION" ]; then
+  declare -xg SDKVM_HOME="$(dirname ${(%):-%N})"
+  source $SDKVM_HOME/scripts/completions/zsh.sh
+elif [ -n "$KSH_VERSION" ]; then
+  declare -xg SDKVM_HOME="$(dirname ${.sh.file})"
+else
+  declare -xg SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  source $SDKVM_HOME/scripts/completions/bash.sh
+fi
 
 sdkvm() {
   local -r commandsDir="$SDKVM_HOME/scripts/commands"
@@ -45,11 +53,11 @@ sdkvm() {
       if [ -f "$command" ]; then
         shift
         local -r temp="$(mktemp)"
-        $command $@ | tee -a "$temp" | grep -v "EVAL:"
+        $command $@ 2> >(tee -a "$temp" | grep -v "EVAL: " >&2)
         local evals="$(cat "$temp" | sed -nE 's/EVAL: *(.+)$/\1/p')"
         rm -f "$temp"
         if [ -n "$evals" ]; then
-          # echo -e "EVAL: \n$evals"
+          # echo -e "EVAL: \n=====\n$evals\n====="
           eval "$evals"
         fi
       else
@@ -62,14 +70,4 @@ sdkvm() {
   error "No command defined. Try --help option"
 }
 
-sdkvm_init() {
-  local -r sdkDir="$SDKVM_HOME/sdk"
-  [ -d "$sdkDir" ] || return
-  for file in "$sdkDir"/*/.version; do
-    local sdk="$(echo "$file" | sed -En "s|^$sdkDir/([^/]+)/.*|\1|p")"
-    local version="$(cat "$file")"
-    sdkvm enable "$sdk" "$version" > /dev/null
-  done
-}
-
-sdkvm_init
+sdkvm init > /dev/null

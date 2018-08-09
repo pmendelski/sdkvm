@@ -3,11 +3,6 @@ sdk_getEnabledVersion() {
   echo "$(delimmap_get "$SDKVM_ENABLED" "$sdk")"
 }
 
-sdk_eval() {
-  # All stdout lines that start with "EVAL: " are evaluated in parent process
-  (>&2 echo "EVAL: $@")
-}
-
 sdk_enable() {
   if [ -z "$SDKVM_ENABLED" ]; then
     export SDKVM_ENABLED=""
@@ -18,8 +13,10 @@ sdk_enable() {
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
   local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   sdk_validateLocalSdkVersion "$sdk" "$version"
-  if [ -z "$enabled" ] || [ "$enabled" != "$version" ]; then
+  if [ -n "$enabled" ] && [ "$enabled" != "$version" ]; then
     sdk_execute "$sdk" disable "$version" "$targetDir"
+  fi
+  if [ -z "$enabled" ] || [ "$enabled" != "$version" ]; then
     printDebug "Enabling SDK $sdk/$version"
     SDKVM_ENABLED="$(delimmap_put "$SDKVM_ENABLED" "$sdk" "$version")"
     sdk_eval "export SDKVM_ENABLED=\"$SDKVM_ENABLED\""
