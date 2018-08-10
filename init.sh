@@ -3,12 +3,12 @@
 declare -xig SDKVM_DEBUG=0
 
 if [ -n "$ZSH_VERSION" ]; then
-  declare -xg SDKVM_HOME="$(dirname ${(%):-%N})"
+  declare -xg SDKVM_HOME="$(cd "$(dirname ${(%):-%N})" && pwd)"
   source $SDKVM_HOME/scripts/completions/zsh.sh
 elif [ -n "$KSH_VERSION" ]; then
-  declare -xg SDKVM_HOME="$(dirname ${.sh.file})"
+  declare -xg SDKVM_HOME="$(cd "$(dirname ${.sh.file})" && pwd)"
 else
-  declare -xg SDKVM_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  declare -xg SDKVM_HOME="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
   source $SDKVM_HOME/scripts/completions/bash.sh
 fi
 
@@ -71,4 +71,11 @@ sdkvm() {
   error "No command defined. Try --help option"
 }
 
-sdkvm init > /dev/null
+_sdkvm_init() {
+  local -r initScript="$SDKVM_HOME/sdk/.init"
+  if [ -f "$initScript" ]; then
+    source "$initScript"
+  fi
+}
+
+_sdkvm_init

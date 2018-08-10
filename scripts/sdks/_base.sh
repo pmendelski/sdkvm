@@ -5,9 +5,6 @@ import utils/extract
 import utils/path
 import utils/delimmap
 
-declare -xr GNU_ARCH="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"
-declare -xr NPROC="$(nproc)"
-
 gnuArch() {
   dpkg-architecture --query DEB_BUILD_GNU_TYPE
 }
@@ -54,8 +51,9 @@ buildFromUrl() {
   extractFromUrl "$downloadUrl" "$sourcesDir"
   cd "$sourcesDir"
   printInfo "Building ${downloadUrl##*/}"
-  ./configure --prefix="$targetDir" --build="$GNU_ARCH" $configOptions | spin
-  make -j "$NPROC" | spin
+  printDebug "Using $(nproc) threads for build"
+  ./configure --prefix="$targetDir" --build="$(gnuArch)" $configOptions | spin
+  make -j "$(nproc)" | spin
   make install | spin
   rm -rf "$sourcesDir"
   printDebug "Built ${downloadUrl##*/}"

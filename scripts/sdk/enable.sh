@@ -69,6 +69,19 @@ sdk_saveEnabled() {
   _SDKVM_EVAL_FILE="$SDKVM_LOCAL_SDKS_DIR/$sdk/.enable"
   _sdk_enable $sdk $version
   _SDKVM_EVAL_FILE="$previousEvalFile"
+  _sdk_refreshInitScript
+}
+
+_sdk_refreshInitScript() {
+  [ -d "$SDKVM_LOCAL_SDKS_DIR" ] || return 0
+  echo "#!/bin/bash" > "$SDKVM_LOCAL_SDKS_DIR/.init"
+  chmod u+x "$SDKVM_LOCAL_SDKS_DIR/.init"
+  for file in "$SDKVM_LOCAL_SDKS_DIR"/*/.enable; do
+    if [ "$file" != "$SDKVM_LOCAL_SDKS_DIR/*/.enable" ]; then
+      cat "$file" >> "$SDKVM_LOCAL_SDKS_DIR/.init"
+    fi
+  done
+  return 0
 }
 
 sdk_saveDisabled() {
