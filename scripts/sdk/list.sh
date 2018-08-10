@@ -22,18 +22,16 @@ sdk_listEnabledSdks() {
 }
 
 sdk_listLocalSdkVersions() {
-  # List local SDK versions in dir creation order
   local -r sdk="${1:?Expected SDK}"
-  find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null -printf "%Tx %.8TX %p\n" \
-    | sort -r \
-    | cut -f 3 -d' ' \
-    | grep -o '[^/]*$'
+  find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
+    | grep -o '[^/]*$' \
+    | sort -rV
 }
 
 sdk_listAllSdks() {
-  echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" | \
-    sort -uV | \
-    sed '/^\s*$/d'
+  echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" \
+    | sort -uV \
+    | sed '/^\s*$/d'
 }
 
 sdk_listAllSdkVersions() {

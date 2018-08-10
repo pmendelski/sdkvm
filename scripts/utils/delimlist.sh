@@ -72,6 +72,21 @@ delimlist_values() {
   done
 }
 
+delimlist_first() {
+  local -r text="$1"
+  local -r delim="${2:-:}"
+  delimlist_values "$text" "$delim" | head -n 1
+}
+
+delimlist_removeFirst() {
+  local -r text="$1"
+  local -r delim="${2:-:}"
+  local -r first="$(delimlist_first "$text" "$delim")"
+  if [ -n "$first" ]; then
+    delimlist_remove "$text" "$delim" "$first"
+  fi
+}
+
 delimlist_findByPrefix() {
   local -r text="$1"
   local -r prefix="$2"

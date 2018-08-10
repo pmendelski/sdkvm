@@ -15,7 +15,8 @@ import ./list
 import ./version
 
 sdk_eval() {
+  echo ">>> $@"
   eval "$@"
   # All stdout lines that start with "EVAL: " are evaluated in parent process
-  (>&2 echo "EVAL: $@")
+  echo "$@" >> "$_SDKVM_EVAL_FILE"
 }

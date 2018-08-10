@@ -52,10 +52,11 @@ sdkvm() {
       local -r command="$commandsDir/$1.sh"
       if [ -f "$command" ]; then
         shift
-        local -r temp="$(mktemp)"
-        $command $@ 2> >(tee -a "$temp" | grep -v "EVAL: " >&2)
-        local evals="$(cat "$temp" | sed -nE 's/EVAL: *(.+)$/\1/p')"
-        rm -f "$temp"
+        export _SDKVM_EVAL_FILE="$(mktemp)"
+        $command $@
+        local evals="$(cat "$_SDKVM_EVAL_FILE")"
+        rm -f "$_SDKVM_EVAL_FILE"
+        unset _SDKVM_EVAL_FILE
         if [ -n "$evals" ]; then
           # echo -e "EVAL: \n=====\n$evals\n====="
           eval "$evals"
@@ -70,4 +71,4 @@ sdkvm() {
   error "No command defined. Try --help option"
 }
 
-sdkvm init > /dev/null
+# sdkvm init > /dev/null

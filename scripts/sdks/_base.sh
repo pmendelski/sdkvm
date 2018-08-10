@@ -61,27 +61,47 @@ buildFromUrl() {
   printDebug "Built ${downloadUrl##*/}"
 }
 
+setupVariableWithBackup() {
+  local -r name="${1:?Expected name}"
+  local -r value="${2:?Expected value}"
+  local -r currentValue="${!name}"
+  local -r prevValueName="_SDKVM_PREV_${name}"
+  if [ -n "$currentValue" ]; then
+    if [ "$currentValue" != "$value" ]; then
+      sdk_eval "export $prevValueName=\"$currentValue\""
+    else
+      sdk_eval "export $prevValueName=\"\$$name\""
+    fi
+  fi
+  sdk_eval "export ${name}=\"$value\""
+}
+
+restorePreviousValue() {
+  local -r name="${1:?Expected name}"
+  local -r currentValue="${!name}"
+  local -r prevValueName="_SDKVM_PREV_${name}"
+  local -r prevValue="${!prevValueName}"
+  if [ -n "$prevValue" ]; then
+    sdk_eval "export $name=\"$prevValue\""
+  else
+    sdk_eval "unset $name"
+  fi
+  sdk_eval "unset $prevValueName"
+}
+
 setupHomeAndPath() {
   local -r name="${1:?Expected name}"
-  local -r homeName="${name}_HOME"
   local -r sdkDir="${2:?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
-  local -r prevSdkDir="${!homeName}"
-  if [ -n "$prevSdkDir" ]; then
-    sdk_eval "export _SDKVM_${homeName}_PREV=\"$prevSdkDir\""
-  fi
-  sdk_eval "export ${homeName}=\"$sdkDir\""
-  sdk_eval "export PATH=\"$(path_add "$sdkBinDir")\""
+  setupVariableWithBackup "${name}_HOME" "$sdkDir"
+  sdk_eval "export PATH=\"$sdkBinDir:\$PATH\""
 }
 
 resetHomeAndPath() {
   local -r name="${1:?Expected name}"
-  local -r homeName="${name}_HOME"
-  local -r prevHomeName="_SDKVM_${homeName}_PREV"
   local -r sdkDir="${2:?Expected sdk directory}"
   local -r sdkBinDir="${3:-$sdkDir/bin}"
-  sdk_eval "export $homeName=\"${!prevHomeName}\""
-  sdk_eval "unset $prevHomeName"
+  restorePreviousValue "${name}_HOME"
   sdk_eval "export PATH=\"$(path_remove "$sdkBinDir")\""
 }
 
