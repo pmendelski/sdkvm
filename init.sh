@@ -71,4 +71,4 @@ sdkvm() {
   error "No command defined. Try --help option"
 }
 
-# sdkvm init > /dev/null
+sdkvm init > /dev/null
