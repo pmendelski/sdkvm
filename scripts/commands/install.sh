@@ -2,6 +2,16 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
+function installAllNotInstalledSdks() {
+  local -r sdks="$(sdk_listNotInstalledSdks)"
+  local sdk=""
+  local version=""
+  for sdk in $(sdk_listNotInstalledSdks); do
+    version="$(sdk_getNewestRemoteSdkVersion "$sdk")"
+    sdk_installSdkVersion "$sdk" "$version"
+  done
+}
+
 main() {
   local -i use=1
   local -i save=1
@@ -32,9 +42,14 @@ main() {
   done
 
   [ $force = 1 ] && sdk_isLocalSdkVersion "$sdk" "$version" && sdk_uninstallSdkVersion "$sdk" "$version"
-  sdk_installSdkVersion "$sdk" "$version"
-  [ $use = 1 ] && sdk_enable "$sdk" "$version"
-  [ $save = 1 ] && sdk_saveEnabled "$sdk"
+  if [ $sdk == "all" ]; then
+    installAllNotInstalledSdks
+  else
+    [ $force = 1 ] && sdk_isLocalSdkVersion "$sdk" "$version" && sdk_uninstallSdkVersion "$sdk" "$version"
+    sdk_installSdkVersion "$sdk" "$version"
+    [ $use = 1 ] && sdk_enable "$sdk" "$version"
+    [ $save = 1 ] && sdk_saveEnabled "$sdk"
+  fi
   return 0
 }
 
