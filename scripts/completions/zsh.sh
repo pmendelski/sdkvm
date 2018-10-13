@@ -52,8 +52,8 @@ _sdkvm() {
           _arguments \
             "1: :($(sdkvm list --remote))" \
             "2: :($(sdkvm list "$words[2]" --remote))" \
+            '--all[Install all SDKs]' \
             '--force[Install the SDK version even if it is already installed]' \
-            '--no-switch[Do not switch to the version after installing]' \
             '--no-use[Do not enable the version after installing]' \
             '--no-save[Do not save the version as the default after installing]' \
             $commonOpts \
@@ -63,6 +63,15 @@ _sdkvm() {
           _arguments \
             "1: :($(sdkvm list --local))" \
             "2: :($(sdkvm list "$words[2]" --local))" \
+            '--yes[Do not ask for confirmation]' \
+            $commonOpts \
+            && ret=0
+        ;;
+        update)
+          _arguments \
+            "1: :($(sdkvm list --local))" \
+            '--no-use[Do not enable the version after installing]' \
+            '--no-save[Do not save the version as the default after installing]' \
             $commonOpts \
             && ret=0
         ;;

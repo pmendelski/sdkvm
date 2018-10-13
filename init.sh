@@ -17,7 +17,6 @@ sdkvm() {
 
   error() {
     (>&2 echo $1)
-    exit 1
   }
 
   execute() {
@@ -43,7 +42,7 @@ sdkvm() {
       return
       ;;
     -*)
-      printError "Urecognized option: $1"
+      error "Urecognized option: $1"
       return 1;
       ;;
     *) # Command.
@@ -62,7 +61,7 @@ sdkvm() {
           eval "$evals"
         fi
       else
-        printError "Unrecognized sdkvm command: \"$command\". Try --help option."
+        error "Unrecognized sdkvm command: \"$command\". Try --help option."
         return 1;
       fi
       return

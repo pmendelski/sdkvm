@@ -5,7 +5,7 @@ _sdkvm() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   if [ $COMP_CWORD = 1 ];then
-    opts="list install uninstall selfupdate update enable disable version --help --verbose --version"
+    opts="list install uninstall update enable disable version --help --verbose --version"
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
   fi
   return 0
