@@ -22,6 +22,7 @@ printAllEnabledSdkVersions() {
 }
 
 main() {
+  handleHelp "version" "$@"
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   [ -n "$sdk" ] && shift
 

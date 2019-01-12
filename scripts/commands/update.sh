@@ -8,6 +8,7 @@ updateSdkvm() {
 }
 
 main() {
+  handleHelp "update" "$@"
   local -i use=1
   local -i save=1
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"

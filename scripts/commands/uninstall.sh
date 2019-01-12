@@ -20,6 +20,7 @@ uninstallSdk() {
 }
 
 main() {
+  handleHelp "uninstall" "$@"
   local -i yes=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   local -r version="$(echo "$2" | grep -o "^[^-].*")"

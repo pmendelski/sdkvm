@@ -3,6 +3,7 @@
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 main() {
+  handleHelp "disable" "$@"
   local -i save=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   local -r version="$(echo "$2" | grep -o "^[^-].*")"

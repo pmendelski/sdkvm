@@ -2,28 +2,30 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
-openJdkDownloadUrls() {
-  local -r versionPages="$( \
-    grepLink http://jdk.java.net/ ".?/java-se-ri/[0-9]+" | \
-    sed 's|./|/|')"
-  for versionPageUrl in $versionPages; do
-    grepQuotedContent \
-      "http://jdk.java.net/$versionPageUrl" \
-      'https://download.java.net/openjdk/jdk[^/]*/ri/jdk[^"/]+[_-]linux-x64[_-][^"/]*.(tar.gz|zip)'
+adoptDownloadUrls() {
+  local -r apiBaseUrl="https://api.adoptopenjdk.net/v2/info/releases/openjdk"
+  local version=8
+  local urls=""
+  while : ; do
+    local versionJson="$(curl -s --fail "$apiBaseUrl$version")"
+    [[ -n "$versionJson" ]] || break
+    local versionUrls="$(echo "$versionJson" | \
+      jq -r ".[].binaries[] | select((.os==\"linux\") and (.architecture==\"x64\") and (.binary_type==\"jdk\") and (.openjdk_impl==\"hotspot\")) | .binary_link" 2>/dev/null)"
+    urls="$urls $versionUrls"
+    version=$((version+1))
   done
+  echo -e $urls | \
+    sed 's| |\n|g' | \
+    tac
 }
 
-openJdkDownloadUrl() {
-  local -r version="${1:?Expected version}"
-  openJdkDownloadUrls | \
-    grep "$version" | \
-    head -n 1
-}
-
-openJdkVersions() {
-  openJdkDownloadUrls | \
-    grep -oE 'jdk(_ri)?-[^-_]+' | \
-    sed -E 's|^[^-]+|openjdk|'
+adoptVersions() {
+  adoptDownloadUrls | \
+    grep -oE '/jdk.+/' | \
+    sed 's|/||g' | \
+    sed 's|%2B|+|g' | \
+    sed 's|jdk-*||g' | \
+    sort -rV
 }
 
 oracleDownloadUrls() {
@@ -38,14 +40,6 @@ oracleDownloadUrls() {
   done
 }
 
-oracleDownloadUrl() {
-  local -r oracleVersionPrefix="oracle-"
-  local -r version="${1:?Expected version}"
-  oracleDownloadUrls | \
-    grep "$version" | \
-    head -n 1
-}
-
 oracleVersions() {
   oracleDownloadUrls | \
     grep -oE 'jdk-[^-_]+' | \
@@ -55,29 +49,31 @@ oracleVersions() {
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
+  local -r encodedVersion="$(echo "$version" | sed 's|+|%2B|' | sed 's|^.\+-||')"
+  local urls=""
   case $version in
-    openjdk-*)
-      openJdkDownloadUrl "${version#openjdk-}"
+    adopt-*)
+      urls="$(adoptDownloadUrls)"
       ;;
-    *)
-      oracleDownloadUrl "$version"
+    oracle-*)
+      urls="$(oracleDownloadUrls)"
       ;;
   esac
+  echo "$urls" | \
+    grep -E "jdk-?$encodedVersion" | \
+    head -n 1
 }
 
 _sdkvm_versions() {
-  oracleVersions
-  # TODO: Add caching for version fetching and parsing
-  # openJdkVersions is too slow
-  # openJdkVersions
+  adoptVersions | sed 's|^|adopt-|'
+  oracleVersions | sed 's|^|oracle-|'
 }
 
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
   local -r url="$(downloadUrl "$version")"
-  extractFromUrl "$url" "$targetDir" \
-    --header "Cookie: oraclelicense=accept-securebackup-cookie"
+  extractFromUrl "$url" "$targetDir"
 }
 
 _sdkvm_enable() {

@@ -27,6 +27,19 @@ help() {
   exit 0
 }
 
+handleHelp() {
+  local -r commandName="$1"
+  shift
+  while (("$#")); do
+    case $1 in
+      --help|-h)
+        help "$commandName"
+        ;;
+    esac
+    shift
+  done
+}
+
 handleCommonParam() {
   local -r commandName="$2"
   case "$1" in

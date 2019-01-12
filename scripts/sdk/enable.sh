@@ -70,6 +70,7 @@ sdk_saveEnabled() {
   _sdk_enable $sdk $version
   _SDKVM_EVAL_FILE="$previousEvalFile"
   _sdk_refreshInitScript
+  printInfo "Saved default SDK version $sdk/$version"
 }
 
 _sdk_refreshInitScript() {

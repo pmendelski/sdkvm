@@ -42,6 +42,7 @@ printSdkVersions() {
 }
 
 main() {
+  handleHelp "list" "$@"
   local -i local=0
   local -i remote=0
   local -i flat=0

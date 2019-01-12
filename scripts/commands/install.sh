@@ -31,6 +31,7 @@ function installAllNotInstalledSdks() {
 }
 
 main() {
+  handleHelp "install" "$@"
   local -i use=1
   local -i save=1
   local -i force=0
@@ -38,12 +39,9 @@ main() {
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   local -r versionParam="$(echo "$2" | grep -o "^[^-].*")"
 
-  if [ -n "$sdk" ]; then 
-    shift
-    [ -n "$versionParam" ] && shift
-    version="${versionParam:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
-  fi
-
+  requireSdkParam "$sdk" || shift
+  [ -n "$versionParam" ] && shift
+  version="${versionParam:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
 
   while (("$#")); do
     case $1 in

@@ -15,6 +15,7 @@ selfVersion() {
 }
 
 main() {
+  handleHelp "self" "$@"
   while (("$#")); do
     case $1 in
       help)
