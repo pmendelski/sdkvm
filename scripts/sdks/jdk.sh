@@ -73,7 +73,8 @@ _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
   local -r url="$(downloadUrl "$version")"
-  extractFromUrl "$url" "$targetDir"
+  extractFromUrl "$url" "$targetDir" \
+    --header "Cookie: oraclelicense=accept-securebackup-cookie"
 }
 
 _sdkvm_enable() {
