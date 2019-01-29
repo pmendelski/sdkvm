@@ -23,7 +23,7 @@ requireVersionParam() {
 
 help() {
   local cmdmanfile="${1:+-$1}"
-  man -l man/sdkvm$cmdmanfile.1
+  man -l $SDKVM_HOME/man/sdkvm$cmdmanfile.1
   exit 0
 }
 
