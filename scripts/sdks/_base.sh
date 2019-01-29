@@ -76,15 +76,17 @@ setupVariableWithBackup() {
 
 restorePreviousValue() {
   local -r name="${1:?Expected name}"
-  local -r currentValue="${!name}"
-  local -r prevValueName="_SDKVM_PREV_${name}"
-  local -r prevValue="${!prevValueName}"
-  if [ -n "$prevValue" ]; then
-    sdk_eval "export $name=\"$prevValue\""
-  else
-    sdk_eval "unset $name"
+  if [[ -v "$name" ]]; then
+    local -r currentValue="${!name}"
+    local -r prevValueName="_SDKVM_PREV_${name}"
+    local -r prevValue="${!prevValueName}"
+    if [ -n "$prevValue" ]; then
+      sdk_eval "export $name=\"$prevValue\""
+    else
+      sdk_eval "unset $name"
+    fi
+    sdk_eval "unset $prevValueName"
   fi
-  sdk_eval "unset $prevValueName"
 }
 
 setupHomeAndPath() {
@@ -116,4 +118,42 @@ installPackages() {
     error "Could not install packages. Unrecognized package manager."
   fi
   printDebug "Installed packages"
+}
+
+desktopEntry() {
+  local -r name="$1"
+  local -r dir="$HOME/.local/share/applications"
+  local entries=""
+  shift
+  for i in "$@"; do
+    entries="$entries$i\n"
+  done
+  if [ -d "$dir" ]; then
+    if [ -f "$dir/$name.desktop" ] && [ "$entries" == "$(cat "$dir/$name.desktop")" ]; then
+      return
+    fi
+    if [ -f "$dir/$name.desktop" ] && [ ! -f "$dir/$name.desktop.bak" ]; then
+      mv "$dir/$name.desktop" "$dir/$name.desktop.bak"
+    fi
+    printInfo "Creating desktop entry: $dir/$name.desktop"
+    echo -e "$entries" > "$dir/$name.desktop"
+    updateDesktopEntries
+  fi
+}
+
+resetDesktopEntry() {
+  local -r name="$1"
+  local -r dir="$HOME/.local/share/applications"
+  if [ -f "$dir/$name.desktop.bak" ]; then
+    printInfo "Restoring desktop entry: $dir/$name.desktop"
+    mv "$dir/$name.desktop.bak" "$dir/$name.desktop"
+    updateDesktopEntries
+  fi
+}
+
+updateDesktopEntries() {
+  if [ -x "$(command -v update-desktop-database)" ]; then
+    printInfo "Updating desktop entries"
+    sudo update-desktop-database || printWarn "Could not update desktop entries"
+  fi
 }

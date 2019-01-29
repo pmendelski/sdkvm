@@ -5,7 +5,7 @@ sdk_listRemoteSdks() {
 
 sdk_listRemoteSdkVersions() {
   local -r sdk="${1:?Expected SDK}"
-  sdk_executeOrEmpty "$sdk" versions
+  sdk_executeOrEmpty "$sdk" versions | sort -urV
 }
 
 sdk_listLocalSdks() {
