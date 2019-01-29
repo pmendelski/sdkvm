@@ -129,7 +129,7 @@ desktopEntry() {
     entries="$entries$i\n"
   done
   if [ -d "$dir" ]; then
-    if [ -f "$dir/$name.desktop" ] && [ "$entries" == "$(cat "$dir/$name.desktop")" ]; then
+    if [ -f "$dir/$name.desktop" ] && [ "$entries\n" == "$(cat "$dir/$name.desktop")" ]; then
       return
     fi
     if [ -f "$dir/$name.desktop" ] && [ ! -f "$dir/$name.desktop.bak" ]; then
