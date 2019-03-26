@@ -28,6 +28,16 @@ postInstall() {
   fi
 }
 
+installDependecnies() {	
+  installLinuxPackages \	
+    build-essential \	
+    libsqlite3-dev sqlite3 \	
+    bzip2 libbz2-dev zlib1g-dev \	
+    libssl-dev openssl \	
+    libgdbm-dev libgdbm-compat-dev \	
+    liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev	
+}
+
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'Python-[0-9.]*[0-9]+' |
@@ -38,6 +48,7 @@ _sdkvm_versions() {
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
+  installDependecnies
   buildFromUrl "$(downloadUrl "$version")" "$targetDir"
   postInstall "$targetDir"
 }

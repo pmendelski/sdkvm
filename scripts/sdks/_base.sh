@@ -1,5 +1,6 @@
 source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
 import utils/print
+import utils/systype
 import utils/tmpdir
 import utils/extract
 import utils/path
@@ -101,7 +102,10 @@ resetHomeAndPath() {
   sdk_eval "export PATH=\"$(path_remove "$sdkBinDir")\""
 }
 
-installPackages() {
+installLinuxPackages() {
+  if [ ! $(isLinux) ]; then
+    return
+  fi
   local -r packages="${@:?Expected packages}"
   printInfo "Installing additional system packages (password may be required)"
   printDebug "Packages:\n$packages"
@@ -116,7 +120,10 @@ installPackages() {
   printDebug "Installed packages"
 }
 
-desktopEntry() {
+ubuntuDesktopEntry() {
+  if [ ! $(isUbuntu) ]; then
+    return;
+  fi
   local -r name="$1"
   local -r dir="$HOME/.local/share/applications"
   local entries=""
@@ -138,6 +145,9 @@ desktopEntry() {
 }
 
 resetDesktopEntry() {
+  if [ ! $(isUbuntu) ]; then
+    return;
+  fi
   local -r name="$1"
   local -r dir="$HOME/.local/share/applications"
   if [ -f "$dir/$name.desktop.bak" ]; then
@@ -148,6 +158,9 @@ resetDesktopEntry() {
 }
 
 updateDesktopEntries() {
+  if [ ! $(isUbuntu) ]; then
+    return;
+  fi
   if [ -x "$(command -v update-desktop-database)" ]; then
     printInfo "Updating desktop entries"
     sudo update-desktop-database || printWarn "Could not update desktop entries"

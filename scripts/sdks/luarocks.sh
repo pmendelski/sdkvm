@@ -14,6 +14,11 @@ downloadUrl() {
     head -n 1
 }
 
+installDependecnies() {	
+  installLinuxPackages \	
+    libreadline-dev	
+}
+
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'luarocks-[0-9.]*[0-9]+' |
@@ -27,6 +32,7 @@ _sdkvm_install() {
   local -r luaVersion="$(sdk_getEnabledVersion lua | grep -oE "[0-9].[0-9]")"
   local -r tmpdir="$(tmpdir_create)"
   sdk_isEnabled "lua" || error "Before installing luarocks make sure lua is enabled."
+  installDependecnies
   extractFromUrl "$(downloadUrl "$version")" "$tmpdir"
   cd "$tmpdir"
   ./configure --prefix="$targetDir" --lua-version="$luaVersion" | spin

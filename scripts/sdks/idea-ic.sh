@@ -38,7 +38,7 @@ ideaEnable() {
   local -r name="${1:?Expected name}"
   local -r homeName="$2"
   local -r home="$3"
-  desktopEntry "$name" \
+  ubuntuDesktopEntry "$name" \
     "[Desktop Entry]" \
     "Type=Application" \
     "Encoding=UTF-8" \

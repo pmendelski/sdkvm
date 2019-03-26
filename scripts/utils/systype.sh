@@ -3,14 +3,18 @@
 
 systype() {
   case "$OSTYPE" in
-    linux*)
+    linux*)   echo "linux" ;;
     bsd*)     echo "linux" ;;
     darwin*)  echo "osx" ;;
     solaris*) echo "solaris" ;;
-    cygwin*)
+    cygwin*)  echo "windows" ;;
     msys*)    echo "windows" ;;
     *)        echo "unknown" ;;
   esac
+}
+
+isUbuntu() {
+  [[ "$(uname -r)" == *"Ubuntu"* ]]
 }
 
 declare -gr SYSTYPE="$(systype)"
