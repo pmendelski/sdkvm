@@ -15,16 +15,6 @@ downloadUrl() {
     head -n 1
 }
 
-installDependecnies() {
-  installPackages \
-    build-essential \
-    libsqlite3-dev sqlite3 \
-    bzip2 libbz2-dev zlib1g-dev \
-    libssl-dev openssl \
-    libgdbm-dev libgdbm-compat-dev \
-    liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-}
-
 postInstall() {
   local -r sdkDir="${1:?Expected target dir}"
   if [ -f "$targetDir/bin/python3" ]; then
@@ -48,7 +38,6 @@ _sdkvm_versions() {
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  installDependecnies
   buildFromUrl "$(downloadUrl "$version")" "$targetDir"
   postInstall "$targetDir"
 }

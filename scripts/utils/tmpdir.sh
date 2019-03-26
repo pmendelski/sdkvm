@@ -29,10 +29,6 @@ tmpdir_remove() {
     echo "2"
     error "Could not remove temp dir '$tmpdir'. Passed path is not a directory"
   fi
-  if [[ "${tmpdir##/tmp/}" == "${tmpdir}" ]] && [ ! "$tmpdir" == "/tmp/" ] ; then
-    echo "3"
-    error "Could not remove temp dir '$tmpdir'. Passed path is not a subpath of /tmp"
-  fi
   rm -rf "$tmpdir"
 }
 

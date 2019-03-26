@@ -15,26 +15,6 @@ downloadUrl() {
     head -n 1
 }
 
-installDependecnies() {
-  installPackages \
-    autoconf \
-    bison \
-    bzip2 \
-    ca-certificates \
-    coreutils \
-    dpkg-dev dpkg \
-    gcc \
-    libc-dev \
-    libffi-dev \
-    libxml2-dev \
-    libxslt-dev \
-    make \
-    ncurses-dev \
-    procps \
-    ruby \
-    tar
-}
-
 _sdkvm_versions() {
   downloadUrls | \
     grep -oE 'ruby-[0-9.]*[0-9]+' |
@@ -42,14 +22,9 @@ _sdkvm_versions() {
     sort -urV
 }
 
-# TODO: Add lua https://www.lua.org/ftp/
-# TODO: Add skvm update command
-# TODO: Check completion
-# TODO: Change sdk/version naming
 _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
-  installDependecnies
   buildFromUrl "$(downloadUrl "$version")" "$targetDir" \
     "--disable-install-doc"
 }

@@ -5,10 +5,6 @@ import utils/extract
 import utils/path
 import utils/delimmap
 
-gnuArch() {
-  dpkg-architecture --query DEB_BUILD_GNU_TYPE
-}
-
 grepLink() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
@@ -52,7 +48,7 @@ buildFromUrl() {
   cd "$sourcesDir"
   printInfo "Building ${downloadUrl##*/}"
   printDebug "Using $(nproc) threads for build"
-  ./configure --prefix="$targetDir" --build="$(gnuArch)" $configOptions | spin
+  ./configure --prefix="$targetDir" $configOptions | spin
   make -j "$(nproc)" | spin
   make install | spin
   rm -rf "$sourcesDir"

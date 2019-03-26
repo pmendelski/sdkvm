@@ -2,6 +2,13 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
+luaOs() {
+  case "$(uname -s)" in
+    Darwin*) echo "macosx";;
+    *) echo "linux";;
+  esac
+}
+
 downloadUrls() {
   grepLink 'https://www.lua.org/ftp/' 'lua-[0-9].[0-9].[0-9].tar.gz' | \
     sed -r 's|^(.+)|https://www.lua.org/ftp/\1|'
@@ -30,10 +37,11 @@ _sdkvm_install() {
   local -r version="$1"
   local -r targetDir="$2"
   local -r tmpdir="$(tmpdir_create)"
-  installDependecnies
+  local -r os="$(luaOs)"
+  # installDependecnies
   extractFromUrl "$(downloadUrl "$version")" "$tmpdir"
   cd "$tmpdir"
-  make linux | spin
+  make $os | spin
   make install INSTALL_TOP="$targetDir" | spin
   tmpdir_remove "$tmpdir"
 }

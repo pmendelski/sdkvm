@@ -2,23 +2,33 @@
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
+mongoOs() {
+  case "$(uname -s)" in
+    Darwin*) echo "osx";;
+    *) echo "linux";;
+  esac
+}
+
 downloadUrls() {
+  local -r os="$(mongoOs)"
   curl -s "https://www.mongodb.com/download-center/community" | \
-    grep -oP "https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-[0-9]*\.[0-9]*\.[0-9]*\.tgz" | \
+    grep -oP "https://fastdl.mongodb.org/$os/mongodb-$os-x86_64-[0-9]*\.[0-9]*\.[0-9]*\.tgz" | \
     sort -ru
 }
 
 downloadUrl() {
+  local -r os="$(mongoOs)"
   local -r version="${1:?Expected version}"
   downloadUrls | \
-    grep "/mongodb-linux-x86_64-$version.tgz" | \
+    grep "/mongodb-$os-x86_64-$version.tgz" | \
     head -n 1
 }
 
 _sdkvm_versions() {
+  local -r os="$(mongoOs)"
   downloadUrls | \
-    grep -oE 'mongodb-linux-x86_64-[^-_]+' | \
-    sed 's|^mongodb-linux-x86_64-||' | \
+    grep -oE "mongodb-$os-x86_64-[^-_]+" | \
+    sed "s|^mongodb-$os-x86_64-||" | \
     sed 's|.tgz$||'
 }
 
