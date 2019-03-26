@@ -72,7 +72,7 @@ oracleVersions() {
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  local -r encodedVersion="$(echo "$version" | sed 's|+|%2B|' | sed 's|^.\+-||')"
+  local -r encodedVersion="$(echo "$version" | sed 's|+|%2B|' | sed 's|^[^-]\+-||')"
   local urls=""
   case $version in
     adopt-*)
