@@ -9,11 +9,9 @@ sdkvm \- manage different versions of Software Development Kits.
 
 .SH SYNOPSIS
 .B sdkvm
-.RB [ \-\-version | \-\-update | \-\-help ]
+.RB [ \-\-version | \-\-help ]
 .br
 .B sdkvm
-.RB [ \-\-debug ]
-.RB [ \-\-no\-pretty ]
 .I COMMAND
 .RI [ OPTS ]
 
@@ -38,8 +36,8 @@ Update the sdkvm.
 .BR \-h ", " \-\-help\fR
 Print the manual.
 .TP
-.BR \-d ", " \-dd ", " \-\-debug\fR
-Increase log verbosity. Multiple occurrences (\fI\-d\fR \fI\-d\fR or \fI\-dd\fR) increases the verbosity even more.
+.BR \-v ", " \-vv ", " \-\-verbose\fR
+Increase log verbosity. Multiple occurrences (\fI\-v\fR \fI\-v\fR or \fI\-vv\fR) increases the verbosity even more.
 .TP
 .BR \-p ", " \-\-no-pretty\fR
 Disable pretty printing. Remove colors and icons from logs.

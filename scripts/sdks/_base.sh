@@ -49,6 +49,7 @@ buildFromUrl() {
   cd "$sourcesDir"
   printInfo "Building ${downloadUrl##*/}"
   printDebug "Using $(nproc) threads for build"
+  printDebug "Config options: $configOptions"
   ./configure --prefix="$targetDir" $configOptions | spin
   make -j "$(nproc)" | spin
   make install | spin
@@ -103,7 +104,7 @@ resetHomeAndPath() {
 }
 
 installLinuxPackages() {
-  if [ ! $(isLinux) ]; then
+  if ! isLinux; then
     return
   fi
   local -r packages="${@:?Expected packages}"
@@ -145,7 +146,7 @@ ubuntuDesktopEntry() {
 }
 
 resetDesktopEntry() {
-  if [ ! $(isUbuntu) ]; then
+  if ! isUbuntu; then
     return;
   fi
   local -r name="$1"
@@ -158,7 +159,7 @@ resetDesktopEntry() {
 }
 
 updateDesktopEntries() {
-  if [ ! $(isUbuntu) ]; then
+  if ! isUbuntu; then
     return;
   fi
   if [ -x "$(command -v update-desktop-database)" ]; then

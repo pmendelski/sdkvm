@@ -26,22 +26,34 @@ postInstall() {
     ln -s "$targetDir/bin/python3-config" "$targetDir/bin/python-config"
     ln -s "$targetDir/share/man/man1/python3.1" "$targetDir/share/man/man1/python.1"
   fi
+  printInfo "Installing pip"
+  curl https://bootstrap.pypa.io/get-pip.py | "$targetDir/bin/python"
 }
 
 installDependecnies() {	
-  installLinuxPackages \	
-    build-essential \	
-    libsqlite3-dev sqlite3 \	
-    bzip2 libbz2-dev zlib1g-dev \	
-    libssl-dev openssl \	
-    libgdbm-dev libgdbm-compat-dev \	
-    liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev	
+  installLinuxPackages \
+    build-essential \
+    libsqlite3-dev sqlite3 \
+    bzip2 libbz2-dev zlib1g-dev \
+    libssl-dev openssl \
+    libgdbm-dev libgdbm-compat-dev \
+    liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+  if isMacosWithBrew ; then
+    brew install readline openssl xz zlib
+    local -r opensslPrefix="$(brew --prefix openssl)"
+    export PATH="$opensslPrefix/bin:$PATH"
+    export LDFLAGS="-L$opensslPrefix/lib"
+    export CFLAGS="-I$opensslPrefix/include"
+    export CPPFLAGS="-I$opensslPrefix/include"
+    export PKG_CONFIG_PATH="$opensslPrefix/lib/pkgconfig"
+    export CONFIGURE_OPTS="--with-openssl=$opensslPrefix"
+  fi
 }
 
 _sdkvm_versions() {
   downloadUrls | \
-    grep -oE 'Python-[0-9.]*[0-9]+' |
-    sed 's|^Python-||' |
+    grep -oE 'Python-[0-9.]*[0-9]+' | \
+    sed 's|^Python-||' | \
     sort -urV
 }
 

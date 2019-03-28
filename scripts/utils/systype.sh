@@ -5,7 +5,7 @@ systype() {
   case "$OSTYPE" in
     linux*)   echo "linux" ;;
     bsd*)     echo "linux" ;;
-    darwin*)  echo "osx" ;;
+    darwin*)  echo "macos" ;;
     solaris*) echo "solaris" ;;
     cygwin*)  echo "windows" ;;
     msys*)    echo "windows" ;;
@@ -15,6 +15,18 @@ systype() {
 
 isUbuntu() {
   [[ "$(uname -r)" == *"Ubuntu"* ]]
+}
+
+isLinux() {
+  [ "$(systype)" = "linux" ]
+}
+
+isMacos() {
+  [ "$(systype)" = "macos" ]
+}
+
+isMacosWithBrew() {
+  isMacos && command -v brew >/dev/null 2>&1
 }
 
 declare -gr SYSTYPE="$(systype)"
