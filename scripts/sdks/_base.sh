@@ -5,11 +5,12 @@ import utils/tmpdir
 import utils/extract
 import utils/path
 import utils/delimmap
+import utils/ccurl
 
 grepLink() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
-  curl -s "$url" | \
+  ccurl -s "$url" | \
     grep -oE "[hH][rR][eE][fF]=\"${pattern}\"" | \
     cut -f 2 -d \"
 }
@@ -17,7 +18,7 @@ grepLink() {
 grepQuotedContent() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
-  curl -s "$url" | \
+  ccurl -s "$url" | \
     grep -oE "\"${pattern}\"" | \
     cut -f 2 -d \"
 }

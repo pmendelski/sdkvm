@@ -12,7 +12,7 @@ mongoOs() {
 
 downloadUrls() {
   local -r os="$(mongoOs)"
-  curl -s "https://www.mongodb.com/download-center/community" | \
+  ccurl -s "https://www.mongodb.com/download-center/community" | \
     grep -oP "https://fastdl.mongodb.org/$os/mongodb-$os-x86_64-[0-9]*\.[0-9]*\.[0-9]*\.tgz" | \
     sort -ru
 }

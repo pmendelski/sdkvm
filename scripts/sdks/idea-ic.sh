@@ -5,7 +5,7 @@ source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 ideaDownloadUrls() {
   local -r name="${1:?Expected name}"
-  curl -s "https://data.services.jetbrains.com/products?code=IIU%2CIIC&release.type=release" | \
+  ccurl -s "https://data.services.jetbrains.com/products?code=IIU%2CIIC&release.type=release" | \
     grep -oP "https://download.jetbrains.com/idea/$name-[0-9]*\.[0-9]*\.[0-9]*\.tar\.gz" | \
     sort -ru
 }

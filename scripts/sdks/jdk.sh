@@ -30,7 +30,7 @@ adoptDownloadUrls() {
   local urls=""
   local -r os="$(adoptOs)"
   while : ; do
-    local versionJson="$(curl -s --fail "$apiBaseUrl$version")"
+    local versionJson="$(ccurl -s --fail "$apiBaseUrl$version")"
     [[ -n "$versionJson" ]] || break
     local versionUrls="$(echo "$versionJson" | \
       jq -r ".[].binaries[] | select((.os==\"$os\") and (.architecture==\"x64\") and (.binary_type==\"jdk\") and (.openjdk_impl==\"hotspot\")) | .binary_link" 2>/dev/null)"

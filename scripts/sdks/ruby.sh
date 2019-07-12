@@ -4,7 +4,7 @@ set -e
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
 downloadUrls() {
-  curl -s https://cache.ruby-lang.org/pub/ruby/index.txt | \
+  ccurl -s https://cache.ruby-lang.org/pub/ruby/index.txt | \
     grep "^ruby-[0-9].[0-9].[0-9][^-]" |
     grep -oE "https://.+.tar.gz"
 }
