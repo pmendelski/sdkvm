@@ -26,6 +26,7 @@ _sdkvm() {
     ;;
     options)
       local -a commonOpts=(
+        '--no-cache[Disable cache]' \
         '--help[Show command help]'
         '--silent[Print no logs]'
         '--no-colors[Use no colors in logs]'

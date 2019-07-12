@@ -48,6 +48,7 @@ handleCommonParam() {
     --no-colors|-c) NOCOLORS=1 ;;
     --yes|-y) YES=1 ;;
     --no-icons|-i) NOICONS=1 ;;
+    --no-cache|-c) NOCACHE=1 ;;
     --verbose|-v) VERBOSE=$(($VERBOSE + 1)) ;;
     -vv) VERBOSE=$(($VERBOSE + 2)) ;;
     -vvv) VERBOSE=$(($VERBOSE + 3)) ;;
