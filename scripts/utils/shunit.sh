@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script should be sourced only once
 [[ ${__SHUNIT_LOADED:-} -eq 1 ]] && return || readonly __SHUNIT_LOADED=1

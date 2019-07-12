@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
@@ -14,9 +15,9 @@ downloadUrl() {
     head -n 1
 }
 
-installDependecnies() {	
-  installLinuxPackages \	
-    libreadline-dev	
+installDependecnies() {
+  installLinuxPackages \
+    libreadline-dev
 }
 
 _sdkvm_versions() {

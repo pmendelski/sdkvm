@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 # Make sure we're in the projects root directory
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && echo $PWD )"

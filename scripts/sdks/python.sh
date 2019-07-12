@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
@@ -30,7 +31,7 @@ postInstall() {
   curl https://bootstrap.pypa.io/get-pip.py | "$targetDir/bin/python"
 }
 
-installDependecnies() {	
+installDependecnies() {
   installLinuxPackages \
     build-essential \
     libsqlite3-dev sqlite3 \

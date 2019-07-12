@@ -75,7 +75,7 @@ sdk_saveEnabled() {
 
 _sdk_refreshInitScript() {
   [ -d "$SDKVM_LOCAL_SDKS_DIR" ] || return 0
-  echo "#!/bin/bash" > "$SDKVM_LOCAL_SDKS_DIR/.init"
+  echo "#!/usr/bin/env bash" > "$SDKVM_LOCAL_SDKS_DIR/.init"
   chmod u+x "$SDKVM_LOCAL_SDKS_DIR/.init"
   for file in "$SDKVM_LOCAL_SDKS_DIR"/*/.enable; do
     if [ "$file" != "$SDKVM_LOCAL_SDKS_DIR/*/.enable" ]; then

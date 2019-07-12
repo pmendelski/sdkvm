@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 source $(dirname "${BASH_SOURCE[0]}")/shunit.sh
 source $(dirname "${BASH_SOURCE[0]}")/delimmap.sh

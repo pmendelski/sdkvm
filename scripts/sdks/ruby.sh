@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 source $(dirname "${BASH_SOURCE[0]}")/_base.sh
 
@@ -15,24 +16,24 @@ downloadUrl() {
     head -n 1
 }
 
-installDependecnies() {	
-  installLinuxPackages \	
-    autoconf \	
-    bison \	
-    bzip2 \	
-    ca-certificates \	
-    coreutils \	
-    dpkg-dev dpkg \	
-    gcc \	
-    libc-dev \	
-    libffi-dev \	
-    libxml2-dev \	
-    libxslt-dev \	
-    make \	
-    ncurses-dev \	
-    procps \	
-    ruby \	
-    tar	
+installDependecnies() {
+  installLinuxPackages \
+    autoconf \
+    bison \
+    bzip2 \
+    ca-certificates \
+    coreutils \
+    dpkg-dev dpkg \
+    gcc \
+    libc-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt-dev \
+    make \
+    ncurses-dev \
+    procps \
+    ruby \
+    tar
 }
 
 _sdkvm_versions() {
