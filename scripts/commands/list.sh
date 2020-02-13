@@ -21,6 +21,7 @@ printSdks() {
 
 printSdkVersions() {
   local -r sdk="${1:?Expected SDK}"
+  local -r all="${2:?Expected all param}"
   local -r localVersions="$(sdk_listLocalSdkVersions "$sdk")"
   if [ -n "$localVersions" ]; then
     println "Local SDK versions:"
@@ -33,9 +34,13 @@ printSdkVersions() {
   fi
   if [ -n "$remoteVersions" ]; then
     println "Remote SDK versions:"
-    printPadded "$(echo "$remoteVersions" | head -n 10)"
-    if [ $remoteVersionsCount -gt 10 ]; then
-      printPadded "...and more, total: $remoteVersionsCount"
+    if [ $all = "1" ]; then
+      printPadded "$remoteVersions"
+    else
+      printPadded "$(echo "$remoteVersions" | head -n 10)"
+      if [ $remoteVersionsCount -gt 10 ]; then
+        printPadded "...and more, total: $remoteVersionsCount"
+      fi
     fi
   else
     printWarn "Remote SDK not found: $sdk"
@@ -45,6 +50,7 @@ printSdkVersions() {
 main() {
   handleHelp "list" "$@"
   local -i local=0
+  local -i all=0
   local -i remote=0
   local -i flat=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
@@ -55,6 +61,9 @@ main() {
     case $1 in
       --local|-l)
         local=1
+        ;;
+      --all|-a)
+        all=1
         ;;
       --remote|-r)
         remote=1
@@ -82,7 +91,7 @@ main() {
     || sdk_listRemoteSdks
   else
     [ -n "$sdk" ] \
-      && printSdkVersions "$sdk" \
+      && printSdkVersions "$sdk" "$all" \
       || printSdks
   fi
   return 0
