@@ -17,7 +17,8 @@ downloadUrl() {
 }
 
 postInstall() {
-  local -r sdkDir="${1:?Expected target dir}"
+  sleep 3 # wait for all I/O
+  local -r targetDir="${1:?Expected target dir}"
   if [ -f "$targetDir/bin/python3" ]; then
     printInfo "Recognized python3. Linking as python."
     ln -s "$targetDir/bin/idle3" "$targetDir/bin/idle"
@@ -28,7 +29,11 @@ postInstall() {
     ln -s "$targetDir/share/man/man1/python3.1" "$targetDir/share/man/man1/python.1"
   fi
   printInfo "Installing pip"
-  curl https://bootstrap.pypa.io/get-pip.py | "$targetDir/bin/python"
+  local -r getPipDir="$(tmpdir_create)"
+  cd "$getPipDir"
+  curl -s https://bootstrap.pypa.io/get-pip.py -o "get-pip.py"
+  "$targetDir/bin/python" "get-pip.py"
+  rm -rf "$getPipDir"
 }
 
 installDependecnies() {

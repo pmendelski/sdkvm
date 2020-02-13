@@ -28,14 +28,14 @@ extractFromUrl() {
   local -r targetDir="${2:?Expected target directory}"
   shift; shift
   local -r wgetParams=("$@")
-  local -r fileName="${downloadUrl##*/}"
   local -r tmpdir="$(tmpdir_create)"
+  local -r fileName="${downloadUrl##*/}"
   cd "$tmpdir"
   printInfo "Downloading $fileName from $downloadUrl"
   printDebug "Using temporary location: $tmpdir"
   wget -q --show-progress --no-check-certificate --no-cookies "${wgetParams[@]}" -O $fileName $downloadUrl
   printTrace "Downloaded $fileName from $downloadUrl to $tmpdir"
-  printInfo "Extracting $fileName files to $targetDir"
+  printInfo "Extracting $fileName to $targetDir"
   extract "$fileName" "$targetDir"
   printTrace "Extracted $fileName files to $targetDir"
   tmpdir_remove "$tmpdir"
