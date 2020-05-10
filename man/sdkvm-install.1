@@ -7,6 +7,7 @@ sdkvm install \- install a SDK
 .B sdkvm install
 .I SDK
 .RB [ VERSION ]
+.RB [ \-\-all ]
 .RB [ \-\-no\-switch ]
 .RB [ \-\-force ]
 
@@ -16,6 +17,9 @@ Install SDK version on local mashine. If no version is provided the newest one a
 By default newly installed SDK is autmatically enabled and persisted.
 
 .SH OPTIONS
+.TP
+.BR \-n ", " \-\-all\fR
+Install all SDKs. Useful when reinstalling a system.
 .TP
 .BR \-n ", " \-\-no\-switch\fR
 Do not automatically enable newly installed SDK.
