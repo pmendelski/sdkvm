@@ -40,6 +40,14 @@ main() {
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   local -r versionParam="$(echo "$2" | grep -o "^[^-].*")"
 
+  if [ -n "$sdk" ]; then
+    shift
+  fi
+
+  if [ -n "$versionParam" ]; then
+    shift
+  fi
+
   while (("$#")); do
     case $1 in
       --no-use|-u)
@@ -64,8 +72,7 @@ main() {
   if [ $all = 1 ]; then
     installAllNotInstalledSdks "$force" "$use" "$save"
   else
-    requireSdkParam "$sdk" || shift
-    [ -n "$versionParam" ] && shift
+    requireSdkParam "$sdk" || :
     version="${versionParam:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
     installSdk "$sdk" "$version" "$force" "$use" "$save"
   fi
