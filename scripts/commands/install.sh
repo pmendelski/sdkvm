@@ -27,6 +27,7 @@ function installAllNotInstalledSdks() {
   local version=""
   for sdk in $(sdk_listAllSdks | sort); do
     version="$(sdk_getNewestRemoteSdkVersion "$sdk")"
+    [ -z "$version" ] && error "Could not resolve newest sdk version for: $sdk"
     installSdk "$sdk" "$version" "$force" "$use" "$save"
   done
 }
@@ -68,7 +69,7 @@ main() {
     esac
     shift
   done
-  
+
   if [ $all = 1 ]; then
     installAllNotInstalledSdks "$force" "$use" "$save"
   else
@@ -76,7 +77,7 @@ main() {
     version="${versionParam:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
     installSdk "$sdk" "$version" "$force" "$use" "$save"
   fi
-  
+
   return 0
 }
 
