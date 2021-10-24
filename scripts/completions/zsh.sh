@@ -1,5 +1,8 @@
 compdef _sdkvm sdkvm
 
+# disable sorting sdkvm so versions are not sorted alphabetically
+# zstyle ':completion:*:sdkvm:*' sort false
+
 _sdkvm() {
   local ret=1 state
   _arguments -C \
@@ -50,7 +53,7 @@ _sdkvm() {
             && ret=0
         ;;
         install)
-          _arguments \
+          _arguments -w -s -S \
             "1: :($(sdkvm list --remote))" \
             "2: :($(sdkvm list "$words[2]" --remote))" \
             '--all[Install all SDKs]' \

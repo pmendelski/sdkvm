@@ -12,6 +12,13 @@ sdk__import() {
 
   local -r moduleFuns=(
     "_sdkvm_install"
+    "_sdkvm_install_packages"
+    "_sdkvm_enable"
+    "_sdkvm_disable"
+    "_sdkvm_versions"
+  )
+  local -r requiredFuns=(
+    "_sdkvm_install"
     "_sdkvm_enable"
     "_sdkvm_disable"
     "_sdkvm_versions"
@@ -26,10 +33,18 @@ sdk__import() {
     unset -f "$fun"
   done
   source "$sdkScript"
-  for fun in $moduleFuns; do
-    _requireSdkFunction $sdk "_sdkvm_versions"
+  for fun in $requiredFuns; do
+    _requireSdkFunction $sdk $fun
   done
   _SDKVM_IMPORTED_SDK="$sdk"
+}
+
+sdk_hasAction() {
+  local -r sdk="$1"
+  local -r action="_sdkvm_$2"
+  sdk__import "$sdk"
+  local -r typeResult="$(type -t $action)"
+  [ -n "$typeResult" ] && [ "$typeResult" = function ]
 }
 
 sdk_execute() {

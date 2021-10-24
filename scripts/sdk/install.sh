@@ -1,13 +1,29 @@
 sdk_installSdkVersion() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
-  local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
+  local -r sdkDir="$SDKVM_LOCAL_SDKS_DIR/$sdk"
+  local -r targetDir="$sdkDir/$version"
   if sdk_isLocalSdkVersion "$sdk" "$version"; then
     error "SDK is already installed $sdk/$version. Skipping..."
   fi
   printInfo "Installing SDK $sdk/$version"
-  sdk_execute "$sdk" install "$version" "$targetDir"
+  sdk_execute "$sdk" install "$version" "$targetDir" "$sdkDir"
   printDebug "SDK installed successffuly $sdk/$version"
+}
+
+sdk_installSdkPackages() {
+  local -r sdk="${1:?Expected SDK}"
+  local -r version="${2:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
+  local -r sdkDir="$SDKVM_LOCAL_SDKS_DIR/$sdk"
+  local -r targetDir="$sdkDir/$version"
+  if sdk_hasAction "$sdk" "installPackages"; then
+    printInfo "Installing SDK global packages $sdk/$version"
+    cd "$targetDir"
+    sdk_execute "$sdk" installPackages "$version" "$targetDir" "$sdkDir"
+    printDebug "SDK global packages installed successffuly $sdk/$version"
+  else
+    printInfo "SDK $sdk/$version has no installPackages action defined. Skipping..."
+  fi
 }
 
 sdk_uninstallSdkVersion() {

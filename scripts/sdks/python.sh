@@ -43,7 +43,8 @@ installDependecnies() {
     bzip2 libbz2-dev zlib1g-dev \
     libssl-dev openssl \
     libgdbm-dev libgdbm-compat-dev \
-    liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+    liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev \
+    libxext-dev
   if isMacosWithBrew ; then
     brew install readline openssl xz zlib
     local -r opensslPrefix="$(brew --prefix openssl)"
@@ -69,6 +70,18 @@ _sdkvm_install() {
   installDependecnies
   buildFromUrl "$(downloadUrl "$version")" "$targetDir"
   postInstall "$targetDir"
+}
+
+_sdkvm_installPackages() {
+  if [ -z "$SDKVM_PYTHON_PACKAGES" ]; then
+    printInfo "No SDKVM_PYTHON_PACKAGES with python global packages. Skipping..."
+  else
+    for pkg in $SDKVM_PYTHON_PACKAGES; do
+      pip install --user "$pkg" \
+        && printInfo "Package installed successfully: $pkg" \
+        || printWarn "Could not install package: $pkg"
+    done
+  fi
 }
 
 _sdkvm_enable() {

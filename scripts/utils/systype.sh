@@ -14,7 +14,7 @@ systype() {
 }
 
 isUbuntu() {
-  [[ "$(uname -r)" == *"Ubuntu"* ]]
+  [[ "$(uname --all)" == *"Ubuntu"* ]]
 }
 
 isLinux() {

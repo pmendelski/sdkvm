@@ -51,6 +51,18 @@ _sdkvm_install() {
     "--disable-install-doc"
 }
 
+_sdkvm_installPackages() {
+  if [ -z "$SDKVM_RUBY_PACKAGES" ]; then
+    printInfo "No SDKVM_RUBY_PACKAGES with ruby global packages. Skipping..."
+  else
+    for pkg in $SDKVM_RUBY_PACKAGES; do
+      gem install --user "$pkg" \
+        && printInfo "Package installed successfully: $pkg" \
+        || printWarn "Could not install package: $pkg"
+    done
+  fi
+}
+
 _sdkvm_enable() {
   setupHomeAndPath "RUBY" "$2"
 }
