@@ -19,7 +19,7 @@ downloadUrl() {
 
 _sdkvm_versions() {
   downloadUrls | \
-    grep -oE "redis-[^-_]+" | \
+    grep -oE "redis-[0-9]+(\.[0-9]+)*(-[^.-]+)*" | \
     sed "s|^redis-||" | \
     sed 's|.tar.gz$||'
 }

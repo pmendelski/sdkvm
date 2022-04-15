@@ -11,8 +11,8 @@ go_systype() {
 }
 
 downloadUrls() {
-  grepLink "https://golang.org/dl/" "/dl/go[0-9.]+$(go_systype)-amd64.tar.gz" | \
-    sed 's|^|https://golang.org|'
+  grepLink "https://go.dev/dl/" "/dl/go[0-9.]+$(go_systype)-amd64.tar.gz" | \
+    sed 's|^|https://go.dev|'
 }
 
 downloadUrl() {
