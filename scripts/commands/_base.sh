@@ -3,9 +3,18 @@
 source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
 import utils/print
 import utils/error
+import utils/systype
 import sdk
 
 registerErrorTrap
+
+if isMacos; then
+  if [ -d /opt/homebrew/opt/grep/libexec/gnubin ]; then
+    export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+  elif [ -d /usr/local/opt/grep/libexec/gnubin ]; then
+    export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"
+  fi
+fi
 
 requireParam() {
   local -r name="$1"
