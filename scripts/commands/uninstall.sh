@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 uninstallSdkVersion() {
   local -r sdk="$1"
@@ -31,26 +31,26 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --yes|-y)
-        yes=1
-        ;;
-      -*)
-        handleCommonParam "$1" "uninstall"
-        ;;
+    --yes | -y)
+      yes=1
+      ;;
+    -*)
+      handleCommonParam "$1" "uninstall"
+      ;;
     esac
     shift
   done
 
   if [ -n "$version" ]; then
-    sdk_isLocalSdkVersion "$sdk" "$version" \
-      && uninstallSdkVersion "$sdk" "$version" "$yes" \
-      || printWarn "SDK version was not found: $sdk/$version"
+    sdk_isLocalSdkVersion "$sdk" "$version" &&
+      uninstallSdkVersion "$sdk" "$version" "$yes" ||
+      printWarn "SDK version was not found: $sdk/$version"
   else
-    sdk_isLocalSdk "$sdk" \
-      && uninstallSdk "$sdk" "$yes" \
-      || printWarn "SDK was not found: $sdk"
+    sdk_isLocalSdk "$sdk" &&
+      uninstallSdk "$sdk" "$yes" ||
+      printWarn "SDK was not found: $sdk"
   fi
   return 0
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"

@@ -1,6 +1,7 @@
+# shellcheck disable=SC2034
 # Script to be sources by all sdkvm commands
 
-source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../utils/import.sh"
 import utils/print
 import utils/error
 import utils/systype
@@ -32,7 +33,7 @@ requireVersionParam() {
 
 help() {
   local cmdmanfile="${1:+-$1}"
-  man $SDKVM_HOME/man/sdkvm$cmdmanfile.1
+  man "$SDKVM_HOME/man/sdkvm$cmdmanfile.1"
   exit 0
 }
 
@@ -41,9 +42,9 @@ handleHelp() {
   shift
   while (("$#")); do
     case $1 in
-      --help|-h)
-        help "$commandName"
-        ;;
+    --help | -h)
+      help "$commandName"
+      ;;
     esac
     shift
   done
@@ -52,17 +53,17 @@ handleHelp() {
 handleCommonParam() {
   local -r commandName="$2"
   case "$1" in
-    --help|-h) help "$commandName" ;;
-    --silent|-s) SILENT=1 ;;
-    --no-colors|-c) NOCOLORS=1 ;;
-    --yes|-y) YES=1 ;;
-    --no-icons|-i) NOICONS=1 ;;
-    --no-cache|-c) NOCACHE=1 ;;
-    --verbose|-v) VERBOSE=$(($VERBOSE + 1)) ;;
-    -vv) VERBOSE=$(($VERBOSE + 2)) ;;
-    -vvv) VERBOSE=$(($VERBOSE + 3)) ;;
-    *)
-      error "Unknown parameter \"$1\". Try --help option."
-      ;;
+  --help | -h) help "$commandName" ;;
+  --silent | -s) SILENT=1 ;;
+  --no-colors | -c) NOCOLORS=1 ;;
+  --yes | -y) YES=1 ;;
+  --no-icons | -i) NOICONS=1 ;;
+  --no-cache | -n) NOCACHE=1 ;;
+  -vvv) VERBOSE=$((VERBOSE + 3)) ;;
+  -vv) VERBOSE=$((VERBOSE + 2)) ;;
+  --verbose | -v) VERBOSE=$((VERBOSE + 1)) ;;
+  *)
+    error "Unknown parameter \"$1\". Try --help option."
+    ;;
   esac
 }

@@ -1,6 +1,6 @@
 sdk_listRemoteSdks() {
-  find "$SDKVM_REMOTE_SDKS_DIR" -mindepth 1 -maxdepth 1 -type f 2>/dev/null ! -name '_*' \
-    | xargs -I '{}' basename {} .sh 2>/dev/null
+  find "$SDKVM_REMOTE_SDKS_DIR" -mindepth 1 -maxdepth 1 -type f ! -name '_*' 2>/dev/null |
+    xargs -I '{}' basename {} .sh 2>/dev/null
 }
 
 sdk_listRemoteSdkVersions() {
@@ -9,8 +9,8 @@ sdk_listRemoteSdkVersions() {
 }
 
 sdk_listLocalSdks() {
-  find "$SDKVM_LOCAL_SDKS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
-    | xargs -I '{}' basename {} 2>/dev/null
+  find "$SDKVM_LOCAL_SDKS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null |
+    xargs -I '{}' basename {} 2>/dev/null
 }
 
 sdk_listEnabledSdks() {
@@ -23,21 +23,21 @@ sdk_listEnabledSdks() {
 
 sdk_listLocalSdkVersions() {
   local -r sdk="${1:?Expected SDK}"
-  find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null \
-    | grep -o '[^/]*$' \
-    | sort -rV
+  find "$SDKVM_LOCAL_SDKS_DIR/${sdk}" -mindepth 1 -maxdepth 1 -type d 2>/dev/null |
+    grep -o '[^/]*$' |
+    sort -rV
 }
 
 sdk_listAllSdks() {
-  echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" \
-    | sort -uV \
-    | sed '/^\s*$/d'
+  echo -e "$(sdk_listLocalSdks)\n$(sdk_listRemoteSdks)" |
+    sort -uV |
+    sed '/^\s*$/d'
 }
 
 sdk_listAllSdkVersions() {
   local -r sdk="${1:?Expected SDK}"
-  echo -e "$(sdk_listLocalSdkVersions "$sdk")\n$(sdk_listRemoteSdkVersions "$sdk")" | \
-    sort -urV | \
+  echo -e "$(sdk_listLocalSdkVersions "$sdk")\n$(sdk_listRemoteSdkVersions "$sdk")" |
+    sort -urV |
     sed '/^\s*$/d'
 }
 

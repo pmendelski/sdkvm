@@ -37,7 +37,7 @@ reportFailures() {
   local previousTestTitle=""
   local -i failures=0
   for failure in "${testFailures[@]}"; do
-    IFS=$TEST_FAILURE_SEP read -ra a <<<$failure;
+    IFS=$TEST_FAILURE_SEP read -ra a <<<"$failure"
     local testFile=${a[0]}
     local testTitle=${a[1]}
     local message=${a[2]}
@@ -55,7 +55,7 @@ trap reportFailures EXIT
 printTestSummary() {
   local printedTestTitle=0
   for failure in "${testFailures[@]}"; do
-    IFS=$TEST_FAILURE_SEP read -ra a <<<$failure;
+    IFS=$TEST_FAILURE_SEP read -ra a <<<$failure
     local testFile=${a[0]}
     local testTitle=${a[1]}
     local message=${a[2]}
@@ -79,7 +79,7 @@ addFailure() {
   local -r entry="${currentTestFile}${TEST_FAILURE_SEP}${currentTestTitle}${TEST_FAILURE_SEP}${escaped}"
   testFailures+=("$entry")
   if [ $bail = 1 ]; then
-    exit 1;
+    exit 1
   fi
 }
 
@@ -114,9 +114,9 @@ runTests() {
 #############
 
 noCtrl() {
-  echo -n "$1" \
-    | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' \
-    | sed -e 's/[[:cntrl:]]//g'
+  echo -n "$1" |
+    sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' |
+    sed -e 's/[[:cntrl:]]//g'
 }
 
 trim() {
@@ -176,21 +176,21 @@ assertFailure() {
 assertDir() {
   local -r actual="$1"
   local -r msg="${2:-Expected '$actual' to be a directory}"
-  [[ -d "$actual"  ]]
+  [[ -d "$actual" ]]
   assertSuccess "$msg"
 }
 
 assertFile() {
   local -r actual="$1"
   local -r msg="${2:-Expected '$actual' to be a file}"
-  [[ -f "$actual"  ]]
+  [[ -f "$actual" ]]
   assertSuccess "$msg"
 }
 
 assertExists() {
   local -r actual="$1"
   local -r msg="${2:-Expected '$actual' to exist}"
-  [ -e "$actual"  ]
+  [ -e "$actual" ]
   assertSuccess "$msg"
 }
 
@@ -256,14 +256,14 @@ noColors() {
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   while (("$#")); do
-  case $1 in
-    --nocolor|-c)
+    case $1 in
+    --nocolor | -c)
       noColors
       ;;
-    --bail|-b)
+    --bail | -b)
       bail=1
       ;;
-    --help|-h)
+    --help | -h)
       printHelp
       exit 0
       ;;

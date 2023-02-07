@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source $(dirname "${BASH_SOURCE[0]}")/shunit.sh
-source $(dirname "${BASH_SOURCE[0]}")/delimlist.sh
+source "$(dirname "${BASH_SOURCE[0]}")/shunit.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/delimlist.sh"
 
 shouldRemoveColonDelimitedValue() {
   local -r text="$1"

@@ -1,6 +1,7 @@
-source $(dirname "${BASH_SOURCE[0]}")/../utils/import.sh
+source "$(dirname "${BASH_SOURCE[0]}")/../utils/import.sh"
 import utils/print
 import utils/systype
+import utils/archtype
 import utils/tmpdir
 import utils/extract
 import utils/path
@@ -10,23 +11,24 @@ import utils/ccurl
 grepLink() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
-  ccurl -s "$url" | \
-    grep -oE "[hH][rR][eE][fF]=\"${pattern}\"" | \
+  ccurl -s "$url" |
+    grep -oE "[hH][rR][eE][fF]=\"${pattern}\"" |
     cut -f 2 -d \"
 }
 
 grepQuotedContent() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
-  ccurl -s "$url" | \
-    grep -oE "\"${pattern}\"" | \
+  ccurl -s "$url" |
+    grep -oE "\"${pattern}\"" |
     cut -f 2 -d \"
 }
 
 extractFromUrl() {
   local -r downloadUrl="${1:?Expected download url}"
   local -r targetDir="${2:?Expected target directory}"
-  shift; shift
+  shift
+  shift
   local -r wgetParams=("$@")
   local -r tmpdir="$(tmpdir_create)"
   local -r fileName="${downloadUrl##*/}"
@@ -124,7 +126,7 @@ installLinuxPackages() {
 
 ubuntuDesktopEntry() {
   if [ ! $(isUbuntu) ]; then
-    return;
+    return
   fi
   local -r name="$1"
   local -r dir="$HOME/.local/share/applications"
@@ -141,14 +143,14 @@ ubuntuDesktopEntry() {
       mv "$dir/$name.desktop" "$dir/$name.desktop.bak"
     fi
     printInfo "Creating desktop entry: $dir/$name.desktop"
-    echo -e "$entries" > "$dir/$name.desktop"
+    echo -e "$entries" >"$dir/$name.desktop"
     updateDesktopEntries
   fi
 }
 
 resetDesktopEntry() {
   if ! isUbuntu; then
-    return;
+    return
   fi
   local -r name="$1"
   local -r dir="$HOME/.local/share/applications"
@@ -161,7 +163,7 @@ resetDesktopEntry() {
 
 updateDesktopEntries() {
   if ! isUbuntu; then
-    return;
+    return
   fi
   if [ -x "$(command -v update-desktop-database)" ]; then
     printInfo "Updating desktop entries"

@@ -7,7 +7,7 @@ declare -g __IMPORTED=()
 
 import() {
   import_error() {
-    (>&2 echo $1)
+    (echo >&2 "$1")
     exit 1
   }
 
@@ -29,7 +29,7 @@ import() {
 
   if [ $cached = 0 ]; then
     __IMPORTED+=("$resolved")
-    source "$resolved" \
-      || import_error "Could not import \"${resolved}\" from \"$callerFile\". Could not source it."
+    source "$resolved" ||
+      import_error "Could not import \"${resolved}\" from \"$callerFile\". Could not source it."
   fi
 }

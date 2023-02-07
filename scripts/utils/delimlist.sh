@@ -27,9 +27,9 @@ delimlist_remove() {
   if [ "$text" = "$toremove" ]; then
     echo ""
   else
-    echo "${delim}${text}${delim}" \
-      | sed "s|${delim}${toremove}${delim}|${delim}|" \
-      | sed -E "s|${delim}(.*)${delim}|\1|"
+    echo "${delim}${text}${delim}" |
+      sed "s|${delim}${toremove}${delim}|${delim}|" |
+      sed -E "s|${delim}(.*)${delim}|\1|"
   fi
 }
 
@@ -40,9 +40,9 @@ delimlist_add() {
   if [ -z "$text" ]; then
     delimlist_encodeValue "$toadd" "$delim"
   else
-    delimlist_contains "$text" "$toadd" "$delim" \
-      && echo "$text" \
-      || echo "${text}${delim}$(delimlist_encodeValue "$toadd" "$delim")"
+    delimlist_contains "$text" "$toadd" "$delim" &&
+      echo "$text" ||
+      echo "${text}${delim}$(delimlist_encodeValue "$toadd" "$delim")"
   fi
 }
 
@@ -58,16 +58,16 @@ delimlist_replace() {
   local -r delim="${4:-:}"
   local -r toreplace="$(delimlist_encodeValue "$2" "$delim")"
   local -r replacement="$(delimlist_encodeValue "$3" "$delim")"
-  echo "${delim}${text}${delim}" \
-    | sed "s|${delim}${toreplace}${delim}|${delim}${replacement}${delim}|" \
-    | sed -E "s|${delim}(.*)${delim}|\1|"
+  echo "${delim}${text}${delim}" |
+    sed "s|${delim}${toreplace}${delim}|${delim}${replacement}${delim}|" |
+    sed -E "s|${delim}(.*)${delim}|\1|"
 }
 
 delimlist_values() {
   local -r text="$1"
   local -r delim="${2:-:}"
   local -r encoded="$(echo "$text" | sed "s|${delim}|\n|g")"
-  for v in "$encoded"; do
+  for v in $encoded; do
     delimlist_decodeValue "$v" "$delim"
   done
 }
@@ -91,9 +91,9 @@ delimlist_findByPrefix() {
   local -r text="$1"
   local -r prefix="$2"
   local -r delim="${3:-:}"
-  echo "$(delimlist_values "$text" "$delim")" | grep "$prefix"
+  delimlist_values "$text" "$delim" | grep "$prefix"
 }
 
 delimlist_findFirstByPrefix() {
-  delimlist_findByPrefix $@ | head -n 1
+  delimlist_findByPrefix "$@" | head -n 1
 }

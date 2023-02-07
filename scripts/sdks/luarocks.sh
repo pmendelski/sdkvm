@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 downloadUrls() {
-  grepLink 'http://luarocks.github.io/luarocks/releases/' 'luarocks-[0-9].[0-9].[0-9].tar.gz' | \
+  grepLink 'http://luarocks.github.io/luarocks/releases/' 'luarocks-[0-9].[0-9].[0-9].tar.gz' |
     sed -r 's|^(.+)|http://luarocks.github.io/luarocks/releases/\1|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  downloadUrls | \
-    grep "luarocks-$version.tar.gz" | \
+  downloadUrls |
+    grep "luarocks-$version.tar.gz" |
     head -n 1
 }
 
@@ -21,7 +21,7 @@ installDependecnies() {
 }
 
 _sdkvm_versions() {
-  downloadUrls | \
+  downloadUrls |
     grep -oE 'luarocks-[0-9.]*[0-9]+' |
     sed 's|^luarocks-||' |
     sort -urV

@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 downloadUrls() {
-  ccurl -s "http://download.redis.io/releases/" | \
-    grep -oP "redis-[0-9]+(\.[0-9]+)*(-[^.-]+)*\.tar.gz" | \
-    sed "s|^redis-|http://download.redis.io/releases/redis-|" | \
+  ccurl -s "http://download.redis.io/releases/" |
+    grep -oP "redis-[0-9]+(\.[0-9]+)*(-[^.-]+)*\.tar.gz" |
+    sed "s|^redis-|http://download.redis.io/releases/redis-|" |
     sort -ru
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  downloadUrls | \
-    grep "/releases/redis-$version.tar.gz" | \
+  downloadUrls |
+    grep "/releases/redis-$version.tar.gz" |
     head -n 1
 }
 
 _sdkvm_versions() {
-  downloadUrls | \
-    grep -oE "redis-[0-9]+(\.[0-9]+)*(-[^.-]+)*" | \
-    sed "s|^redis-||" | \
+  downloadUrls |
+    grep -oE "redis-[0-9]+(\.[0-9]+)*(-[^.-]+)*" |
+    sed "s|^redis-||" |
     sed 's|.tar.gz$||'
 }
 

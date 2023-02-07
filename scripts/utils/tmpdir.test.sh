@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-source $(dirname "${BASH_SOURCE[0]}")/shunit.sh
-source $(dirname "${BASH_SOURCE[0]}")/tmpdir.sh
+source "$(dirname "${BASH_SOURCE[0]}")/shunit.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/tmpdir.sh"
 
 shouldCreateTmpDir() {
   local -r tmpdir=$(tmpdir_create)

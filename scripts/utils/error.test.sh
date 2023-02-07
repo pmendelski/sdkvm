@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
-source $(dirname "${BASH_SOURCE[0]}")/shunit.sh
-source $(dirname "${BASH_SOURCE[0]}")/error.sh
+source "$(dirname "${BASH_SOURCE[0]}")/shunit.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/error.sh"
 
 shouldExitWithNonZeroCode() {
-  local -r code="$(error &>/dev/null; echo $?)"
+  local -r code="$(
+    error &>/dev/null
+    echo $?
+  )"
   assertNotEquals "$code" "0" "Expected error command to exit with non 0 status code"
 }
 test shouldExitWithNonZeroCode
@@ -23,7 +26,10 @@ shouldPrintDefaultErrroMessageToStdErr() {
 test shouldPrintDefaultErrroMessageToStdErr
 
 shouldPrintStacktraceToStdErr() {
-  local -r result="$(trap 'errorTrap 2>&1 >/dev/null' EXIT; error 2>&1 >/dev/null)"
+  local -r result="$(
+    trap 'errorTrap 2>&1 >/dev/null' EXIT
+    error 2>&1 >/dev/null
+  )"
   assertContains "$(trimmedNoCtrl "$result")" "1: shouldPrintStacktraceToStdErr(...) ./scripts/utils/shunit.sh"
 }
 test shouldPrintStacktraceToStdErr

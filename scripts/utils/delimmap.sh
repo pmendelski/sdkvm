@@ -1,7 +1,7 @@
 # This script should be sourced only once
 [[ ${UTILS_DELIMMAP:-} -eq 1 ]] && return || readonly UTILS_DELIMMAP=1
 
-source $(dirname "${BASH_SOURCE[0]}")/delimlist.sh
+source "$(dirname "${BASH_SOURCE[0]}")/delimlist.sh"
 
 declare -r ENTRY_DELIM_REPLACEMENT="%SLASH%"
 

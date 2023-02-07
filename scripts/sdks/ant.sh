@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 downloadUrls() {
-  grepLink 'https://archive.apache.org/dist/ant/binaries/' 'apache-ant-[0-9.]+-bin\.tar\.gz' | \
+  grepLink 'https://archive.apache.org/dist/ant/binaries/' 'apache-ant-[0-9.]+-bin\.tar\.gz' |
     sed 's|^|https://archive.apache.org/dist/ant/binaries/|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  downloadUrls | \
-    grep "/apache-ant-$version-bin.tar.gz" | \
+  downloadUrls |
+    grep "/apache-ant-$version-bin.tar.gz" |
     head -n 1
 }
 
 _sdkvm_versions() {
-  downloadUrls | \
-    grep -oE 'apache-ant-[^-_]+' | \
+  downloadUrls |
+    grep -oE 'apache-ant-[^-_]+' |
     sed 's|apache-ant-||' |
     sort -rV
 }

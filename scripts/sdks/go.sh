@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 go_systype() {
   case "$OSTYPE" in
-    linux*)   echo "linux" ;;
-    darwin*)  echo "darwin" ;;
+  linux*) echo "linux" ;;
+  darwin*) echo "darwin" ;;
   esac
 }
 
 downloadUrls() {
-  grepLink "https://go.dev/dl/" "/dl/go[0-9.]+$(go_systype)-amd64.tar.gz" | \
+  grepLink "https://go.dev/dl/" "/dl/go[0-9.]+$(go_systype)-amd64.tar.gz" |
     sed 's|^|https://go.dev|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  downloadUrls | \
-    grep "/go$version.$(go_systype)-amd64.tar.gz" | \
+  downloadUrls |
+    grep "/go$version.$(go_systype)-amd64.tar.gz" |
     head -n 1
 }
 
 _sdkvm_versions() {
-  downloadUrls | \
-    grep -oE 'go[^a-z]+\.' | \
-    sed 's|^go||' | \
+  downloadUrls |
+    grep -oE 'go[^a-z]+\.' |
+    sed 's|^go||' |
     sed 's|.$||'
 }
 
@@ -42,4 +42,3 @@ _sdkvm_enable() {
 _sdkvm_disable() {
   resetHomeAndPath "GO" "$2"
 }
-

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 updateSdkvm() {
   printInfo "Updating sdkvm..."
@@ -18,15 +18,15 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --no-use|-u)
-        use=0
-        ;;
-      --no-save|-s)
-        save=0
-        ;;
-      -*)
-        handleCommonParam "$1" "update"
-        ;;
+    --no-use | -u)
+      use=0
+      ;;
+    --no-save | -s)
+      save=0
+      ;;
+    -*)
+      handleCommonParam "$1" "update"
+      ;;
     esac
     shift
   done
@@ -48,4 +48,4 @@ main() {
   return 0
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"

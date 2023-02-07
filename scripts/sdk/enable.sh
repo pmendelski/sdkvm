@@ -41,8 +41,8 @@ sdk_disable() {
     sdk_execute "$sdk" disable "$version" "$targetDir"
     printDebug "Disabled SDK $sdk/$version"
   else
-    [ -z "$enabled" ] && \
-      printInfo "SDK is not enabled. Skipping..." || \
+    [ -z "$enabled" ] &&
+      printInfo "SDK is not enabled. Skipping..." ||
       printInfo "SDK $sdk/$version is not enabled. Enabled version: $enabled. Skipping..."
   fi
 }
@@ -61,10 +61,10 @@ sdk_saveEnabled() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   [ -z "$version" ] && error "Could not resolve SDK version to persist"
-  echo "$version" > "$SDKVM_LOCAL_SDKS_DIR/$sdk/.version"
+  echo "$version" >"$SDKVM_LOCAL_SDKS_DIR/$sdk/.version"
   rm -f "$SDKVM_LOCAL_SDKS_DIR/$sdk/enabled"
   ln -sf "$SDKVM_LOCAL_SDKS_DIR/$sdk/$version" "$SDKVM_LOCAL_SDKS_DIR/$sdk/enabled"
-  echo "" > $SDKVM_LOCAL_SDKS_DIR/$sdk/.enable
+  echo "" >$SDKVM_LOCAL_SDKS_DIR/$sdk/.enable
   local -r previousEvalFile="$_SDKVM_EVAL_FILE"
   _SDKVM_EVAL_FILE="$SDKVM_LOCAL_SDKS_DIR/$sdk/.enable"
   _sdk_enable $sdk $version
@@ -75,11 +75,11 @@ sdk_saveEnabled() {
 
 _sdk_refreshInitScript() {
   [ -d "$SDKVM_LOCAL_SDKS_DIR" ] || return 0
-  echo "#!/usr/bin/env bash" > "$SDKVM_LOCAL_SDKS_DIR/.init"
+  echo "#!/usr/bin/env bash" >"$SDKVM_LOCAL_SDKS_DIR/.init"
   chmod u+x "$SDKVM_LOCAL_SDKS_DIR/.init"
   for file in "$SDKVM_LOCAL_SDKS_DIR"/*/.enable; do
     if [ "$file" != "$SDKVM_LOCAL_SDKS_DIR/*/.enable" ]; then
-      cat "$file" >> "$SDKVM_LOCAL_SDKS_DIR/.init"
+      cat "$file" >>"$SDKVM_LOCAL_SDKS_DIR/.init"
     fi
   done
   return 0

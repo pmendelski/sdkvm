@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 function installSdk() {
   local -r sdk="$1"
@@ -54,21 +54,21 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --no-use|-u)
-        use=0
-        ;;
-      --no-save|-s)
-        save=0
-        ;;
-      --all|-a)
-        all=1
-        ;;
-      --force|-f)
-        force=1
-        ;;
-      -*)
-        handleCommonParam "$1" "install"
-        ;;
+    --no-use | -u)
+      use=0
+      ;;
+    --no-save | -s)
+      save=0
+      ;;
+    --all | -a)
+      all=1
+      ;;
+    --force | -f)
+      force=1
+      ;;
+    -*)
+      handleCommonParam "$1" "install"
+      ;;
     esac
     shift
   done
@@ -84,4 +84,4 @@ main() {
   return 0
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"

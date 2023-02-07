@@ -2,15 +2,21 @@
 [[ ${UTILS_SYSTYPE:-} -eq 1 ]] && return || readonly UTILS_SYSTYPE=1
 
 systype() {
-  case "$OSTYPE" in
-    linux*)   echo "linux" ;;
-    bsd*)     echo "linux" ;;
-    darwin*)  echo "macos" ;;
-    solaris*) echo "solaris" ;;
-    cygwin*)  echo "windows" ;;
-    msys*)    echo "windows" ;;
-    *)        echo "unknown" ;;
+  local -r sys="${1:?Expected system type}"
+  case "$sys" in
+  [Ll]inux*) echo "linux" ;;
+  bsd* | BSD* | [Oo]penbsd) echo "openbsd" ;;
+  [Ff]reebsd) echo "freebsd" ;;
+  [Dd]arwin*) echo "darwin" ;;
+  [Ss]olaris*) echo "solaris" ;;
+  [Cc]ygwin*) echo "windows" ;;
+  [Ww]indows* | [Mm]sys*) echo "windows" ;;
+  *) echo "unknown" ;;
   esac
+}
+
+ssystype() {
+  systype "$OSTYPE"
 }
 
 isUbuntu() {
@@ -18,15 +24,15 @@ isUbuntu() {
 }
 
 isLinux() {
-  [ "$(systype)" = "linux" ]
+  [ "$(ssystype)" = "linux" ]
 }
 
 isMacos() {
-  [ "$(systype)" = "macos" ]
+  [ "$(ssystype)" = "darwin" ]
 }
 
 isMacosWithBrew() {
   isMacos && command -v brew >/dev/null 2>&1
 }
 
-declare -gr SYSTYPE="$(systype)"
+declare -gr SYSTYPE="$(ssystype)"

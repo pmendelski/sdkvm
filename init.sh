@@ -8,42 +8,44 @@ fi
 declare -xig SDKVM_DEBUG=0
 
 if [ -n "${ZSH_VERSION-}" ]; then
-  declare -xg SDKVM_HOME="$(cd "$(dirname ${(%):-%N})" && pwd)"
-  source $SDKVM_HOME/scripts/completions/zsh.sh
+  # shellcheck disable=SC2296
+  declare -xg SDKVM_HOME="$(cd "$(dirname "${(%):-%N}")" && pwd)"
+  source "$SDKVM_HOME/scripts/completions/zsh.zsh"
 elif [ -n "${KSH_VERSION-}" ]; then
-  declare -xg SDKVM_HOME="$(cd "$(dirname ${.sh.file})" && pwd)"
+  # shellcheck disable=SC2296
+  declare -xg SDKVM_HOME="$(cd "$(dirname "${.sh.file}")" && pwd)"
 else
   declare -xg SDKVM_HOME="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-  source $SDKVM_HOME/scripts/completions/bash.sh
+  source "$SDKVM_HOME/scripts/completions/bash.sh"
 fi
 
 sdkvm() {
   local -r commandsDir="$SDKVM_HOME/scripts/commands"
 
   error() {
-    (>&2 echo $1)
+    (>&2 echo "$1")
   }
 
   execute() {
     local command="$1"
     shift
-    "$commandsDir/${command}.sh" $@
+    "$commandsDir/${command}.sh" "$@"
   }
 
   executeSelf() {
     local command="$1"
     shift
     shift
-    "$commandsDir/self.sh" "$command" $@
+    "$commandsDir/self.sh" "$command" "$@"
   }
 
   case $1 in
     --help|-h)
-      executeSelf "help" $@
+      executeSelf "help" "$@"
       return
       ;;
     --version|-v)
-      executeSelf "version" $@
+      executeSelf "version" "$@"
       return
       ;;
     -*)
@@ -57,7 +59,7 @@ sdkvm() {
       if [ -f "$command" ]; then
         shift
         export _SDKVM_EVAL_FILE="$(mktemp)"
-        $command $@
+        $command "$@"
         local evals="$(cat "$_SDKVM_EVAL_FILE")"
         rm -f "$_SDKVM_EVAL_FILE"
         unset _SDKVM_EVAL_FILE

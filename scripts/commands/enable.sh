@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 main() {
   handleHelp "enable" "$@"
@@ -14,12 +14,12 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --save|-s)
-        save=1
-        ;;
-      -?*)
-        handleCommonParam "$1" "enable"
-        ;;
+    --save | -s)
+      save=1
+      ;;
+    -?*)
+      handleCommonParam "$1" "enable"
+      ;;
     esac
     shift
   done
@@ -29,4 +29,4 @@ main() {
   return 0
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"

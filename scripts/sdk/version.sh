@@ -11,23 +11,23 @@ sdk_getNewestLocalSdkVersion() {
 sdk_validateRemoteSdkVersion() {
   local -r sdk="${1:?"Expected sdk"}"
   local -r version="${2:?"Expected version"}"
-  sdk_isRemote "$sdk" "$version" \
-    || error "Unrecognized remote $sdk version: \"$version\""
+  sdk_isRemote "$sdk" "$version" ||
+    error "Unrecognized remote $sdk version: \"$version\""
 }
 
 sdk_validateLocalSdkVersion() {
   local -r sdk="${1:?"Expected sdk"}"
   local -r version="${2:?"Expected version"}"
-  sdk_isLocalSdkVersion "$sdk" "$version" \
-    || error "Unrecognized local $sdk version: \"$version\". Available local versions: \n$(sdk_listLocalSdkVersions "$sdk")"
+  sdk_isLocalSdkVersion "$sdk" "$version" ||
+    error "Unrecognized local $sdk version: \"$version\". Available local versions: \n$(sdk_listLocalSdkVersions "$sdk")"
 }
 
 sdk_isLocalSdkVersion() {
   local -r sdk="${1:?"Expected sdk"}"
   local -r version="${2:?"Expected version"}"
   local -r versions="$(sdk_listLocalSdkVersions "$sdk")"
-  [ -n "$versions" ] \
-    && echo "$versions" | grep -Fq "$version"
+  [ -n "$versions" ] &&
+    echo "$versions" | grep -Fq "$version"
 }
 
 sdk_isLocalSdk() {
@@ -40,8 +40,8 @@ sdk_isRemoteSdkVersion() {
   local -r sdk="${1:?"Expected sdk"}"
   local -r version="${2:?"Expected version"}"
   local -r versions="$(sdk_listRemoteSdkVersions "$sdk")"
-  [ -n "$versions" ] \
-    && echo "$versions" | grep -Fq "$version"
+  [ -n "$versions" ] &&
+    echo "$versions" | grep -Fq "$version"
 }
 
 sdk_getRemoteSdkVersionDownloadUrl() {

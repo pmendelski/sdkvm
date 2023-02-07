@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh dfsdf"
 
 downloadUrls() {
-  ccurl -s https://cache.ruby-lang.org/pub/ruby/index.txt | \
+  ccurl -s https://cache.ruby-lang.org/pub/ruby/index.txt |
     grep "^ruby-[0-9].[0-9].[0-9][^-]" |
     grep -oE "https://.+.tar.gz"
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  downloadUrls | \
-    grep "ruby-$version.tar.gz" | \
+  downloadUrls |
+    grep "ruby-$version.tar.gz" |
     head -n 1
 }
 
@@ -37,7 +37,7 @@ installDependecnies() {
 }
 
 _sdkvm_versions() {
-  downloadUrls | \
+  downloadUrls |
     grep -oE 'ruby-[0-9.]*[0-9]+' |
     sed 's|^ruby-||' |
     sort -urV
@@ -56,9 +56,9 @@ _sdkvm_installPackages() {
     printInfo "No SDKVM_RUBY_PACKAGES with ruby global packages. Skipping..."
   else
     for pkg in $SDKVM_RUBY_PACKAGES; do
-      gem install --user "$pkg" \
-        && printInfo "Package installed successfully: $pkg" \
-        || printWarn "Could not install package: $pkg"
+      gem install --user "$pkg" &&
+        printInfo "Package installed successfully: $pkg" ||
+        printWarn "Could not install package: $pkg"
     done
   fi
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 printSdks() {
   local -r localSdks="$(sdk_listLocalSdks)"
@@ -59,42 +59,42 @@ main() {
 
   while (("$#")); do
     case $1 in
-      --local|-l)
-        local=1
-        ;;
-      --all|-a)
-        all=1
-        ;;
-      --remote|-r)
-        remote=1
-        ;;
-      --flat|-f)
-        flat=1
-        ;;
-      -*)
-        handleCommonParam "$1" "list"
-        ;;
+    --local | -l)
+      local=1
+      ;;
+    --all | -a)
+      all=1
+      ;;
+    --remote | -r)
+      remote=1
+      ;;
+    --flat | -f)
+      flat=1
+      ;;
+    -*)
+      handleCommonParam "$1" "list"
+      ;;
     esac
     shift
   done
   if [ $flat = 1 ]; then
-    [ -n "$sdk" ] \
-      && sdk_listAllSdkVersions "$sdk" \
-      || sdk_listAllSdks
+    [ -n "$sdk" ] &&
+      sdk_listAllSdkVersions "$sdk" ||
+      sdk_listAllSdks
   elif [ "$local" == 1 ]; then
-    [ -n "$sdk" ] \
-      && sdk_listLocalSdkVersions "$sdk" \
-      || sdk_listLocalSdks
+    [ -n "$sdk" ] &&
+      sdk_listLocalSdkVersions "$sdk" ||
+      sdk_listLocalSdks
   elif [ "$remote" == 1 ]; then
-    [ -n "$sdk" ] \
-    && sdk_listRemoteSdkVersions "$sdk" \
-    || sdk_listRemoteSdks
+    [ -n "$sdk" ] &&
+      sdk_listRemoteSdkVersions "$sdk" ||
+      sdk_listRemoteSdks
   else
-    [ -n "$sdk" ] \
-      && printSdkVersions "$sdk" "$all" \
-      || printSdks
+    [ -n "$sdk" ] &&
+      printSdkVersions "$sdk" "$all" ||
+      printSdks
   fi
   return 0
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main "$@"

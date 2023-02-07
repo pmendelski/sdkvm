@@ -52,7 +52,7 @@ sdk_execute() {
   local -r action="_sdkvm_$2"
   shift
   shift
-  sdk__import "$sdk" && \
+  sdk__import "$sdk" &&
     $action $@
 }
 

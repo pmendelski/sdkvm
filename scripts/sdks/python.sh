@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source $(dirname "${BASH_SOURCE[0]}")/_base.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 downloadUrls() {
   grepLink \
@@ -11,8 +11,8 @@ downloadUrls() {
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  downloadUrls | \
-    grep "Python-$version.tgz" | \
+  downloadUrls |
+    grep "Python-$version.tgz" |
     head -n 1
 }
 
@@ -45,7 +45,7 @@ installDependecnies() {
     libgdbm-dev libgdbm-compat-dev \
     liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev \
     libxext-dev
-  if isMacosWithBrew ; then
+  if isMacosWithBrew; then
     brew install readline openssl xz zlib
     local -r opensslPrefix="$(brew --prefix openssl)"
     export PATH="$opensslPrefix/bin:$PATH"
@@ -58,9 +58,9 @@ installDependecnies() {
 }
 
 _sdkvm_versions() {
-  downloadUrls | \
-    grep -oE 'Python-[0-9.]*[0-9]+' | \
-    sed 's|^Python-||' | \
+  downloadUrls |
+    grep -oE 'Python-[0-9.]*[0-9]+' |
+    sed 's|^Python-||' |
     sort -urV
 }
 
@@ -77,9 +77,9 @@ _sdkvm_installPackages() {
     printInfo "No SDKVM_PYTHON_PACKAGES with python global packages. Skipping..."
   else
     for pkg in $SDKVM_PYTHON_PACKAGES; do
-      pip install --user "$pkg" \
-        && printInfo "Package installed successfully: $pkg" \
-        || printWarn "Could not install package: $pkg"
+      pip install --user "$pkg" &&
+        printInfo "Package installed successfully: $pkg" ||
+        printWarn "Could not install package: $pkg"
     done
   fi
 }
