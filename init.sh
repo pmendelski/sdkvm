@@ -7,10 +7,10 @@ fi
 
 declare -xig SDKVM_DEBUG=0
 
-if [ -n "$ZSH_VERSION" ]; then
+if [ -n "${ZSH_VERSION-}" ]; then
   declare -xg SDKVM_HOME="$(cd "$(dirname ${(%):-%N})" && pwd)"
   source $SDKVM_HOME/scripts/completions/zsh.sh
-elif [ -n "$KSH_VERSION" ]; then
+elif [ -n "${KSH_VERSION-}" ]; then
   declare -xg SDKVM_HOME="$(cd "$(dirname ${.sh.file})" && pwd)"
 else
   declare -xg SDKVM_HOME="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"

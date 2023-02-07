@@ -17,16 +17,17 @@ downloadUrls() {
 
 _sdkvm_versions() {
   downloadUrls | \
-    grep -oE '/jdk-.+/' | \
+    grep -oE '/jdk[-8].+/' | \
     sed 's|/||g' | \
     sed 's|%2B|+|g' | \
     sed 's|jdk-*||g' | \
+    sed 's|jdk*||g' | \
     sort -rV
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  local -r encodedVersion="$(echo "$version" | sed 's|+|%2B|' | sed 's|^[^-]\+-||')"
+  local -r encodedVersion="$(echo "$version" | sed 's|+|%2B|')"
   downloadUrls | \
     grep -E "jdk-?$encodedVersion" | \
     head -n 1

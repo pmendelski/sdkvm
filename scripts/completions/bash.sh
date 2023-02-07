@@ -12,7 +12,7 @@ _sdkvm() {
 }
 
 # make zsh emulate bash if necessary
-if [[ -n "$ZSH_VERSION" ]]; then
+if [[ -n "${ZSH_VERSION-}" ]]; then
     autoload bashcompinit
     bashcompinit
 fi
