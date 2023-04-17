@@ -12,7 +12,7 @@ nodeOs() {
 
 downloadUrls() {
   local -r os="$(nodeOs)"
-  grepLink 'https://nodejs.org/en/download/releases/' 'https://nodejs.org/download/release/v[0-9.]+/' |
+  grepLink 'https://nodejs.org/download/release/' 'v[0-9.]+/' |
     grep -oE "v[0-9.]+" |
     sed -r "s|^(.+)|https://nodejs.org/download/release/\1/node-\1-$os-x64.tar.gz|"
 }
