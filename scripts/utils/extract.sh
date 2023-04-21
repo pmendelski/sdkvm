@@ -8,19 +8,22 @@ extract() {
   *.zip) unzip -q "$package" -d "${tmp}" ;;
   *) error "Could not extract $package" ;;
   esac
-  local -r extracted="$(ls -1q "$tmp")"
-  if [[ ! ${#extracted[*]} == "1" ]]; then
-    error "Expected package ${package} to contain single directory. Got: ${#extracted[*]}"
+  local -r entries="$(ls -1q "$tmp" | wc -l)"
+  if [ "$entries" != "1" ]; then
+    mkdir -p "$dest"
+    mv $tmp/* "$dest"
+  else
+    local -r extracted="$(ls -1q "$tmp")"
+    if [ -f "${tmp}/${extracted}" ]; then
+      mkdir -p "${tmp}/${extracted}-dir"
+      mv "${tmp}/${extracted}" "${tmp}/${extracted}-dir"
+      mv "${tmp}/${extracted}-dir" "${tmp}/${extracted}"
+    fi
+    if [ ! -d "${tmp}/${extracted}" ]; then
+      error "Expected package ${package} to contain a directory. ${tmp}/${extracted} is not a directory."
+    fi
+    mkdir -p "$dest"
+    mv "${tmp}/${extracted}"/* "$dest"
   fi
-  if [[ -f "${tmp}/${extracted}" ]]; then
-    mkdir -p "${tmp}/${extracted}-dir"
-    mv "${tmp}/${extracted}" "${tmp}/${extracted}-dir"
-    mv "${tmp}/${extracted}-dir" "${tmp}/${extracted}"
-  fi
-  if [[ ! -d "${tmp}/${extracted}" ]]; then
-    error "Expected package ${package} to contain a directory. ${tmp}/${extracted} is not a directory."
-  fi
-  mkdir -p "$dest"
-  mv "${tmp}/${extracted}"/* "$dest"
   rm -rf "$tmp"
 }
