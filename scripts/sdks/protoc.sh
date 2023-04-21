@@ -12,7 +12,9 @@ downloadUrls() {
   if [ "$ARCHTYPE" == "arm64" ]; then
     pkgarch="aarch_64"
   fi
-  ccurl -s 'https://api.github.com/repos/protocolbuffers/protobuf/releases' |
+  local p1="$(ccurl -s 'https://api.github.com/repos/protocolbuffers/protobuf/releases?per_page=50')"
+  local p2="$(ccurl -s 'https://api.github.com/repos/protocolbuffers/protobuf/releases?per_page=50&page=2')"
+  echo -e "$p1\n$p2" |
     grep -oE "\"protoc-[0-9.]*-$pkgsys-$pkgarch.zip\"" |
     grep -oE '[^"]+' |
     sort -Vu |
