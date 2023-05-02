@@ -24,21 +24,23 @@ sdk_enable() {
 _sdk_enable() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getNewestLocalSdkVersion "$sdk")}"
-  local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   sdk_eval "export _SDKVM_ENABLED=\"$sdk/$version:\$_SDKVM_ENABLED\""
-  sdk_execute "$sdk" enable "$version" "$targetDir"
+  local -r sdkDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
+  local -r pkgDir="$SDKVM_LOCAL_PKGS_DIR/$sdk/$version"
+  sdk_execute "$sdk" enable "$version" "$sdkDir" "$pkgDir"
 }
 
 sdk_disable() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
-  local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
+  local -r sdkDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
+  local -r pkgDir="$SDKVM_LOCAL_PKGS_DIR/$sdk/$version"
   if [ -n "$enabled" ] && [ "$enabled" = "$version" ]; then
     printInfo "Disabling SDK $sdk/$version"
     _SDKVM_ENABLED="$(delimmap_remove "$_SDKVM_ENABLED" "$sdk")"
     sdk_eval "export _SDKVM_ENABLED=\"$_SDKVM_ENABLED\""
-    sdk_execute "$sdk" disable "$version" "$targetDir"
+    sdk_execute "$sdk" disable "$version" "$sdkDir" "$pkgDir"
     printDebug "Disabled SDK $sdk/$version"
   else
     [ -z "$enabled" ] &&
