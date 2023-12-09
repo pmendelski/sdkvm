@@ -27,7 +27,7 @@ sdk_isLocalSdkVersion() {
   local -r version="${2:?"Expected version"}"
   local -r versions="$(sdk_listLocalSdkVersions "$sdk")"
   [ -n "$versions" ] &&
-    echo "$versions" | grep -Fq "$version"
+    echo "$versions" | grep -Fxq "$version"
 }
 
 sdk_isLocalSdk() {
@@ -41,7 +41,7 @@ sdk_isRemoteSdkVersion() {
   local -r version="${2:?"Expected version"}"
   local -r versions="$(sdk_listRemoteSdkVersions "$sdk")"
   [ -n "$versions" ] &&
-    echo "$versions" | grep -Fq "$version"
+    echo "$versions" | grep -Fxq "$version"
 }
 
 sdk_getRemoteSdkVersionDownloadUrl() {
