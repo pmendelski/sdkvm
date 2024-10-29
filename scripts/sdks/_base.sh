@@ -90,6 +90,16 @@ restorePreviousValue() {
   fi
 }
 
+addToPath() {
+  local -r dir="${1:?Expected dir}"
+  sdk_eval "export PATH=\"$dir:\$PATH\""
+}
+
+removeFromPath() {
+  local -r dir="${1:?Expected dir}"
+  sdk_eval "export PATH=\"$(path_remove "$dir")\""
+}
+
 setupHomeAndPath() {
   local -r name="${1:?Expected name}"
   local -r sdkDir="${2:?Expected sdk directory}"

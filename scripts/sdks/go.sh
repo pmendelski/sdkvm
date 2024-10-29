@@ -37,10 +37,14 @@ _sdkvm_install() {
 
 _sdkvm_enable() {
   setupHomeAndPath "GO" "$2"
-  setupVariableWithBackup "GOBIN" "$3"
+  setupVariableWithBackup "GOMODCACHE" "$3/mod"
+  setupVariableWithBackup "GOBIN" "$3/bin"
+  addToPath "$3/bin"
 }
 
 _sdkvm_disable() {
   resetHomeAndPath "GO" "$2"
+  restorePreviousValue "GOMODCACHE"
   restorePreviousValue "GOBIN"
+  removeFromPath "$3/bin"
 }
