@@ -35,6 +35,15 @@ _sdkvm_install() {
   extractFromUrl "$(downloadUrl "$version")" "$targetDir"
 }
 
+_sdkvm_installPackage() {
+  local -r pkg="${1?Expected package}"
+  if [[ "$pkg" =~ "@" ]]; then
+    go install "$pkg"
+  else
+    go install "$pkg@latest"
+  fi
+}
+
 _sdkvm_enable() {
   setupHomeAndPath "GO" "$2"
   setupVariableWithBackup "GOMODCACHE" "$3/mod"

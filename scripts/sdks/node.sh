@@ -38,16 +38,9 @@ _sdkvm_install() {
   extractFromUrl "$(downloadUrl "$version")" "$targetDir"
 }
 
-_sdkvm_installPackages() {
-  if [ -z "$SDKVM_NODE_PACKAGES" ]; then
-    printInfo "No SDKVM_NODE_PACKAGES with node global packages. Skipping..."
-  else
-    for pkg in $SDKVM_NODE_PACKAGES; do
-      npm i -g "$pkg" &&
-        printInfo "Package installed successfully: $pkg" ||
-        printWarn "Could not install package: $pkg"
-    done
-  fi
+_sdkvm_installPackage() {
+  local -r pkg="${1?Expected package}"
+  npm i -g "$pkg"
 }
 
 _sdkvm_enable() {

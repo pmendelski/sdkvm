@@ -16,11 +16,23 @@ sdk_installSdkPackages() {
   local -r version="${2:-$(sdk_getNewestRemoteSdkVersion "$sdk")}"
   local -r sdkDir="$SDKVM_LOCAL_SDKS_DIR/$sdk"
   local -r targetDir="$sdkDir/$version"
+  local -r sdkPkgEnvName="SDKVM_${sdk^^}_PACKAGES"
   if sdk_hasAction "$sdk" "installPackages"; then
     printInfo "Installing SDK global packages $sdk/$version"
     cd "$targetDir"
     sdk_execute "$sdk" installPackages "$version" "$targetDir" "$sdkDir"
     printDebug "SDK global packages installed successffuly $sdk/$version"
+  elif sdk_hasAction "$sdk" "installPackage" && [ -n "${!sdkPkgEnvName}" ]; then
+    printInfo "Installing SDK global packages $sdk/$version"
+    cd "$targetDir"
+    for pkg in ${!sdkPkgEnvName}; do
+      if [ -n "$pkg" ]; then
+        sdk_execute "$sdk" installPackage "$pkg" "$version" "$targetDir" "$sdkDir" &&
+          printInfo "Package installed successfully: $pkg" ||
+          printWarn "Could not install package: $pkg"
+      fi
+    done
+    printDebug "SDK global packages installed $sdk/$version"
   else
     printInfo "SDK $sdk/$version has no installPackages action defined. Skipping..."
   fi
