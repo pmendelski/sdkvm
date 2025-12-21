@@ -4,9 +4,10 @@ set -e
 source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 downloadUrls() {
-  ccurl -s "https://kafka.apache.org/downloads" |
+  ccurl -s "https://kafka.apache.org/community/downloads/" |
     grep -oE '/kafka/[0-9.]+/kafka_[0-9.-]+\.tgz' |
-    sed 's|^|https://archive.apache.org/dist|'
+    sed 's|^|https://dlcdn.apache.org|' |
+    sort -ru
 }
 
 downloadUrl() {

@@ -12,7 +12,7 @@ import utils/error
 grepLink() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
-  ccurl -s "$url" |
+  ccurl -s --compressed "$url" |
     grep -oE "[hH][rR][eE][fF]=\"${pattern}\"" |
     cut -f 2 -d \"
 }
@@ -20,7 +20,7 @@ grepLink() {
 grepQuotedContent() {
   local -r url="${1:?Expected url}"
   local -r pattern="${2:?Expected pattern}"
-  ccurl -s "$url" |
+  ccurl -s --compressed "$url" |
     grep -oE "\"${pattern}\"" |
     cut -f 2 -d \"
 }
@@ -36,7 +36,11 @@ extractFromUrl() {
   cd "$tmpdir" || error "Dir does not exist $tmpdir"
   printInfo "Downloading $fileName from $downloadUrl"
   printDebug "Using temporary location: $tmpdir"
-  wget -q --show-progress --no-check-certificate --no-cookies "${wgetParams[@]}" -O "$fileName" "$downloadUrl"
+  if [ ${#wgetParams[@]} -eq 0 ]; then
+    wget -q --show-progress --no-check-certificate --no-cookies -O "$fileName" "$downloadUrl"
+  else
+    wget -q --show-progress --no-check-certificate --no-cookies "${wgetParams[@]}" -O "$fileName" "$downloadUrl"
+  fi
   printTrace "Downloaded $fileName from $downloadUrl to $tmpdir"
   printInfo "Extracting $fileName to $targetDir"
   extract "$fileName" "$targetDir"

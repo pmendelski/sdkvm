@@ -3,33 +3,34 @@ set -e
 
 source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
-mongoOs() {
-  case "$(uname -s)" in
-  Darwin*) echo "osx" ;;
-  *) echo "linux" ;;
-  esac
-}
-
 downloadUrls() {
-  local -r os="$(mongoOs)"
-  ccurl -s "https://www.mongodb.com/download-center/community/releases" |
-    grep -oP "https://fastdl.mongodb.org/$os/mongodb-$os-x86_64-[0-9]*\.[0-9]*\.[0-9]*\.tgz" |
+  local pkgsys="debian"
+  if [ "$SYSTYPE" = "darwin" ]; then
+    pkgsys="macos"
+  fi
+  local pkgarch="x86_64"
+  if [ "$ARCHTYPE" = "arm64" ]; then
+    pkgarch="arm64"
+  fi
+  local pattern="https://fastdl.mongodb.org/${pkgsys//^macos$/osx}/mongodb-$pkgsys-$pkgarch-.*-[0-9]*\.[0-9]*\.[0-9]*\.tgz"
+  if [ "$pkgsys" = "macos" ]; then
+    pattern="https://fastdl.mongodb.org/osx/mongodb-$pkgsys-$pkgarch-[0-9]*\.[0-9]*\.[0-9]*\.tgz"
+  fi
+  ccurl -s "https://www.mongodb.com/try/download/community-edition/releases" |
+    grep -oP "$pattern" |
     sort -ru
 }
 
 downloadUrl() {
-  local -r os="$(mongoOs)"
   local -r version="${1:?Expected version}"
   downloadUrls |
-    grep "/mongodb-$os-x86_64-$version.tgz" |
+    grep "$version.tgz" |
     head -n 1
 }
 
 _sdkvm_versions() {
-  local -r os="$(mongoOs)"
   downloadUrls |
-    grep -oE "mongodb-$os-x86_64-[^-_]+" |
-    sed "s|^mongodb-$os-x86_64-||" |
+    grep -oE "[0-9.]*.tgz$" |
     sed 's|.tgz$||'
 }
 

@@ -4,7 +4,7 @@ extract() {
   local -r tmp="$(mktemp -d)"
   printDebug "Extracting ${package}"
   case "$package" in
-  *.tar.gz | *.tgz) tar zxf "$package" -C "${tmp}" ;;
+  *.tar.gz | *.tgz) tar -zxf "$package" -C "${tmp}" ;;
   *.zip) unzip -q "$package" -d "${tmp}" ;;
   *) error "Could not extract $package" ;;
   esac
