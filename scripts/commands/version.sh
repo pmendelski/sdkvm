@@ -24,13 +24,29 @@ printAllEnabledSdkVersions() {
   fi
 }
 
+printAllSdkVersions() {
+  local -r allSdks="$(sdk_listAllSdks)"
+  if [ -n "$allSdks" ]; then
+    for s in $allSdks; do
+      version="$(sdk_getEnabledVersion "$s")"
+      println "$s: ${version:-N/A}"
+    done
+  else
+    printWarn "There is no enabled SDK"
+  fi
+}
+
 main() {
   handleHelp "version" "$@"
+  local -i all=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
   [ -n "$sdk" ] && shift
 
   while (("$#")); do
     case $1 in
+    --all | -a)
+      all=1
+      ;;
     -*)
       handleCommonParam "$1" "version"
       ;;
@@ -40,6 +56,8 @@ main() {
 
   if [ -n "$sdk" ]; then
     printEnabledSdkVersion "$sdk"
+  elif [ "$all" = 1 ]; then
+    printAllSdkVersions
   else
     printAllEnabledSdkVersions
   fi

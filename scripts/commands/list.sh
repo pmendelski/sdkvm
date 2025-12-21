@@ -4,24 +4,32 @@ set -e
 source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 printSdks() {
-  local -r localSdks="$(sdk_listLocalSdks)"
-  local -r remoteSdks="$(sdk_listRemoteSdks)"
-  if [ -n "$localSdks" ]; then
-    println "Local SDKs:"
-    printPadded "$(sdk_listLocalSdks)"
-  fi
-  if [ -n "$remoteVersions" ] && [ -n "$localVersions" ]; then
-    println
-  fi
-  if [ -n "$remoteSdks" ]; then
-    println "Remote SDKs:"
-    printPadded "$remoteSdks"
-  fi
+  local -r versions="${1:?Expected versions param}"
+  println "Local SDKs:"
+  for s in $(sdk_listLocalSdks); do
+    if [ "$versions" = 1 ]; then
+      local remote="$(sdk_getNewestRemoteSdkVersion "$s")"
+      printPadded "$s $(sdk_getEnabledVersion "$s") (remote:${remote:-N/A})"
+    else
+      printPadded "$s"
+    fi
+  done
+  println
+  println "Remote SDKs:"
+  for s in $(sdk_listRemoteSdks); do
+    if [ "$versions" = 1 ]; then
+      local remote="$(sdk_getNewestRemoteSdkVersion "$s")"
+      printPadded "$s ${remote:-N/A}"
+    else
+      printPadded "$s"
+    fi
+  done
 }
 
 printSdkVersions() {
   local -r sdk="${1:?Expected SDK}"
   local -r all="${2:?Expected all param}"
+  local -r versions="${3:?Expected versions param}"
   local -r localVersions="$(sdk_listLocalSdkVersions "$sdk")"
   if [ -n "$localVersions" ]; then
     println "Local SDK versions:"
@@ -53,6 +61,7 @@ main() {
   local -i all=0
   local -i remote=0
   local -i flat=0
+  local -i versions=0
   local -r sdk="$(echo "$1" | grep -o "^[^-].*")"
 
   [ -n "$sdk" ] && shift
@@ -67,6 +76,9 @@ main() {
       ;;
     --remote | -r)
       remote=1
+      ;;
+    --versions)
+      versions=1
       ;;
     --flat | -f)
       flat=1
@@ -97,9 +109,9 @@ main() {
     fi
   else
     if [ -n "$sdk" ]; then
-      printSdkVersions "$sdk" "$all"
+      printSdkVersions "$sdk" "$all" "$versions"
     else
-      printSdks
+      printSdks "$versions"
     fi
   fi
   return 0

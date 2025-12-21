@@ -91,7 +91,7 @@ delimlist_findByPrefix() {
   local -r text="$1"
   local -r prefix="$2"
   local -r delim="${3:-:}"
-  delimlist_values "$text" "$delim" | grep "$prefix"
+  delimlist_values "$text" "$delim" | grep "^$prefix"
 }
 
 delimlist_findFirstByPrefix() {

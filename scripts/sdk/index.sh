@@ -14,8 +14,9 @@ import ./install
 import ./list
 import ./version
 
+# shellcheck disable=SC2294
 sdk_eval() {
-  "$@"
+  eval "$@"
   # All stdout lines that start with "EVAL: " are evaluated in parent process
   echo "$@" >>"$_SDKVM_EVAL_FILE"
 }

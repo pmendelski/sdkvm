@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-source "$(dirname "${BASH_SOURCE[0]}")/_base.sh dfsdf"
+source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
 downloadUrls() {
   ccurl -s https://cache.ruby-lang.org/pub/ruby/index.txt |
