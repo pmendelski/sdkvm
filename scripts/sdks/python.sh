@@ -77,9 +77,11 @@ _sdkvm_installPackages() {
     printInfo "No SDKVM_PYTHON_PACKAGES with python global packages. Skipping..."
   else
     for pkg in $SDKVM_PYTHON_PACKAGES; do
-      pip install --user "$pkg" &&
-        printInfo "Package installed successfully: $pkg" ||
+      if pip install --user "$pkg"; then
+        printInfo "Package installed successfully: $pkg"
+      else
         printWarn "Could not install package: $pkg"
+      fi
     done
   fi
 }

@@ -34,11 +34,11 @@ printSdkVersions() {
   fi
   if [ -n "$remoteVersions" ]; then
     println "Remote SDK versions:"
-    if [ $all = "1" ]; then
+    if [ "$all" = "1" ]; then
       printPadded "$remoteVersions"
     else
       printPadded "$(echo "$remoteVersions" | head -n 10)"
-      if [ $remoteVersionsCount -gt 10 ]; then
+      if [ "$remoteVersionsCount" -gt 10 ]; then
         printPadded "...and more, total: $remoteVersionsCount"
       fi
     fi
@@ -78,21 +78,29 @@ main() {
     shift
   done
   if [ $flat = 1 ]; then
-    [ -n "$sdk" ] &&
-      sdk_listAllSdkVersions "$sdk" ||
+    if [ -n "$sdk" ]; then
+      sdk_listAllSdkVersions "$sdk"
+    else
       sdk_listAllSdks
+    fi
   elif [ "$local" == 1 ]; then
-    [ -n "$sdk" ] &&
-      sdk_listLocalSdkVersions "$sdk" ||
+    if [ -n "$sdk" ]; then
+      sdk_listLocalSdkVersions "$sdk"
+    else
       sdk_listLocalSdks
+    fi
   elif [ "$remote" == 1 ]; then
-    [ -n "$sdk" ] &&
-      sdk_listRemoteSdkVersions "$sdk" ||
+    if [ -n "$sdk" ]; then
+      sdk_listRemoteSdkVersions "$sdk"
+    else
       sdk_listRemoteSdks
+    fi
   else
-    [ -n "$sdk" ] &&
-      printSdkVersions "$sdk" "$all" ||
+    if [ -n "$sdk" ]; then
+      printSdkVersions "$sdk" "$all"
+    else
       printSdks
+    fi
   fi
   return 0
 }

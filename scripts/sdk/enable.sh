@@ -1,13 +1,12 @@
 sdk_getEnabledVersion() {
   local -r sdk="${1:?Expected SDK}"
-  echo "$(delimmap_get "$_SDKVM_ENABLED" "$sdk")"
+  delimmap_get "$_SDKVM_ENABLED" "$sdk"
 }
 
 sdk_enable() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getNewestLocalSdkVersion "$sdk")}"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
-  local -r targetDir="$SDKVM_LOCAL_SDKS_DIR/$sdk/$version"
   sdk_validateLocalSdkVersion "$sdk" "$version"
   if [ "$enabled" != "$version" ]; then
     if [ -n "$enabled" ]; then
@@ -43,16 +42,18 @@ sdk_disable() {
     sdk_execute "$sdk" disable "$version" "$sdkDir" "$pkgDir"
     printDebug "Disabled SDK $sdk/$version"
   else
-    [ -z "$enabled" ] &&
-      printInfo "SDK is not enabled. Skipping..." ||
+    if [ -z "$enabled" ]; then
+      printInfo "SDK is not enabled. Skipping..."
+    else
       printInfo "SDK $sdk/$version is not enabled. Enabled version: $enabled. Skipping..."
+    fi
   fi
 }
 
 sdk_isEnabled() {
   local -r sdk="${1:?Expected SDK}"
   local -r version="${2:-$(sdk_getEnabledVersion "$sdk")}"
-  delimmap_contains "$_SDKVM_ENABLED" "$sdk" "$value"
+  delimmap_contains "$_SDKVM_ENABLED" "$sdk" "$version"
 }
 
 sdk_isDisabled() {
@@ -66,10 +67,10 @@ sdk_saveEnabled() {
   echo "$version" >"$SDKVM_LOCAL_SDKS_DIR/$sdk/.version"
   rm -f "$SDKVM_LOCAL_SDKS_DIR/$sdk/enabled"
   ln -sf "$SDKVM_LOCAL_SDKS_DIR/$sdk/$version" "$SDKVM_LOCAL_SDKS_DIR/$sdk/enabled"
-  echo "" >$SDKVM_LOCAL_SDKS_DIR/$sdk/.enable
+  echo "" >"$SDKVM_LOCAL_SDKS_DIR/$sdk/.enable"
   local -r previousEvalFile="$_SDKVM_EVAL_FILE"
   _SDKVM_EVAL_FILE="$SDKVM_LOCAL_SDKS_DIR/$sdk/.enable"
-  _sdk_enable $sdk $version
+  _sdk_enable "$sdk" "$version"
   _SDKVM_EVAL_FILE="$previousEvalFile"
   _sdk_refreshInitScript
   printInfo "Saved default SDK version $sdk/$version"

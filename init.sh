@@ -7,6 +7,7 @@ fi
 
 declare -xig SDKVM_DEBUG=0
 
+# Install completions
 if [ -n "${ZSH_VERSION-}" ]; then
   # shellcheck disable=SC2296
   declare -xg SDKVM_HOME="$(cd "$(dirname "${(%):-%N}")" && pwd)"
@@ -19,17 +20,19 @@ else
   source "$SDKVM_HOME/scripts/completions/bash.sh"
 fi
 
+# Install man pages
+if [ ! -f "$HOME/.local/share/man/man1/sdkvm.1" ]; then
+  mkdir -p "$HOME/.local/share/man/man1"
+  for m in $(find "$SDKVM_HOME/man" -mindepth 1 -maxdepth 1 -type f -print0 | xargs -0 -I {} echo "{}"); do
+    ln -si "$m" "$HOME/.local/share/man/man1"
+  done
+fi
+
 sdkvm() {
   local -r commandsDir="$SDKVM_HOME/scripts/commands"
 
   error() {
     (>&2 echo "$1")
-  }
-
-  execute() {
-    local command="$1"
-    shift
-    "$commandsDir/${command}.sh" "$@"
   }
 
   executeSelf() {
@@ -74,7 +77,6 @@ sdkvm() {
       return
       ;;
   esac
-  error "No command defined. Try --help option"
 }
 
 _sdkvm_init() {

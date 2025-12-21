@@ -6,7 +6,7 @@ _sdkvm() {
   cur="${COMP_WORDS[COMP_CWORD]}"
   if [ "$COMP_CWORD" = 1 ]; then
     opts="list install uninstall update enable disable version --help --verbose --version --no-cache"
-    COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+    mapfile -t COMPREPLY < <(compgen -W "${opts}" -- "${cur}")
   fi
   return 0
 }

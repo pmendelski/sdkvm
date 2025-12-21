@@ -37,7 +37,7 @@ main() {
     if [ "$newestLocal" != "$newestRemote" ]; then
       printInfo "Updating $sdk from $newestLocal to $newestRemote"
       sdk_installSdkVersion "$sdk" "$newestRemote"
-      [ $use = 1 ] && sdk_enable "$sdk" "$version"
+      [ $use = 1 ] && sdk_enable "$sdk" "$newestRemote"
       [ $save = 1 ] && sdk_saveEnabled "$sdk"
     else
       printInfo "SDK $sdk is in the most recent version $newestLocal"

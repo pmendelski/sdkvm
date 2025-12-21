@@ -1,6 +1,6 @@
 sdk_listRemoteSdks() {
-  find "$SDKVM_REMOTE_SDKS_DIR" -mindepth 1 -maxdepth 1 -type f ! -name '_*' 2>/dev/null |
-    xargs -I '{}' basename {} .sh 2>/dev/null |
+  find "$SDKVM_REMOTE_SDKS_DIR" -mindepth 1 -maxdepth 1 -type f ! -name '_*' -print0 2>/dev/null |
+    xargs -0 -I '{}' basename {} .sh 2>/dev/null |
     sort
 }
 
@@ -10,8 +10,8 @@ sdk_listRemoteSdkVersions() {
 }
 
 sdk_listLocalSdks() {
-  find "$SDKVM_LOCAL_SDKS_DIR" -mindepth 1 -maxdepth 1 -type d 2>/dev/null |
-    xargs -I '{}' basename {} 2>/dev/null |
+  find "$SDKVM_LOCAL_SDKS_DIR" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null |
+    xargs -0 -I '{}' basename {} 2>/dev/null |
     sort
 }
 
@@ -47,9 +47,9 @@ sdk_listNotInstalledSdks() {
   local -r installed="$(sdk_listLocalSdks)"
   local -r remote="$(sdk_listRemoteSdks)"
   local -i contains=0
-  for remoteSdk in ${remote[@]}; do
+  for remoteSdk in "${remote[@]}"; do
     contains=0
-    for installedSdk in ${installed[@]}; do
+    for installedSdk in "${installed[@]}"; do
       if [ "$installedSdk" = "$remoteSdk" ]; then
         contains=1
         break
@@ -66,9 +66,9 @@ sdk_listNotInstalledSdkVersions() {
   local -r installed="$(sdk_listLocalSdkVersions "$sdk")"
   local -r remote="$(sdk_listRemoteSdkVersions "$sdk")"
   local -i contains=0
-  for remoteSdk in ${remote[@]}; do
+  for remoteSdk in "${remote[@]}"; do
     contains=0
-    for installedSdk in ${installed[@]}; do
+    for installedSdk in "${installed[@]}"; do
       if [ "$installedSdk" = "$remoteSdk" ]; then
         contains=1
         break

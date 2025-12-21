@@ -7,6 +7,7 @@ import utils/extract
 import utils/path
 import utils/delimmap
 import utils/ccurl
+import utils/error
 
 grepLink() {
   local -r url="${1:?Expected url}"
@@ -32,10 +33,10 @@ extractFromUrl() {
   local -r wgetParams=("$@")
   local -r tmpdir="$(tmpdir_create)"
   local -r fileName="${downloadUrl##*/}"
-  cd "$tmpdir"
+  cd "$tmpdir" || error "Dir does not exist $tmpdir"
   printInfo "Downloading $fileName from $downloadUrl"
   printDebug "Using temporary location: $tmpdir"
-  wget -q --show-progress --no-check-certificate --no-cookies "${wgetParams[@]}" -O $fileName $downloadUrl
+  wget -q --show-progress --no-check-certificate --no-cookies "${wgetParams[@]}" -O "$fileName" "$downloadUrl"
   printTrace "Downloaded $fileName from $downloadUrl to $tmpdir"
   printInfo "Extracting $fileName to $targetDir"
   extract "$fileName" "$targetDir"
@@ -49,11 +50,11 @@ buildFromUrl() {
   local -r configOptions="$3"
   local -r sourcesDir="$(tmpdir_create)"
   extractFromUrl "$downloadUrl" "$sourcesDir"
-  cd "$sourcesDir"
+  cd "$sourcesDir" || error "Dir does not exist $sourcesDir"
   printInfo "Building ${downloadUrl##*/}"
   printDebug "Using $(nproc) threads for build"
   printDebug "Config options: $configOptions"
-  ./configure --prefix="$targetDir" $configOptions | spin
+  ./configure --prefix="$targetDir" "$configOptions" | spin
   make -j "$(nproc)" | spin
   make install | spin
   rm -rf "$sourcesDir"
@@ -120,14 +121,14 @@ installLinuxPackages() {
   if ! isLinux; then
     return
   fi
-  local -r packages="${@:?Expected packages}"
+  local -r packages="${*:?Expected packages}"
   printInfo "Installing additional system packages (password may be required)"
   printDebug "Packages:\n$packages"
   if [ -x "$(command -v apt-get)" ]; then
     sudo apt-get update | spin
-    sudo apt-get -y install $packages | spin
+    sudo apt-get -y install "$packages" | spin
   elif [ -x "$(command -v yum)" ]; then
-    sudo yum -y install $packages | spin
+    sudo yum -y install "$packages" | spin
   else
     error "Could not install packages. Unrecognized package manager."
   fi
@@ -135,7 +136,7 @@ installLinuxPackages() {
 }
 
 ubuntuDesktopEntry() {
-  if [ ! $(isUbuntu) ]; then
+  if ! isUbuntu; then
     return
   fi
   local -r name="$1"

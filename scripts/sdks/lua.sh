@@ -42,7 +42,7 @@ _sdkvm_install() {
   # installDependecnies
   extractFromUrl "$(downloadUrl "$version")" "$tmpdir"
   cd "$tmpdir"
-  make $os | spin
+  make "$os" | spin
   make install INSTALL_TOP="$targetDir" | spin
   tmpdir_remove "$tmpdir"
 }

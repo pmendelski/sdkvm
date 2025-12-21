@@ -4,7 +4,7 @@ sdk__import() {
   _requireSdkFunction() {
     local -r sdk="$1"
     local -r name="$2"
-    local -r typeResult="$(type -t $name)"
+    local -r typeResult="$(type -t "$name")"
     if [ -z "$typeResult" ] || [ ! "$typeResult" = function ]; then
       error "Missing sdk module $sdk function: $name"
     fi
@@ -29,12 +29,12 @@ sdk__import() {
   [ ! -f "$sdkScript" ] && error "Urecognized SDK: \"$sdk\""
   [ -z "$sdk" ] && error "Missing SDK parameter"
   _SDKVM_IMPORTED_SDK=""
-  for fun in $moduleFuns; do
+  for fun in "${moduleFuns[@]}"; do
     unset -f "$fun"
   done
   source "$sdkScript"
-  for fun in $requiredFuns; do
-    _requireSdkFunction $sdk $fun
+  for fun in "${requiredFuns[@]}"; do
+    _requireSdkFunction "$sdk" "$fun"
   done
   _SDKVM_IMPORTED_SDK="$sdk"
 }
@@ -43,7 +43,7 @@ sdk_hasAction() {
   local -r sdk="$1"
   local -r action="_sdkvm_$2"
   sdk__import "$sdk"
-  local -r typeResult="$(type -t $action)"
+  local -r typeResult="$(type -t "$action")"
   [ -n "$typeResult" ] && [ "$typeResult" = function ]
 }
 
@@ -53,7 +53,7 @@ sdk_execute() {
   shift
   shift
   sdk__import "$sdk" &&
-    $action $@
+    $action "$@"
 }
 
 sdk_isDefined() {
@@ -63,7 +63,7 @@ sdk_isDefined() {
 
 sdk_executeOrEmpty() {
   local -r sdk="$1"
-  if $(sdk_isDefined "$sdk"); then
+  if sdk_isDefined "$sdk"; then
     sdk_execute "$@"
   fi
 }

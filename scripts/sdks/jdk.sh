@@ -27,7 +27,7 @@ _sdkvm_versions() {
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
-  local -r encodedVersion="$(echo "$version" | sed 's|+|%2B|')"
+  local -r encodedVersion="${version//+/%2B}"
   downloadUrls |
     grep -E "jdk-?$encodedVersion" |
     head -n 1

@@ -1,72 +1,68 @@
-.TH SDKVM 1
-." Sources on writing man pages:
-." - basic format: http://www.linuxhowtos.org/System/creatingman.htm
-." - syopsis: https://unix.stackexchange.com/a/425026
-."
+.Dd December 21, 2025
+.Dt SDKVM 1
+.Os
 
-.SH NAME
-sdkvm \- manage different versions of Software Development Kits.
+.Sh NAME
+.Nm sdkvm
+.Nd manage different versions of Software Development Kits.
 
-.SH SYNOPSIS
-.B sdkvm
-.RB [ \-\-version | \-\-help ]
-.br
-.B sdkvm
-.I COMMAND
-.RI [ OPTS ]
+.Sh SYNOPSIS
+.Nm
+.Op Ar PARAMS
+.Ar SUBCMD
 
-.SH DESCRIPTION
-Sdkvm manages different Software Development Kits (SDK). It is designed to handle all kinds of SDKs and add no overhead to the terminal startup time.
-.PP
-Sdkvm uses cached information on available SDKs. The list od SDK avaialble versions can be easily updated.
-.PP
-In comparison with nvm, rvm or sdkman it adds little overhead to the terminal startup time and it is not dedicated to any specific SDK.
-.PP
-Source: \fIhttps://github.com/pmendelski/sdkvm\fR
+.Sh DESCRIPTION
+.Nm
+manages different Software Development Kits (SDK).\&
+.Pp
+It is designed to handle all kinds of SDKs and add no overhead to the terminal startup time.\&
+Sdkvm uses cached information on available SDKs. The list od SDK avaialble versions can be easily updated.\&
+In comparison with nvm, rvm or sdkman it adds little overhead to the terminal startup time and it is not dedicated to any specific SDK.\&
+.Pp
+Source:
+.Lk https://github.com/pmendelski/sdkvm
 
-.SH OPTIONS
+.Sh ARGUMENTS
 Lisf of options available in all sdkvm commands:
-.TP
-.BR \-v ", " \-\-version\fR
+.Bl -tag -width Ds
+.It Fl v , Fl -version
 Print the sdkvm version.
-.TP
-.BR \-u ", " \-\-update\fR
+.It Fl u , Fl -update
 Update the sdkvm.
-.TP
-.BR \-c ", " \-\-no-cache\fR
+.It Fl c , Fl -no-cache
 Disable sdkvm cache.
-.TP
-.BR \-h ", " \-\-help\fR
+.It Fl h , Fl -help
 Print the manual.
-.TP
-.BR \-v ", " \-vv ", " \-\-verbose\fR
+.It Fl v , Fl vv , Fl -verbose
 Increase log verbosity. Multiple occurrences (\fI\-v\fR \fI\-v\fR or \fI\-vv\fR) increases the verbosity even more.
-.TP
-.BR \-p ", " \-\-no-pretty\fR
+.It Fl p , Fl -no-pretty
 Disable pretty printing. Remove colors and icons from logs.
-.TP
-.BR \-y ", " \-\-yes\fR
+.It Fl y , Fl -yes
 Assume 'yes' as the answer for all confirmations.
 
-.SH COMMANDS
-.TP
-.B list
-List SDKs.
-.TP
-.B install
-Install a SDK.
-.TP
-.B unintsall
-Uninstall a SDK.
-.TP
-.B update
-Install and enable the newest SDK version.
-.TP
-.B enable
-Enable an installed version of SDK.
-.TP
-.B disable
-Disable a previousle enabled SDK version.
-.TP
-.B version
-Print enabled version of SDK.
+.Sh SUBCOMMANDS
+.Bl -tag -width Ds
+.It Cm list
+List SDKs
+.Pq Xr sdkvm-list 1
+.It Cm install
+Install a SDK
+.Pq Xr sdkvm-install 1
+.It Cm unintsall
+Uninstall a SDK
+.Pq Xr sdkvm-uninstall 1
+.It Cm update
+Install and enable the newest SDK version
+.Pq Xr sdkvm-update 1
+.It Cm enable
+Enable an installed version of SDK
+.Pq Xr sdkvm-enable 1
+.It Cm disable
+Disable a previousle enabled SDK version
+.Pq Xr sdkvm-disable 1
+.It Cm version
+Print enabled version of SDK
+.Pq Xr sdkvm-version 1
+.It Cm status
+Print SDK statuses
+.Pq Xr sdkvm-status 1

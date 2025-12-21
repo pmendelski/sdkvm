@@ -56,9 +56,11 @@ _sdkvm_installPackages() {
     printInfo "No SDKVM_RUBY_PACKAGES with ruby global packages. Skipping..."
   else
     for pkg in $SDKVM_RUBY_PACKAGES; do
-      gem install --user "$pkg" &&
-        printInfo "Package installed successfully: $pkg" ||
+      if gem install --user "$pkg"; then
+        printInfo "Package installed successfully: $pkg"
+      else
         printWarn "Could not install package: $pkg"
+      fi
     done
   fi
 }

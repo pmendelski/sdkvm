@@ -10,13 +10,13 @@ function installSdk() {
   local -r use="$4"
   local -r save="$5"
   local -r enabled="$(sdk_getEnabledVersion "$sdk")"
-  if [ $force = 1 ] || ! sdk_isLocalSdkVersion "$sdk" "$version"; then
+  if [ "$force" = 1 ] || ! sdk_isLocalSdkVersion "$sdk" "$version"; then
     sdk_isLocalSdkVersion "$sdk" "$version" && sdk_uninstallSdkVersion "$sdk" "$version"
     sdk_installSdkVersion "$sdk" "$version"
     sdk_enable "$sdk" "$version"
     sdk_installSdkPackages "$sdk" "$version"
-    [ $use != 1 ] && [ "$enabled" != "$version" ] && sdk_enable "$sdk" "$enabled"
-    [ $save = 1 ] && sdk_saveEnabled "$sdk"
+    [ "$use" != 1 ] && [ "$enabled" != "$version" ] && sdk_enable "$sdk" "$enabled"
+    [ "$save" = 1 ] && sdk_saveEnabled "$sdk"
   else
     printWarn "Skipping already installed SDK $sdk $version"
   fi

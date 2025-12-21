@@ -42,13 +42,17 @@ main() {
   done
 
   if [ -n "$version" ]; then
-    sdk_isLocalSdkVersion "$sdk" "$version" &&
-      uninstallSdkVersion "$sdk" "$version" "$yes" ||
+    if sdk_isLocalSdkVersion "$sdk" "$version"; then
+      uninstallSdkVersion "$sdk" "$version" "$yes"
+    else
       printWarn "SDK version was not found: $sdk/$version"
+    fi
   else
-    sdk_isLocalSdk "$sdk" &&
-      uninstallSdk "$sdk" "$yes" ||
+    if sdk_isLocalSdk "$sdk"; then
+      uninstallSdk "$sdk" "$yes"
+    else
       printWarn "SDK was not found: $sdk"
+    fi
   fi
   return 0
 }
