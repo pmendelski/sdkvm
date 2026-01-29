@@ -3,18 +3,18 @@ set -e
 
 source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
-nodeOs() {
-  case "$(uname -s)" in
-  Darwin*) echo "darwin" ;;
-  *) echo "linux" ;;
-  esac
-}
-
 downloadUrls() {
-  local -r os="$(nodeOs)"
+  local pkgsys="$SYSTYPE"
+  local pkgarch="$ARCHTYPE"
+  if [ "$SYSTYPE" == "windows" ]; then
+    pkgsys="win"
+  fi
+  if [ "$ARCHTYPE" == "amd64" ]; then
+    pkgarch="x64"
+  fi
   grepLink 'https://nodejs.org/download/release/' 'v[0-9.]+/' |
     grep -oE "v[0-9.]+" |
-    sed -r "s|^(.+)|https://nodejs.org/download/release/\1/node-\1-$os-x64.tar.gz|"
+    sed -r "s|^(.+)|https://nodejs.org/download/release/\1/node-\1-$pkgsys-$pkgarch.tar.gz|"
 }
 
 downloadUrl() {

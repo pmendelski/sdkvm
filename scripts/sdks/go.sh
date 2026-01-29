@@ -3,22 +3,15 @@ set -e
 
 source "$(dirname "${BASH_SOURCE[0]}")/_base.sh"
 
-go_systype() {
-  case "$OSTYPE" in
-  linux*) echo "linux" ;;
-  darwin*) echo "darwin" ;;
-  esac
-}
-
 downloadUrls() {
-  grepLink "https://go.dev/dl/" "/dl/go[0-9.]+$(go_systype)-amd64.tar.gz" |
+  grepLink "https://go.dev/dl/" "/dl/go[0-9.]+$SYSTYPE-$ARCHTYPE.tar.gz" |
     sed 's|^|https://go.dev|'
 }
 
 downloadUrl() {
   local -r version="${1:?Expected version}"
   downloadUrls |
-    grep "/go$version.$(go_systype)-amd64.tar.gz" |
+    grep "/go$version.$SYSTYPE-$ARCHTYPE.tar.gz" |
     head -n 1
 }
 
